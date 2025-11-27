@@ -1,55 +1,73 @@
 name: Deploy Angular App to GitHub Pages
-
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # Change this to your default branch if different
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  contents: write  # Required to push to GitHub Pages
+  id-token: write  # Required for GitHub Actions to authenticate
+  pull-requests: write  # Required to manage pull requests
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v5
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.19.0'
-          cache: npm
+          node-version: '22.19.0'  # Specify the Node.js version you want to use
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Angular app
+      - name: Install Dependencies
         run: |
-          npx ng build --configuration production --base-href "/WWM-Helper/"
+          rm -rf node_modules package-lock.json
+          npm install
+          npm ci
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist/wwm-helper/browser
+      - name: Install angular-cli-ghpages and Angular CLI
+        run: |
+          npm install -g @angular/cli@21.0.1
+          npm install -g angular-cli-ghpages@2.0.3
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      - name: Deploy
+        run: |
+          echo "Checking Angular CLI installation..."
+          npm list -g @angular/cli
 
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          echo "Content of index.html before building:"
+          cat src/index.html
+
+          echo "Building Angular app..."
+          npx ng build --configuration production --base-href "/wwm-helper/"
+
+          echo "Directory structure after build:"
+          ls -la dist/wwm-helper/browser/
+
+          touch dist/wwm-helper/browser/.nojekyll
+
+          echo "Full directory listing of build output:"
+          find dist -type f | sort
+
+          echo "Base href is generated index.html:"
+          grep '<base href=' dist/wwm-helper/browser/index.html
+
+          echo "Checking index.html content after build:"
+          cat dist/wwm-helper/browser/index.html
+
+          echo "Checking asset references in index.html:"
+          grep -o 'src="[^"]*"' dist/wwm-helper/browser/index.html
+          grep -o 'href="[^"]*"' dist/wwm-helper/browser/index.html
+
+          echo "Deploying to GitHub Pages..."
+          npx angular-cli-ghpages --dir=dist/wwm-helper/browser --no-silent --message="Deployed via GitHub Actions: ${{ github.sha }}" --repo=https://github.com/Besaids/WWM-Helper.git --branch=gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deployment Complete
+        run: echo "Angular app has been successfully deployed to GitHub Pages."
