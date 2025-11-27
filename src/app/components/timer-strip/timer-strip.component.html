@@ -1,0 +1,13 @@
+<section class="timer-strip">
+  <div class="timer-strip-inner">
+    @if (timers$ | async; as timers) {
+      @for (t of timers; track t.id) {
+        <div class="timer-pill">
+          <i class="bi" [ngClass]="t.icon"></i>
+          <span class="label">{{ t.label }}</span>
+          <span class="value">{{ t.remaining }}</span>
+        </div>
+      }
+    }
+  </div>
+</section>

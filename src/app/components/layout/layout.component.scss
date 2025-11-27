@@ -1,0 +1,18 @@
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(
+    circle at top,
+    #121826 0,
+    var(--color-bg-root) 55%,
+    #03040a 100%
+  );
+  color: var(--color-text-primary);
+}
+
+.app-main {
+  flex: 1;
+  padding: 1.5rem var(--spacing-outer-x) 2rem;
+}
+

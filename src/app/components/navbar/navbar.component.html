@@ -1,0 +1,45 @@
+<header class="app-header">
+  <!-- Brand / logo -->
+  <div class="brand">
+    <img
+      src="assets/portal/wwm-logo.png"
+      alt="WWM Helper logo"
+      class="brand-mark"
+    />
+  </div>
+
+  <!-- Desktop navigation -->
+  <nav class="main-nav main-nav--desktop">
+    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Home
+    </a>
+    <a routerLink="/timers" routerLinkActive="active">Timers</a>
+    <a routerLink="/planner" routerLinkActive="active">Planner</a>
+    <a routerLink="/guides" routerLinkActive="active">Guides</a>
+  </nav>
+
+  <!-- Mobile burger button -->
+  <button
+    class="nav-toggle main-nav--mobile"
+    type="button"
+    (click)="toggleMenu()"
+    aria-label="Toggle navigation"
+  >
+    <i class="bi" [ngClass]="isMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+  </button>
+</header>
+
+<!-- Mobile dropdown menu -->
+<nav class="mobile-menu" [class.mobile-menu--open]="isMenuOpen">
+  <a
+    routerLink="/home"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    (click)="closeMenu()"
+  >
+    Home
+  </a>
+  <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()">Timers</a>
+  <a routerLink="/planner" routerLinkActive="active" (click)="closeMenu()">Planner</a>
+  <a routerLink="/guides" routerLinkActive="active" (click)="closeMenu()">Guides</a>
+</nav>

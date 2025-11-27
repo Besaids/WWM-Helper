@@ -1,0 +1,91 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Hero */
+
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.home-hero-text h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.home-hero-text p {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-secondary);
+  max-width: 40rem;
+}
+
+.home-hero-actions {
+  margin-top: 1.1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Buttons */
+
+.btn-primary,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: none;
+  color: var(--color-text-primary);
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-teal));
+  border-color: transparent;
+}
+
+.btn-primary i,
+.btn-ghost i {
+  font-size: 1rem;
+}
+
+.btn-ghost {
+  border-color: var(--color-border-subtle);
+  background: rgba(15, 23, 42, 0.75);
+  color: var(--color-text-secondary);
+}
+
+/* Lower grid */
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.home-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}
+
+/* Responsiveness */
+
+@media (max-width: 991.98px) {
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+}
