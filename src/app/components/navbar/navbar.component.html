@@ -1,16 +1,27 @@
 <header class="app-header">
   <!-- Brand / logo -->
-  <div class="brand">
+  <a
+    class="brand"
+    routerLink="/home"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    (click)="closeMenu()"
+    aria-label="Go to home"
+  >
     <img
       src="assets/portal/wwm-logo.png"
       alt="WWM Helper logo"
       class="brand-mark"
     />
-  </div>
+  </a>
 
   <!-- Desktop navigation -->
   <nav class="main-nav main-nav--desktop">
-    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <a
+      routerLink="/home"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
       Home
     </a>
     <a routerLink="/timers" routerLinkActive="active">Timers</a>
@@ -39,7 +50,13 @@
   >
     Home
   </a>
-  <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()">Timers</a>
-  <a routerLink="/planner" routerLinkActive="active" (click)="closeMenu()">Planner</a>
-  <a routerLink="/guides" routerLinkActive="active" (click)="closeMenu()">Guides</a>
+  <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()">
+    Timers
+  </a>
+  <a routerLink="/planner" routerLinkActive="active" (click)="closeMenu()">
+    Planner
+  </a>
+  <a routerLink="/guides" routerLinkActive="active" (click)="closeMenu()">
+    Guides
+  </a>
 </nav>

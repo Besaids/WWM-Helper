@@ -53,8 +53,9 @@
 /* On narrower screens, keep a single row and left-align */
 @media (max-width: 768px) {
   .timer-strip-inner {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: flex-start;
     padding-inline: 1rem;
+    row-gap: 0.4rem;
   }
 }
