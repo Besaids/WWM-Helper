@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import {
   ChecklistItem,
@@ -24,6 +25,8 @@ type ChecklistState = Record<string, boolean>;
   styleUrl: './checklist.component.scss',
 })
 export class ChecklistComponent implements OnInit, OnDestroy {
+  private readonly route = inject(ActivatedRoute);
+
   readonly DAILY_ITEMS = DAILY_CHECKLIST;
   readonly WEEKLY_ITEMS = WEEKLY_CHECKLIST;
   readonly FREEPLAY_IDEAS = FREEPLAY_IDEAS;
@@ -38,12 +41,16 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   private currentWeeklyId = getWeeklyCycleId();
   private cycleWatchSub?: Subscription;
 
-  constructor() {
-    this.loadState();
-  }
-
   ngOnInit(): void {
-    // Only run in the browser
+    // Set initial tab from query param if present
+    const tabParam = this.route.snapshot.queryParamMap.get('tab');
+    if (tabParam === 'daily' || tabParam === 'weekly') {
+      this.activeTab.set(tabParam);
+    }
+
+    this.loadState();
+
+    // Only run the live reset watcher in the browser
     if (typeof window === 'undefined') {
       return;
     }
@@ -58,7 +65,6 @@ export class ChecklistComponent implements OnInit, OnDestroy {
         this.currentDailyId = nextDailyId;
         this.currentWeeklyId = nextWeeklyId;
 
-        // Reload the whole page so all components pick up the new cycle.
         window.location.reload();
       }
     });
@@ -164,7 +170,7 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   }
 
   getCategoryGroups(
-    importance: ChecklistImportance
+    importance: ChecklistImportance,
   ): { category: string; items: ChecklistItem[] }[] {
     const items = this.getItemsForTab(importance);
     const byCategory = new Map<string, ChecklistItem[]>();

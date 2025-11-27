@@ -16,7 +16,7 @@ export class TimerService {
     map(() => {
       const now = DateTime.utc();
       return TIMER_DEFINITIONS.map((def) => this.buildChip(def, now));
-    })
+    }),
   );
 
   private buildChip(def: TimerDefinition, now: DateTime): TimerChip {
@@ -136,7 +136,7 @@ export class TimerService {
    */
   private getDailyMultiBoundary(
     schedule: DailyMultiSchedule,
-    now: DateTime
+    now: DateTime,
   ): { nextBoundary: DateTime | null; isOpen: boolean } {
     const windowHours = schedule.windowHours ?? 0;
 
@@ -200,14 +200,12 @@ export class TimerService {
 
     if (!best) {
       const firstTime = schedule.times[0];
-      best = now
-        .plus({ days: 1 })
-        .set({
-          hour: firstTime.hour,
-          minute: firstTime.minute,
-          second: 0,
-          millisecond: 0,
-        });
+      best = now.plus({ days: 1 }).set({
+        hour: firstTime.hour,
+        minute: firstTime.minute,
+        second: 0,
+        millisecond: 0,
+      });
       isOpen = false;
     }
 
@@ -219,25 +217,23 @@ export class TimerService {
    */
   private getWeeklyRangeBoundary(
     schedule: WeeklyRangeSchedule,
-    now: DateTime
+    now: DateTime,
   ): { nextBoundary: DateTime | null; isOpen: boolean } {
-    const startThisWeek = now
-      .set({
-        weekday: schedule.openWeekday,
-        hour: schedule.openHour,
-        minute: schedule.openMinute,
-        second: 0,
-        millisecond: 0,
-      });
+    const startThisWeek = now.set({
+      weekday: schedule.openWeekday,
+      hour: schedule.openHour,
+      minute: schedule.openMinute,
+      second: 0,
+      millisecond: 0,
+    });
 
-    let endThisWeek = now
-      .set({
-        weekday: schedule.closeWeekday,
-        hour: schedule.closeHour,
-        minute: schedule.closeMinute,
-        second: 0,
-        millisecond: 0,
-      });
+    let endThisWeek = now.set({
+      weekday: schedule.closeWeekday,
+      hour: schedule.closeHour,
+      minute: schedule.closeMinute,
+      second: 0,
+      millisecond: 0,
+    });
 
     // If end <= start, the range wraps into next week
     if (endThisWeek <= startThisWeek) {

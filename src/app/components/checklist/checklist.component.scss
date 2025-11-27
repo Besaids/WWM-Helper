@@ -37,11 +37,7 @@
 }
 
 .tab-pill--active {
-  background: linear-gradient(
-    135deg,
-    rgba(234, 179, 8, 0.14),
-    rgba(56, 189, 248, 0.14)
-  );
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.14), rgba(56, 189, 248, 0.14));
   color: var(--color-text-primary);
 }
 

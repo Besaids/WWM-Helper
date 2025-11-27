@@ -1,56 +1,129 @@
-<section class="home">
+<section class="home-page">
   <!-- Hero -->
   <section class="home-hero card-surface card-padding">
     <div class="home-hero-text">
       <h1>Where Winds Meet Helper</h1>
-      <p>
-        Lightweight planner and timers for your WWM routine. Track resets, world events, and
+      <p class="home-hero-subtitle text-muted-strong">
+        Lightweight planner and timers for your WWM routine. Track resets, world events and
         checklist progress without leaving your browser.
       </p>
 
       <div class="home-hero-actions">
-        <button class="btn-primary">
-          <i class="bi bi-lightning-charge"></i>
-          View today&apos;s checklist
-        </button>
-        <button class="btn-ghost">
-          <i class="bi bi-clock-history"></i>
-          See all timers
-        </button>
+        <a routerLink="/checklist" [queryParams]="{ tab: 'daily' }" class="btn-primary">
+          View today’s checklist
+        </a>
+        <a routerLink="/timers" class="btn-secondary"> See all timers </a>
       </div>
     </div>
   </section>
 
-  <!-- Lower grid -->
+  <!-- Dashboard cards -->
   <section class="home-grid">
+    <!-- Today card -->
     <article class="home-card card-surface card-padding">
       <header class="home-card-header">
-        <h2>Today</h2>
-        <span class="chip">Stub data</span>
+        <div>
+          <h2>Today at a glance</h2>
+          <p class="home-card-subtitle text-muted-strong">
+            {{ today | date: 'EEEE, d MMM' }} • Daily reset at 21:00 UTC.
+          </p>
+        </div>
+        <a routerLink="/checklist" [queryParams]="{ tab: 'daily' }" class="home-card-link">
+          Open checklist
+        </a>
       </header>
-      <p class="text-muted">
-        This will show your daily / weekly snapshot once we wire the planner.
-      </p>
+
+      <div class="home-card-body">
+        <h3 class="home-card-section-title">
+          {{ dailyHighlights.title }}
+        </h3>
+
+        <ul class="home-list">
+          @for (item of dailyHighlights.items; track item.id) {
+            <li class="home-list-item">
+              <div class="home-list-main">
+                <span class="home-list-label">{{ item.label }}</span>
+                @if (item.category) {
+                  <span class="home-list-category">{{ item.category }}</span>
+                }
+              </div>
+              @if (item.description) {
+                <p class="home-list-description text-muted-strong">
+                  {{ item.description }}
+                </p>
+              }
+            </li>
+          }
+        </ul>
+      </div>
     </article>
 
+    <!-- Weekly card -->
     <article class="home-card card-surface card-padding">
       <header class="home-card-header">
-        <h2>Upcoming timers</h2>
-        <span class="chip">Coming soon</span>
+        <div>
+          <h2>This week</h2>
+          <p class="home-card-subtitle text-muted-strong">
+            Weekly reset on Sunday at 21:00 UTC. Good time to plan long-term goals.
+          </p>
+        </div>
+        <a routerLink="/checklist" [queryParams]="{ tab: 'weekly' }" class="home-card-link">
+          Weekly view
+        </a>
       </header>
-      <p class="text-muted">
-        Here we&apos;ll list the next boss windows, resets and limited events.
-      </p>
+
+      <div class="home-card-body">
+        <h3 class="home-card-section-title">
+          {{ weeklyHighlights.title }}
+        </h3>
+
+        <ul class="home-list">
+          @for (item of weeklyHighlights.items; track item.id) {
+            <li class="home-list-item">
+              <div class="home-list-main">
+                <span class="home-list-label">{{ item.label }}</span>
+                @if (item.category) {
+                  <span class="home-list-category">{{ item.category }}</span>
+                }
+              </div>
+              @if (item.description) {
+                <p class="home-list-description text-muted-strong">
+                  {{ item.description }}
+                </p>
+              }
+            </li>
+          }
+        </ul>
+      </div>
     </article>
 
-    <article class="home-card card-surface card-padding">
+    <!-- Guides/resources card -->
+    <article class="home-card card-surface card-padding home-card--resources">
       <header class="home-card-header">
-        <h2>Guides & resources</h2>
-        <span class="chip">Placeholder</span>
+        <div>
+          <h2>Guides & resources</h2>
+          <p class="home-card-subtitle text-muted-strong">
+            Quick jump to useful external resources while we build in-app guides.
+          </p>
+        </div>
       </header>
-      <p class="text-muted">
-        Quick access to curated guides, Reddit posts and CN peeks.
-      </p>
+
+      <div class="home-card-body home-card-body--resources">
+        <ul class="home-resources">
+          @for (link of resourceLinks; track link.href) {
+            <li>
+              <a
+                class="home-resource-link"
+                [href]="link.href"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
     </article>
   </section>
 </section>

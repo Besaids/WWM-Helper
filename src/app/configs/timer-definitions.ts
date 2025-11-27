@@ -1,4 +1,4 @@
-import { TimerDefinition } from "../models";
+import { TimerDefinition } from '../models';
 
 export const TIMER_DEFINITIONS: TimerDefinition[] = [
   // ========================

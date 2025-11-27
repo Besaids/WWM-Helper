@@ -40,11 +40,7 @@
           </p>
         </div>
 
-        <button
-          type="button"
-          class="reset-link"
-          (click)="resetCurrentTab()"
-        >
+        <button type="button" class="reset-link" (click)="resetCurrentTab()">
           {{ activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist' }}
         </button>
       </header>

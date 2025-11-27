@@ -1,6 +1,5 @@
 <section class="timers-page">
   @if (timers$ | async; as timers) {
-
     <header class="timers-page-header">
       <h1>Timers &amp; resets</h1>
       <p class="text-muted-strong">
@@ -17,9 +16,7 @@
         <header class="timers-card-header">
           <div>
             <h2>Daily Reset</h2>
-            <p class="timers-card-subtitle">
-              What refreshes every day at server reset.
-            </p>
+            <p class="timers-card-subtitle">What refreshes every day at server reset.</p>
           </div>
 
           @if (getChip(timers, 'daily-reset'); as chip) {
@@ -37,11 +34,10 @@
             <ul>
               <li>
                 <strong>Energy</strong> – Regenerates 1 every 9 real-time minutes up to your
-                personal cap (e.g. 500). Spent on
-                <strong>Campaign Challenge</strong>,
-                <strong>Outpost Challenge</strong> and
-                <strong>Sword Trial</strong> (20 Energy for Campaign/Outpost/Joint Battle,
-                60 Energy for boss trials like Formless Mountain Pass).
+                personal cap (e.g. 500). Spent on <strong>Campaign Challenge</strong>,
+                <strong>Outpost Challenge</strong> and <strong>Sword Trial</strong> (20 Energy for
+                Campaign/Outpost/Joint Battle, 60 Energy for boss trials like Formless Mountain
+                Pass).
               </li>
               <li>
                 <strong>Stamina</strong> – Crafting resource with a 2,500 cap. You gain
@@ -60,10 +56,9 @@
                 weekly gain cap).
               </li>
               <li>
-                <strong>Blessed Land for Cultivation</strong>,
-                <strong>Five Animal Frolics</strong>,
-                <strong>Scholar&apos;s Hearth</strong> – Online activities usually tied into
-                Jianghu Errands; their participation rewards reset daily.
+                <strong>Blessed Land for Cultivation</strong>, <strong>Five Animal Frolics</strong>,
+                <strong>Scholar&apos;s Hearth</strong> – Online activities usually tied into Jianghu
+                Errands; their participation rewards reset daily.
               </li>
               <li>
                 <strong>Bounties</strong> – NPC bounty list refreshes. Once you clear all NPC
@@ -98,9 +93,7 @@
         <header class="timers-card-header">
           <div>
             <h2>Weekly Reset</h2>
-            <p class="timers-card-subtitle">
-              Weekly lockouts, caps and stock refresh.
-            </p>
+            <p class="timers-card-subtitle">Weekly lockouts, caps and stock refresh.</p>
           </div>
 
           @if (getChip(timers, 'weekly-reset'); as chip) {
@@ -123,8 +116,8 @@
               </li>
               <li>
                 <strong>Guild Hero&apos;s Realm</strong> – 5–10 guild members; separate weekly
-                reward for clearing both bosses together as a guild. No matchmaking and no
-                Energy cost; has its own weekly lockout.
+                reward for clearing both bosses together as a guild. No matchmaking and no Energy
+                cost; has its own weekly lockout.
               </li>
             </ul>
           </section>
@@ -142,13 +135,12 @@
                 <strong>Red Gold Boutique</strong>.
               </li>
               <li>
-                <strong>Jade Fish</strong> – 20,000 weekly cap as the current Season currency;
-                used in the Season Shop. Many Season items also have their own weekly purchase
-                limits.
+                <strong>Jade Fish</strong> – 20,000 weekly cap as the current Season currency; used
+                in the Season Shop. Many Season items also have their own weekly purchase limits.
               </li>
               <li>
-                <strong>Reputation</strong> – 1,200 weekly gain cap from Jianghu Errands; used
-                in Sect shops.
+                <strong>Reputation</strong> – 1,200 weekly gain cap from Jianghu Errands; used in
+                Sect shops.
               </li>
             </ul>
           </section>
@@ -157,8 +149,8 @@
             <h3>Social XP caps</h3>
             <ul>
               <li>
-                <strong>Partnership</strong> – 2,000 XP per week from activities with your
-                Partner; unlocks perks and Partnership shop items.
+                <strong>Partnership</strong> – 2,000 XP per week from activities with your Partner;
+                unlocks perks and Partnership shop items.
               </li>
               <li>
                 <strong>Discipleship</strong> – 2,000 XP per week from activities with your
@@ -170,8 +162,8 @@
               </li>
               <li>
                 <strong>Intimacy</strong> – Weekly cap exists but the exact value is hidden.
-                Increased by travelling together, chatting, and gifting friends; affects
-                long-term friendship perks.
+                Increased by travelling together, chatting, and gifting friends; affects long-term
+                friendship perks.
               </li>
             </ul>
           </section>
@@ -180,16 +172,15 @@
             <h3>Weekly shop stock</h3>
             <ul>
               <li>
-                <strong>Season / Jade Fish Shop</strong> – Many items refresh weekly, on top of
-                the Jade Fish weekly cap.
+                <strong>Season / Jade Fish Shop</strong> – Many items refresh weekly, on top of the
+                Jade Fish weekly cap.
               </li>
               <li>
                 <strong>Battle Pass Token Shop</strong> – Some rewards also have weekly limits.
               </li>
               <li>
                 Other merchants carry items with <strong>weekly</strong> rather than daily stock.
-                Some high-end items also use <strong>monthly</strong> caps; check in-game
-                tooltips.
+                Some high-end items also use <strong>monthly</strong> caps; check in-game tooltips.
               </li>
             </ul>
           </section>
@@ -215,9 +206,7 @@
             <header class="timers-subheader">
               <div>
                 <h3>Fireworks Seats</h3>
-                <p class="timers-subheader-subtitle">
-                  Bidding window for sponsored seats.
-                </p>
+                <p class="timers-subheader-subtitle">Bidding window for sponsored seats.</p>
               </div>
 
               @if (getChip(timers, 'fireworks-seats'); as chip) {
@@ -235,8 +224,8 @@
                 <strong>Friday 13:00</strong> (local server time).
               </li>
               <li>
-                <strong>What</strong> – Bid on sponsored seats for the Fireworks Show and set
-                custom fireworks messages that will appear to other players.
+                <strong>What</strong> – Bid on sponsored seats for the Fireworks Show and set custom
+                fireworks messages that will appear to other players.
               </li>
               <li>
                 The helper shows this timer as <strong>open</strong> while bidding is live and
@@ -270,8 +259,7 @@
                 (local server time).
               </li>
               <li>
-                <strong>Where</strong> – <strong>Velvet Shade → Pearlglow Lake</strong> in
-                Kaifeng.
+                <strong>Where</strong> – <strong>Velvet Shade → Pearlglow Lake</strong> in Kaifeng.
               </li>
               <li>
                 <strong>What</strong> – Live Fireworks Festival with <strong>red envelopes</strong>
@@ -279,8 +267,8 @@
               </li>
               <li>
                 You can also trigger related quests by talking to
-                <strong>Zhao Rui</strong> and <strong>Sun Jinyuan</strong> near Velvet Shade
-                between <strong>Chen</strong> and <strong>You</strong> hours.
+                <strong>Zhao Rui</strong> and <strong>Sun Jinyuan</strong> near Velvet Shade between
+                <strong>Chen</strong> and <strong>You</strong> hours.
               </li>
             </ul>
           </section>
@@ -306,14 +294,15 @@
 
             <ul>
               <li>
-                <strong>Multiplayer</strong> – Every <strong>Friday &amp; Saturday at 20:30</strong>.
-                Main Fireworks Show instance where sponsored seats and custom messages appear; best
-                time for <strong>red envelopes</strong> with other players.
+                <strong>Multiplayer</strong> – Every
+                <strong>Friday &amp; Saturday at 20:30</strong>. Main Fireworks Show instance where
+                sponsored seats and custom messages appear; best time for
+                <strong>red envelopes</strong> with other players.
               </li>
               <li>
-                <strong>Solo</strong> – Every night at <strong>Zi hour</strong> a Fireworks
-                Festival runs at Pearlglow Lake in your own world. You can fast-forward time to
-                Zi hour to see it; rewards may differ from the full multiplayer event.
+                <strong>Solo</strong> – Every night at <strong>Zi hour</strong> a Fireworks Festival
+                runs at Pearlglow Lake in your own world. You can fast-forward time to Zi hour to
+                see it; rewards may differ from the full multiplayer event.
               </li>
             </ul>
           </section>

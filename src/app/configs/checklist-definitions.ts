@@ -53,8 +53,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     importance: 'core',
     category: 'Sect & multiplayer',
     label: 'Complete your Sect Jianghu Errands.',
-    description:
-      'Daily Merit for the Sect ladder plus Reputation (which has its own weekly cap).',
+    description: 'Daily Merit for the Sect ladder plus Reputation (which has its own weekly cap).',
     tags: ['social', 'solo'],
   },
   {
@@ -282,7 +281,8 @@ export const FREEPLAY_IDEAS: FreeplayIdea[] = [
     id: 'idea-pvp',
     category: 'Combat',
     label: 'Queue for PvP.',
-    description: 'Jump into PvP modes if you feel like testing builds or just want a change of pace.',
+    description:
+      'Jump into PvP modes if you feel like testing builds or just want a change of pace.',
     tags: ['combat', 'multiplayer'],
   },
   {

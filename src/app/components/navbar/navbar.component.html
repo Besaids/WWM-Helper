@@ -8,20 +8,12 @@
     (click)="closeMenu()"
     aria-label="Go to home"
   >
-    <img
-      src="assets/portal/wwm-logo.png"
-      alt="WWM Helper logo"
-      class="brand-mark"
-    />
+    <img src="assets/portal/wwm-logo.png" alt="WWM Helper logo" class="brand-mark" />
   </a>
 
   <!-- Desktop navigation -->
   <nav class="main-nav main-nav--desktop">
-    <a
-      routerLink="/home"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
+    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       Home
     </a>
     <a routerLink="/timers" routerLinkActive="active">Timers</a>
@@ -49,10 +41,6 @@
   >
     Home
   </a>
-  <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()">
-    Timers
-  </a>
-  <a routerLink="/checklist" routerLinkActive="active" (click)="closeMenu()">
-    Checklist
-  </a>
+  <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()"> Timers </a>
+  <a routerLink="/checklist" routerLinkActive="active" (click)="closeMenu()"> Checklist </a>
 </nav>
