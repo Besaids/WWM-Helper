@@ -2,13 +2,13 @@ name: Deploy Angular App to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change this to your default branch if different
+      - main
   workflow_dispatch:
 
 permissions:
-  contents: write  # Required to push to GitHub Pages
-  id-token: write  # Required for GitHub Actions to authenticate
-  pull-requests: write  # Required to manage pull requests
+  contents: write
+  id-token: write
+  pull-requests: write
 
 jobs:
   build-and-deploy:
@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.19.0'  # Specify the Node.js version you want to use
+          node-version: '22.19.0'
           cache: 'npm'
 
       - name: Install Dependencies
@@ -45,33 +45,25 @@ jobs:
           echo "Checking Angular CLI installation..."
           npm list -g @angular/cli
 
-          echo "Content of index.html before building:"
-          cat src/index.html
-
           echo "Building Angular app..."
-          npx ng build --configuration production --base-href "/wwm-helper/"
+          npx ng build --configuration production --base-href "/WWM-Helper/"
 
           echo "Directory structure after build:"
+          ls -la dist/wwm-helper/
           ls -la dist/wwm-helper/browser/
 
+          # Ensure .nojekyll is inside browser
           touch dist/wwm-helper/browser/.nojekyll
 
-          echo "Full directory listing of build output:"
-          find dist -type f | sort
-
-          echo "Base href is generated index.html:"
+          echo "Base href in generated index.html:"
           grep '<base href=' dist/wwm-helper/browser/index.html
 
           echo "Checking index.html content after build:"
           cat dist/wwm-helper/browser/index.html
 
-          echo "Checking asset references in index.html:"
-          grep -o 'src="[^"]*"' dist/wwm-helper/browser/index.html
-          grep -o 'href="[^"]*"' dist/wwm-helper/browser/index.html
-
           echo "Deploying to GitHub Pages..."
           npx angular-cli-ghpages \
-            --dir=dist/wwm-helper \
+            --dir=dist/wwm-helper/browser \
             --no-silent \
             --message="Deployed via GitHub Actions: ${{ github.sha }}" \
             --repo=https://github.com/Besaids/WWM-Helper.git \
