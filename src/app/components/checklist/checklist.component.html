@@ -1,0 +1,181 @@
+<section class="checklist-page">
+  <header class="checklist-header">
+    <h1>Checklist</h1>
+    <p class="text-muted-strong">
+      Daily and weekly tasks for Where Winds Meet. Tick off what you have done; entries reset
+      automatically with the game’s daily and weekly resets.
+    </p>
+
+    <div class="checklist-tabs">
+      <button
+        type="button"
+        class="tab-pill"
+        [class.tab-pill--active]="isActiveTab('daily')"
+        (click)="setTab('daily')"
+      >
+        Daily
+      </button>
+      <button
+        type="button"
+        class="tab-pill"
+        [class.tab-pill--active]="isActiveTab('weekly')"
+        (click)="setTab('weekly')"
+      >
+        Weekly
+      </button>
+    </div>
+  </header>
+
+  <div class="checklist-grid">
+    <!-- Checklist card -->
+    <article class="checklist-card card-surface card-padding">
+      <header class="checklist-card-header">
+        <div class="checklist-card-header-main">
+          <h2>
+            {{ activeTab() === 'daily' ? 'Daily checklist' : 'Weekly checklist' }}
+          </h2>
+          <p class="checklist-card-subtitle text-muted-strong">
+            Core priorities first, then nice-to-have extras. State is stored locally per reset
+            cycle.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="reset-link"
+          (click)="resetCurrentTab()"
+        >
+          {{ activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist' }}
+        </button>
+      </header>
+
+      <div class="checklist-card-body">
+        <!-- Core section -->
+        <section class="checklist-group">
+          <h3>Core priorities</h3>
+
+          @for (group of getCategoryGroups('core'); track group.category) {
+            <div class="checklist-category">
+              <h4>{{ group.category }}</h4>
+
+              <ul>
+                @for (item of group.items; track item.id) {
+                  <li>
+                    <label class="checklist-item">
+                      <input
+                        type="checkbox"
+                        [checked]="isChecked(item)"
+                        (change)="toggleItem(item, $any($event.target).checked)"
+                      />
+
+                      <div class="checklist-item-content">
+                        <span class="checklist-item-label">
+                          {{ item.label }}
+                        </span>
+                        @if (item.description) {
+                          <span class="checklist-item-description text-muted-strong">
+                            {{ item.description }}
+                          </span>
+                        }
+                        @if (item.tags?.length) {
+                          <div class="checklist-tags">
+                            @for (tag of item.tags; track tag) {
+                              <span class="checklist-tag">
+                                {{ tag }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </label>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </section>
+
+        <!-- Optional section -->
+        <section class="checklist-group checklist-group--optional">
+          <h3>Nice extras</h3>
+
+          @for (group of getCategoryGroups('optional'); track group.category) {
+            <div class="checklist-category">
+              <h4>{{ group.category }}</h4>
+
+              <ul>
+                @for (item of group.items; track item.id) {
+                  <li>
+                    <label class="checklist-item">
+                      <input
+                        type="checkbox"
+                        [checked]="isChecked(item)"
+                        (change)="toggleItem(item, $any($event.target).checked)"
+                      />
+
+                      <div class="checklist-item-content">
+                        <span class="checklist-item-label">
+                          {{ item.label }}
+                        </span>
+                        @if (item.description) {
+                          <span class="checklist-item-description text-muted-strong">
+                            {{ item.description }}
+                          </span>
+                        }
+                        @if (item.tags?.length) {
+                          <div class="checklist-tags">
+                            @for (tag of item.tags; track tag) {
+                              <span class="checklist-tag">
+                                {{ tag }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </label>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </section>
+      </div>
+    </article>
+
+    <!-- Freeplay suggestions -->
+    <article class="checklist-card card-surface card-padding checklist-card--ideas">
+      <header class="checklist-card-header">
+        <div class="checklist-card-header-main">
+          <h2>Not sure what to do?</h2>
+          <p class="checklist-card-subtitle text-muted-strong">
+            Suggestions for when you have time but no clear goal. These are not checkboxes – just
+            ideas you can pick from.
+          </p>
+        </div>
+      </header>
+
+      <div class="checklist-card-body checklist-card-body--ideas">
+        @for (idea of FREEPLAY_IDEAS; track idea.id) {
+          <section class="idea">
+            <h3>
+              <span class="idea-title">{{ idea.label }}</span>
+              <span class="idea-category">{{ idea.category }}</span>
+            </h3>
+            <p class="idea-description text-muted-strong">
+              {{ idea.description }}
+            </p>
+            @if (idea.tags?.length) {
+              <div class="idea-tags">
+                @for (tag of idea.tags; track tag) {
+                  <span class="checklist-tag">
+                    {{ tag }}
+                  </span>
+                }
+              </div>
+            }
+          </section>
+        }
+      </div>
+    </article>
+  </div>
+</section>
