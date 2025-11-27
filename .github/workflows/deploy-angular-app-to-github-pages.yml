@@ -35,6 +35,11 @@ jobs:
           npm install -g @angular/cli@21.0.1
           npm install -g angular-cli-ghpages@2.0.3
 
+      - name: Configure git identity for deployment
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Deploy
         run: |
           echo "Checking Angular CLI installation..."
@@ -65,7 +70,12 @@ jobs:
           grep -o 'href="[^"]*"' dist/wwm-helper/browser/index.html
 
           echo "Deploying to GitHub Pages..."
-          npx angular-cli-ghpages --dir=dist/wwm-helper/browser --no-silent --message="Deployed via GitHub Actions: ${{ github.sha }}" --repo=https://github.com/Besaids/WWM-Helper.git --branch=gh-pages
+          npx angular-cli-ghpages \
+            --dir=dist/wwm-helper \
+            --no-silent \
+            --message="Deployed via GitHub Actions: ${{ github.sha }}" \
+            --repo=https://github.com/Besaids/WWM-Helper.git \
+            --branch=gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
