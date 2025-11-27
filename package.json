@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "format": "prettier \"src/**/*.{ts,html,scss,js,json,md}\" --write",
+    "lint": "ng lint"
   },
   "prettier": {
     "printWidth": 100,
@@ -23,21 +25,35 @@
   "private": true,
   "packageManager": "npm@11.6.4",
   "dependencies": {
+    "@angular/animations": "^21.0.1",
+    "@angular/cdk": "^21.0.1",
     "@angular/common": "^21.0.0",
     "@angular/compiler": "^21.0.0",
     "@angular/core": "^21.0.0",
     "@angular/forms": "^21.0.0",
     "@angular/platform-browser": "^21.0.0",
     "@angular/router": "^21.0.0",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "howler": "^2.2.4",
+    "luxon": "^3.7.2",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "uuid": "^13.0.0",
+    "zone.js": "^0.16.0"
   },
   "devDependencies": {
     "@angular/build": "^21.0.1",
     "@angular/cli": "^21.0.1",
     "@angular/compiler-cli": "^21.0.0",
+    "@types/luxon": "^3.7.1",
+    "@types/uuid": "^10.0.0",
+    "angular-eslint": "21.0.1",
+    "eslint": "^9.39.1",
     "jsdom": "^27.1.0",
+    "prettier": "^3.7.1",
     "typescript": "~5.9.2",
+    "typescript-eslint": "8.46.4",
     "vitest": "^4.0.8"
   }
 }

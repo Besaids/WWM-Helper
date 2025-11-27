@@ -1,0 +1,138 @@
+.timers-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.timers-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.timers-page-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.timers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.timers-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.timers-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.timers-card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.timers-card-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.timers-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.timers-card-body--stacked {
+  gap: 1.25rem;
+}
+
+.timers-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.timers-section h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.timers-section ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.15rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.timers-section li + li {
+  margin-top: 0.35rem;
+}
+
+/* Fireworks subtimers */
+
+.timers-section--sub {
+  padding: 0.75rem 0 0;
+  border-top: 1px dashed var(--color-border-subtle);
+}
+
+.timers-subheader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.timers-subheader h3 {
+  font-size: 0.95rem;
+}
+
+.timers-subheader-subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Chip tweaks reused from global .chip */
+
+.chip--timer {
+  white-space: nowrap;
+}
+
+.chip-label {
+  font-weight: 500;
+}
+
+.chip-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .timers-page-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .timers-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chip--timer {
+    margin-top: 0.25rem;
+  }
+
+  .timers-grid {
+    grid-template-columns: 1fr;
+  }
+}

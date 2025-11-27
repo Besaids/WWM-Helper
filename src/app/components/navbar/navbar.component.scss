@@ -1,0 +1,123 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem var(--spacing-outer-x);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: linear-gradient(to bottom, rgba(5, 7, 11, 0.96), rgba(5, 7, 11, 0.9));
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.brand-mark {
+  height: 64px;
+  display: block;
+}
+
+/* Desktop nav */
+.main-nav {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.95rem;
+
+  a {
+    position: relative;
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    padding-bottom: 0.15rem;
+
+    &.active,
+    &:hover {
+      color: var(--color-text-primary);
+    }
+
+    &.active::after,
+    &:hover::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -0.35rem;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-teal));
+      border-radius: var(--radius-pill);
+    }
+  }
+}
+
+/* Burger button */
+.nav-toggle {
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 1.5rem;
+  display: none; // shown in mobile breakpoint
+  padding: 0;
+}
+
+/* Mobile dropdown */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem var(--spacing-outer-x) 0.75rem;
+  background: rgba(10, 14, 24, 0.98);
+  border-bottom: 1px solid var(--color-border-subtle);
+
+  a {
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    padding: 0.35rem 0;
+
+    &.active,
+    &:hover {
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+.mobile-menu--open {
+  display: flex;
+}
+
+/* Desktop ≥ 992px */
+@media (min-width: 992px) {
+  .main-nav--desktop {
+    display: flex;
+  }
+
+  .main-nav--mobile,
+  .mobile-menu {
+    display: none;
+  }
+}
+
+/* Mobile < 992px */
+@media (max-width: 991.98px) {
+  .main-nav--desktop {
+    display: none;
+  }
+
+  .main-nav--mobile {
+    display: block;
+  }
+
+  .app-header {
+    padding-inline: 1rem;
+  }
+
+  .mobile-menu {
+    padding-inline: 1rem;
+  }
+}
