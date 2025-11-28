@@ -1,0 +1,179 @@
+<section
+  class="music-player card-surface card-padding"
+  [class.music-player--open]="isPlaylistOpen()"
+>
+  <header class="music-player-header">
+    <div class="music-player-info">
+      <div class="music-player-title">
+        {{ currentTrackTitle() }}
+      </div>
+      <div class="music-player-subtitle text-muted-strong">
+        <a
+          href="https://suno.com/playlist/cda7ce2e-c15f-47ad-bb20-885a9ee22513"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="music-player-subtitle-link"
+        >
+          Where Winds Met soundtrack
+        </a>
+        &nbsp;· {{ trackIndexDisplay() }}
+      </div>
+    </div>
+
+    <div class="music-player-header-actions">
+      <!-- Shuffle now lives to the left of volume -->
+      <button
+        type="button"
+        class="music-player-icon-btn music-player-shuffle"
+        [class.music-player-icon-btn--active]="shuffle()"
+        (click)="toggleShuffle()"
+        title="Shuffle playlist"
+      >
+        <i class="bi bi-shuffle"></i>
+      </button>
+
+      <div class="music-player-volume">
+        <button
+          type="button"
+          class="music-player-icon-btn"
+          (click)="toggleMute()"
+          title="Mute / Unmute"
+        >
+          <i
+            class="bi"
+            [ngClass]="
+              muted() || volume() === 0
+                ? 'bi-volume-mute-fill'
+                : 'bi-volume-up-fill'
+            "
+          ></i>
+        </button>
+
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          [value]="volume()"
+          (input)="onVolumeInput($event)"
+        />
+      </div>
+
+      <button
+        type="button"
+        class="music-player-icon-btn"
+        (click)="togglePlaylist()"
+        aria-label="Toggle playlist"
+      >
+        <i
+          class="bi"
+          [ngClass]="isPlaylistOpen() ? 'bi-chevron-down' : 'bi-music-note-list'"
+        ></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="music-player-controls">
+    <div class="music-player-transport">
+      <button
+        type="button"
+        class="music-player-icon-btn"
+        (click)="prevTrack()"
+        title="Previous track"
+      >
+        <i class="bi bi-skip-backward-fill"></i>
+      </button>
+
+      <button
+        type="button"
+        class="music-player-icon-btn music-player-icon-btn--primary"
+        (click)="togglePlayPause()"
+        title="Play / Pause"
+      >
+        <i
+          class="bi"
+          [ngClass]="isPlaying() ? 'bi-pause-fill' : 'bi-play-fill'"
+        ></i>
+      </button>
+
+      <button
+        type="button"
+        class="music-player-icon-btn"
+        (click)="stop()"
+        title="Stop"
+      >
+        <i class="bi bi-stop-fill"></i>
+      </button>
+
+      <button
+        type="button"
+        class="music-player-icon-btn"
+        (click)="nextTrack()"
+        title="Next track"
+      >
+        <i class="bi bi-skip-forward-fill"></i>
+      </button>
+    </div>
+
+    <div class="music-player-progress">
+      <input
+        type="range"
+        min="0"
+        [max]="duration() || 0"
+        [value]="currentTime()"
+        (input)="onSeek($event)"
+      />
+      <span class="music-player-time text-muted-strong">
+        {{ formatTime(currentTime()) }} / {{ formatTime(duration()) }}
+      </span>
+    </div>
+  </div>
+
+  @if (isPlaylistOpen()) {
+    <!-- Floating drawer attached to bottom of player -->
+    <div class="music-player-overlay">
+      <div class="music-player-playlist card-surface card-padding">
+        <div class="music-player-playlist-header">
+          <span>Playlist</span>
+          <span class="music-player-playlist-count">
+            {{ enabledCount() }} / {{ tracks.length }} enabled
+          </span>
+        </div>
+
+        <ul class="music-player-playlist-list">
+          @for (track of tracks; track track.id) {
+            <li
+              class="music-player-playlist-item"
+              [class.music-player-playlist-item--current]="
+                track.id === currentTrackId()
+              "
+            >
+              <label class="music-player-track-toggle">
+                <input
+                  type="checkbox"
+                  [checked]="isTrackEnabled(track.id)"
+                  (change)="
+                    toggleTrackEnabled(
+                      track.id,
+                      $any($event.target).checked
+                    )
+                  "
+                />
+              </label>
+
+              <button
+                type="button"
+                class="music-player-track-button"
+                (click)="playTrack(track.id)"
+              >
+                <span class="music-player-track-title">
+                  {{ track.title }}
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+</section>

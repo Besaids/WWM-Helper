@@ -1,31 +1,42 @@
 .app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem var(--spacing-outer-x);
-  border-bottom: 1px solid var(--color-border-subtle);
-  background: linear-gradient(to bottom, rgba(5, 7, 11, 0.96), rgba(5, 7, 11, 0.9));
-  backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 20;
+  padding: 0.5rem var(--spacing-outer-x) 0.4rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 7, 11, 0.96),
+    rgba(5, 7, 11, 0.9)
+  );
+  backdrop-filter: blur(12px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Top row */
+
+.app-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
 }
 
 .brand {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: var(--color-text-primary);
-  gap: 0.5rem;
-  cursor: pointer;
 }
 
 .brand-mark {
   height: 64px;
-  display: block;
 }
 
 /* Desktop nav */
+
 .main-nav {
   display: flex;
   gap: 1.5rem;
@@ -50,35 +61,40 @@
       right: 0;
       bottom: -0.35rem;
       height: 2px;
-      background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-teal));
+      background: linear-gradient(
+        90deg,
+        var(--color-accent-gold),
+        var(--color-accent-teal)
+      );
       border-radius: var(--radius-pill);
     }
   }
 }
 
-/* Burger button */
+/* Burger */
+
 .nav-toggle {
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
   font-size: 1.5rem;
-  display: none; // shown in mobile breakpoint
   padding: 0;
+  display: none; // only on mobile
 }
 
-/* Mobile dropdown */
+/* Mobile menu */
+
 .mobile-menu {
   display: none;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.5rem var(--spacing-outer-x) 0.75rem;
-  background: rgba(10, 14, 24, 0.98);
-  border-bottom: 1px solid var(--color-border-subtle);
+  padding: 0.35rem 0 0.5rem;
+  font-size: 0.9rem;
 
   a {
     text-decoration: none;
     color: var(--color-text-secondary);
-    padding: 0.35rem 0;
+    padding: 0.25rem 0;
 
     &.active,
     &:hover {
@@ -91,8 +107,26 @@
   display: flex;
 }
 
+/* Player row */
+
+.nav-music-player-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* Desktop ≥ 992px */
+
 @media (min-width: 992px) {
+  .app-header {
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: 0.5rem;
+  }
+
+  .app-header-inner {
+    flex: 0 0 auto;
+  }
+
   .main-nav--desktop {
     display: flex;
   }
@@ -101,9 +135,16 @@
   .mobile-menu {
     display: none;
   }
+
+  .nav-music-player-container {
+    flex: 0 0 auto;
+    margin-left: auto; // push player to the far right
+    justify-content: flex-end;
+  }
 }
 
 /* Mobile < 992px */
+
 @media (max-width: 991.98px) {
   .main-nav--desktop {
     display: none;
@@ -111,13 +152,29 @@
 
   .main-nav--mobile {
     display: block;
+    margin-left: auto;
   }
 
   .app-header {
     padding-inline: 1rem;
   }
 
+  .app-header-inner {
+    gap: 0.75rem;
+    justify-content: space-between; // logo left, burger right
+  }
+
   .mobile-menu {
-    padding-inline: 1rem;
+    padding-inline: 0;
+  }
+
+  .nav-music-player-container {
+    margin-top: 0.4rem;
+    justify-content: stretch;
+  }
+
+  .nav-music-player-container app-music-player {
+    width: 100%;
+    max-width: 100%;
   }
 }

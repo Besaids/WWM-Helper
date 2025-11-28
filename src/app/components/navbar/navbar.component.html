@@ -1,46 +1,57 @@
 <header class="app-header">
-  <!-- Brand / logo -->
-  <a
-    class="brand"
-    routerLink="/home"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    (click)="closeMenu()"
-    aria-label="Go to home"
-  >
-    <img src="assets/portal/wwm-logo.png" alt="WWM Helper logo" class="brand-mark" />
-  </a>
+  <!-- Top row: logo + desktop nav + burger -->
+  <div class="app-header-inner">
+    <a class="brand" routerLink="/home">
+      <img
+        src="assets/portal/wwm-logo.png"
+        alt="WWM Helper logo"
+        class="brand-mark"
+      />
+    </a>
 
-  <!-- Desktop navigation -->
-  <nav class="main-nav main-nav--desktop">
-    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <nav class="main-nav main-nav--desktop">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Home
+      </a>
+      <a routerLink="/timers" routerLinkActive="active">Timers</a>
+      <a routerLink="/checklist" routerLinkActive="active">Checklist</a>
+    </nav>
+
+    <!-- Mobile burger button -->
+    <button
+      class="nav-toggle main-nav--mobile"
+      type="button"
+      (click)="toggleMenu()"
+      aria-label="Toggle navigation"
+    >
+      <i class="bi" [ngClass]="isMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+    </button>
+  </div>
+
+  <!-- Mobile dropdown menu: should appear directly under logo+burger -->
+  <nav class="mobile-menu" [class.mobile-menu--open]="isMenuOpen">
+    <a
+      routerLink="/home"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeMenu()"
+    >
       Home
     </a>
-    <a routerLink="/timers" routerLinkActive="active">Timers</a>
-    <a routerLink="/checklist" routerLinkActive="active">Checklist</a>
+    <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()">
+      Timers
+    </a>
+    <a routerLink="/checklist" routerLinkActive="active" (click)="closeMenu()">
+      Checklist
+    </a>
   </nav>
 
-  <!-- Mobile burger button -->
-  <button
-    class="nav-toggle main-nav--mobile"
-    type="button"
-    (click)="toggleMenu()"
-    aria-label="Toggle navigation"
-  >
-    <i class="bi" [ngClass]="isMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
-  </button>
+  <!-- Player row: lives after the mobile menu in DOM so menu is above it on mobile -->
+  <div class="nav-music-player-container">
+    <app-music-player></app-music-player>
+  </div>
 </header>
-
-<!-- Mobile dropdown menu -->
-<nav class="mobile-menu" [class.mobile-menu--open]="isMenuOpen">
-  <a
-    routerLink="/home"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    (click)="closeMenu()"
-  >
-    Home
-  </a>
-  <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()"> Timers </a>
-  <a routerLink="/checklist" routerLinkActive="active" (click)="closeMenu()"> Checklist </a>
-</nav>
