@@ -1,4 +1,5 @@
 import { TimerDefinition } from '../models';
+import { RESET_CONFIG } from './reset-config';
 
 export const TIMER_DEFINITIONS: TimerDefinition[] = [
   // ========================
@@ -11,8 +12,8 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     icon: 'bi-sunrise',
     schedule: {
       type: 'daily',
-      hour: 21,
-      minute: 0,
+      hour: RESET_CONFIG.DAILY_RESET_HOUR_UTC,
+      minute: RESET_CONFIG.DAILY_RESET_MINUTE_UTC,
     },
   },
   {
@@ -22,9 +23,9 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     icon: 'bi-calendar-week',
     schedule: {
       type: 'weekly',
-      weekday: 7, // Sunday
-      hour: 21,
-      minute: 0,
+      weekday: RESET_CONFIG.WEEKLY_RESET_DAY,
+      hour: RESET_CONFIG.WEEKLY_RESET_HOUR_UTC,
+      minute: RESET_CONFIG.WEEKLY_RESET_MINUTE_UTC,
     },
   },
 
@@ -65,7 +66,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   },
 
   // 2) Seats Bidding – Monday 1:00 → Friday 13:00 (UTC)
-  //    One long weekly window, with “open” / “closed” state.
+  //    One long weekly window, with "open" / "closed" state.
   {
     id: 'fireworks-seats',
     label: 'Fireworks Seats',

@@ -152,12 +152,7 @@
                 <input
                   type="checkbox"
                   [checked]="isTrackEnabled(track.id)"
-                  (change)="
-                    toggleTrackEnabled(
-                      track.id,
-                      $any($event.target).checked
-                    )
-                  "
+                  (change)="onTrackCheckboxChange($event, track.id)"
                 />
               </label>
 

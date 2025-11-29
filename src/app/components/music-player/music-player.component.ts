@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, signal, computed } from '@angular/core';
 import { MUSIC_TRACKS, MusicTrack } from '../../configs';
+import { loadJsonFromStorage, loadVersioned, saveVersioned } from '../../utils';
 
 type TrackId = string;
 
@@ -33,9 +34,7 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
   readonly shuffle = signal(false);
   readonly isPlaylistOpen = signal(false);
 
-  readonly enabledTrackIds = signal<Set<TrackId>>(
-    new Set(this.tracks.map((t) => t.id)),
-  );
+  readonly enabledTrackIds = signal<Set<TrackId>>(new Set(this.tracks.map((t) => t.id)));
 
   // playback progress
   readonly currentTime = signal(0);
@@ -47,14 +46,30 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
   private audio: HTMLAudioElement | null = null;
   private lastNonZeroVolume = 0.5;
 
+  // Event handler references for proper cleanup
+  private readonly onEndedHandler = (): void => this.handleTrackEnded();
+  private readonly onTimeUpdateHandler = (): void => {
+    if (!this.audio) return;
+    this.currentTime.set(this.audio.currentTime || 0);
+  };
+  private readonly onLoadedMetadataHandler = (): void => {
+    if (!this.audio) return;
+    this.duration.set(this.audio.duration || 0);
+  };
+
   ngOnInit(): void {
     this.restoreState();
     this.initAudio();
   }
 
   ngOnDestroy(): void {
-    this.audio?.pause();
-    this.audio = null;
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.removeEventListener('ended', this.onEndedHandler);
+      this.audio.removeEventListener('timeupdate', this.onTimeUpdateHandler);
+      this.audio.removeEventListener('loadedmetadata', this.onLoadedMetadataHandler);
+      this.audio = null;
+    }
   }
 
   // ---- Audio init / sync ----
@@ -67,15 +82,9 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
     this.applyTrackToAudio();
     this.applyVolumeToAudio();
 
-    this.audio.addEventListener('ended', () => this.handleTrackEnded());
-    this.audio.addEventListener('timeupdate', () => {
-      if (!this.audio) return;
-      this.currentTime.set(this.audio.currentTime || 0);
-    });
-    this.audio.addEventListener('loadedmetadata', () => {
-      if (!this.audio) return;
-      this.duration.set(this.audio.duration || 0);
-    });
+    this.audio.addEventListener('ended', this.onEndedHandler);
+    this.audio.addEventListener('timeupdate', this.onTimeUpdateHandler);
+    this.audio.addEventListener('loadedmetadata', this.onLoadedMetadataHandler);
   }
 
   private applyTrackToAudio(): void {
@@ -112,13 +121,16 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
   // ---- Persistence ----
 
   private restoreState(): void {
-    if (typeof localStorage === 'undefined') return;
+    // Not available in SSR / some environments
+    if (typeof window === 'undefined') return;
 
     try {
-      const raw = localStorage.getItem(this.storageKey);
-      if (!raw) return;
+      // Try versioned payload first
+      const versioned = loadVersioned<PlayerState>(this.storageKey);
+      const parsed =
+        versioned?.data ?? loadJsonFromStorage<Partial<PlayerState>>(this.storageKey) ?? null;
 
-      const parsed = JSON.parse(raw) as Partial<PlayerState>;
+      if (!parsed) return;
 
       if (parsed.currentTrackId && this.tracks.some((t) => t.id === parsed.currentTrackId)) {
         this.currentTrackId.set(parsed.currentTrackId);
@@ -139,22 +151,20 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
       }
 
       if (Array.isArray(parsed.enabledTrackIds) && parsed.enabledTrackIds.length) {
-        const valid = parsed.enabledTrackIds.filter((id) =>
-          this.tracks.some((t) => t.id === id),
-        );
+        const valid = parsed.enabledTrackIds.filter((id) => this.tracks.some((t) => t.id === id));
         if (valid.length) {
           this.enabledTrackIds.set(new Set(valid));
         }
       }
 
-      // do not auto-play on load
+      // Do not auto-play on load
     } catch {
       // ignore malformed storage
     }
   }
 
   private saveState(): void {
-    if (typeof localStorage === 'undefined') return;
+    if (typeof window === 'undefined') return;
 
     const enabledArray = Array.from(this.enabledTrackIds());
     const state: PlayerState = {
@@ -166,7 +176,7 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
       enabledTrackIds: enabledArray,
     };
 
-    localStorage.setItem(this.storageKey, JSON.stringify(state));
+    saveVersioned<PlayerState>(this.storageKey, state);
   }
 
   // ---- Controls ----
@@ -194,8 +204,10 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
       .then(() => {
         this.saveState();
       })
-      .catch(() => {
+      .catch((error) => {
         this.isPlaying.set(false);
+        // Log playback failures (autoplay policies, codec issues, etc.)
+        console.warn('Audio playback failed:', error);
       });
   }
 
@@ -323,7 +335,12 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
     return this.enabledTrackIds().has(trackId);
   }
 
-  toggleTrackEnabled(trackId: TrackId, checked: boolean): void {
+  onTrackCheckboxChange(event: Event, trackId: TrackId): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.toggleTrackEnabled(trackId, checked);
+  }
+
+  private toggleTrackEnabled(trackId: TrackId, checked: boolean): void {
     const current = new Set(this.enabledTrackIds());
 
     if (checked) {

@@ -15,6 +15,7 @@ The codebase is small but opinionated:
 - Centralised **config/data** (timers, checklist, music tracks) under `app/configs`.
 - A single **layout shell** around all routed pages.
 - A separate **design system** in `src/styles/**` (see `styles/README.md`).
+- Centralised **localStorage handling** under `app/utils/**` with versioning and cleanup.
 
 ---
 
@@ -27,12 +28,13 @@ The codebase is small but opinionated:
 - RxJS.
 - Luxon (time/date).
 - Bootstrap + Bootstrap Icons (for some base styling).
-- Custom SCSS design system under `src/styles/**`. :contentReference[oaicite:0]{index=0}
+- Custom SCSS design system under `src/styles/**`.
 
 **Entry files**
 
 - `main.ts`
   - Bootstraps the app with `bootstrapApplication(App, appConfig)`.
+  - Runs storage migrations and checklist cleanup before bootstrapping.
 
 - `app/app.config.ts`
   - Application config:
@@ -135,7 +137,7 @@ The codebase is small but opinionated:
 - Responsibility:
   - Sticky top bar with logo + navigation links (`Home / Timers / Checklist`).
   - Responsive behaviour (desktop nav vs mobile hamburger).
-  - Sits at the top of the layout shell; does **not** use `.page-shell` (full-width header with padded edges). :contentReference[oaicite:1]{index=1}
+  - Sits at the top of the layout shell; header is full-width with padded edges (no `.page-shell` here).
 
 **Music player**
 
@@ -143,7 +145,7 @@ The codebase is small but opinionated:
 - Responsibility:
   - Small audio player pinned directly below the navbar (inside `NavbarComponent`).
   - Plays a curated playlist of tracks defined in `app/configs/music-tracks.ts`.
-  - Keeps state in `localStorage`:
+  - Keeps state in `localStorage` via the shared storage helpers:
     - Current track id.
     - Volume, mute state.
     - Shuffle on/off.
@@ -153,6 +155,7 @@ The codebase is small but opinionated:
   - Uses a plain `HTMLAudioElement` under the hood.
   - Tracks progress and duration with event listeners (`timeupdate`, `loadedmetadata`, `ended`).
   - Uses Angular signals for reactive state (current track, playing flag, volume, etc.).
+  - Persists state using `loadVersioned` / `saveVersioned` from `app/utils/storage.ts`, with backward compatibility for pre-versioned data.
 
 ### 3.2 Timer strip + timers page
 
@@ -163,7 +166,7 @@ The codebase is small but opinionated:
   - Thin horizontal bar below the navbar and music player.
   - Subscribes to `TimerService.timerChips$`.
   - Renders a row of “chips” showing current and upcoming timers (reset, arena, fireworks, etc.).
-  - Each pill uses the global `.chip` style plus a local modifier for timer-specific tweaks.
+  - Each pill uses the global `.chip` style plus local tweaks.
 
 **Timers page**
 
@@ -212,7 +215,7 @@ The codebase is small but opinionated:
     - **Daily** tab – daily tasks with core vs optional sections.
     - **Weekly** tab – weekly tasks.
   - A small **Freeplay ideas** section for “do when you feel like it” tasks.
-  - Persists completed state across sessions.
+  - Persists completed state across sessions using shared storage helpers.
 
 **Behaviour:**
 
@@ -231,10 +234,10 @@ The codebase is small but opinionated:
   - `getWeeklyCycleId()`:
     - Same idea but weekly, anchored at Sunday 21:00 UTC.
 
-- The component:
-  - Maintains `dailyState` and `weeklyState` maps in memory.
-  - Loads/saves them via `localStorage`.
-  - Checks periodically whether the cycle id changed; if so, it reloads the page to clear state.
+- Persistence details:
+  - Uses `loadVersioned` / `saveVersioned` from `app/utils/storage.ts`.
+  - Falls back to reading legacy raw JSON if versioned data is not present (backward compatible for existing users).
+  - Keys are namespaced with `wwm-` (see storage section below).
 
 ### 3.4 Home page
 
@@ -300,7 +303,7 @@ Global styles and design system live outside `app`:
 
 - Entry file: `../styles.scss`
   - Wires in tokens, base, shared components, utilities.
-  - Also imports Bootstrap + Bootstrap Icons.
+  - Imports Bootstrap CSS + Bootstrap Icons.
 - Design system: `../styles/**`
   - See `../styles/README.md` for full documentation.
 
@@ -311,7 +314,42 @@ Component–level SCSS in `app/components/**` should:
 
 ---
 
-## 7. How to add or change things
+## 7. Utils & storage
+
+**Folder:** `app/utils`
+
+Current helpers:
+
+- `storage.ts`
+  - Core storage helpers.
+  - `STORAGE_PREFIX = 'wwm-'` – all keys we own start with this prefix.
+  - `STORAGE_SCHEMA_VERSION` – global storage schema version (number).
+  - `getSafeLocalStorage()` – safe access to `window.localStorage` (handles SSR / errors).
+  - `loadJsonFromStorage<T>(key)` / `saveJsonToStorage(key, value)` – raw JSON helpers.
+  - `Versioned<T>` – wrapper type `{ version, data }`.
+  - `loadVersioned<T>(key)` / `saveVersioned<T>(key, data)` – versioned payload helpers.
+
+- `storage-migrations.ts`
+  - `runStorageMigrations()` – central entrypoint to run migrations on app startup.
+  - Uses a special `wwm-schema-version` key to track which migrations have already been applied.
+  - Currently contains the framework only; real migrations can be added when `STORAGE_SCHEMA_VERSION` is bumped.
+
+- `checklist-storage.ts`
+  - `cleanupChecklistStorage()` – called on startup to prune old checklist keys.
+  - Keeps only:
+    - `wwm-checklist-daily-<currentDailyCycleId>`
+    - `wwm-checklist-weekly-<currentWeeklyCycleId>`
+  - Deletes any older cycle keys, preventing unbounded localStorage growth.
+
+**Bootstrap behaviour (main.ts):**
+
+- `runStorageMigrations()` is called before Angular bootstraps.
+- `cleanupChecklistStorage()` is also called before Angular bootstraps.
+- This happens on every full page load (initial open or hard refresh), not on internal route changes.
+
+---
+
+## 8. How to add or change things
 
 ### Add a new page
 
@@ -339,12 +377,24 @@ Component–level SCSS in `app/components/**` should:
   - `src/styles/components/*.scss` (for structured components like cards/buttons/chips).
   - or `src/styles/utilities/*.scss` (for small layout/text helpers).
 
+### Evolve storage structure
+
+When you need to change the shape of stored data:
+
+1. Bump `STORAGE_SCHEMA_VERSION` in `app/utils/storage.ts`.
+2. Add migration functions in `app/utils/storage-migrations.ts` to:
+   - Read old keys.
+   - Transform them into the new shape.
+   - Write them back as `Versioned<T>` payloads.
+3. Optionally update `cleanupChecklistStorage()` or add new cleanup helpers if key patterns change.
+4. Keep components reading via `loadVersioned` with a fallback to `loadJsonFromStorage` for legacy payloads.
+
 ---
 
-## 8. Maintenance notes
+## 9. Maintenance notes
 
 - This file is meant to stay **authoritative** over time:
   - Whenever you add a new feature, route, major component, or config file, update this README.
-  - Whenever you significantly change how timers, checklist, or music player work, update the relevant section here.
-
-Keeping `src/README.md` and `styles/README.md` in sync with the codebase makes it much easier to understand the project quickly without re-discovering the architecture from scratch.
+  - Whenever you significantly change how timers, checklist, music player, or storage work, update the relevant section here.
+- Keep `styles/README.md` in sync with any changes to tokens or shared components.
+- Optionally maintain a `project-log.md` with date-stamped bullet entries to quickly see what changed between sessions.

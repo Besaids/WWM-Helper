@@ -3,7 +3,7 @@
     <h1>Checklist</h1>
     <p class="text-muted-strong">
       Daily and weekly tasks for Where Winds Meet. Tick off what you have done; entries reset
-      automatically with the game’s daily and weekly resets.
+      automatically with the game's daily and weekly resets.
     </p>
 
     <div class="checklist-tabs">
@@ -61,7 +61,7 @@
                       <input
                         type="checkbox"
                         [checked]="isChecked(item)"
-                        (change)="toggleItem(item, $any($event.target).checked)"
+                        (change)="onCheckboxChange($event, item)"
                       />
 
                       <div class="checklist-item-content">
@@ -106,7 +106,7 @@
                       <input
                         type="checkbox"
                         [checked]="isChecked(item)"
-                        (change)="toggleItem(item, $any($event.target).checked)"
+                        (change)="onCheckboxChange($event, item)"
                       />
 
                       <div class="checklist-item-content">

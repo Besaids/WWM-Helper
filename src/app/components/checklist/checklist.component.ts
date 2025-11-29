@@ -11,6 +11,9 @@ import {
   getDailyCycleId,
   getWeeklyCycleId,
 } from '../../configs';
+import { loadJsonFromStorage, loadVersioned, saveVersioned } from '../../utils';
+
+const CYCLE_CHECK_INTERVAL_MS = 60_000; // Check for cycle changes every minute
 
 type ChecklistTab = 'daily' | 'weekly';
 
@@ -51,13 +54,13 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     this.loadState();
 
     // Only run the live reset watcher in the browser
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
       return;
     }
 
     // Check once per minute whether the daily/weekly cycle ID changed.
     // When it changes, force a full page reload so timers + checklists reset.
-    this.cycleWatchSub = interval(60_000).subscribe(() => {
+    this.cycleWatchSub = interval(CYCLE_CHECK_INTERVAL_MS).subscribe(() => {
       const nextDailyId = getDailyCycleId();
       const nextWeeklyId = getWeeklyCycleId();
 
@@ -86,44 +89,35 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   // --- Checklist state helpers ---
 
-  private getStorage(): Storage | null {
-    try {
-      if (typeof localStorage === 'undefined') {
-        return null;
-      }
-      return localStorage;
-    } catch {
-      return null;
-    }
-  }
-
   private loadState(): void {
-    const storage = this.getStorage();
-    if (!storage) {
-      this.dailyState = {};
-      this.weeklyState = {};
-      return;
-    }
-
     const dailyKey = `wwm-checklist-daily-${getDailyCycleId()}`;
     const weeklyKey = `wwm-checklist-weekly-${getWeeklyCycleId()}`;
 
-    const dailyRaw = storage.getItem(dailyKey);
-    const weeklyRaw = storage.getItem(weeklyKey);
+    // Try versioned payloads first
+    const dailyVersioned = loadVersioned<ChecklistState>(dailyKey);
+    const weeklyVersioned = loadVersioned<ChecklistState>(weeklyKey);
 
-    this.dailyState = dailyRaw ? (JSON.parse(dailyRaw) as ChecklistState) : {};
-    this.weeklyState = weeklyRaw ? (JSON.parse(weeklyRaw) as ChecklistState) : {};
+    if (dailyVersioned?.data) {
+      this.dailyState = dailyVersioned.data;
+    } else {
+      // Fallback: legacy raw JSON (pre-versioning)
+      this.dailyState = loadJsonFromStorage<ChecklistState>(dailyKey) ?? {};
+    }
+
+    if (weeklyVersioned?.data) {
+      this.weeklyState = weeklyVersioned.data;
+    } else {
+      // Fallback: legacy raw JSON (pre-versioning)
+      this.weeklyState = loadJsonFromStorage<ChecklistState>(weeklyKey) ?? {};
+    }
   }
 
   private saveState(): void {
-    const storage = this.getStorage();
-    if (!storage) return;
-
     const dailyKey = `wwm-checklist-daily-${getDailyCycleId()}`;
     const weeklyKey = `wwm-checklist-weekly-${getWeeklyCycleId()}`;
 
-    storage.setItem(dailyKey, JSON.stringify(this.dailyState));
-    storage.setItem(weeklyKey, JSON.stringify(this.weeklyState));
+    saveVersioned<ChecklistState>(dailyKey, this.dailyState);
+    saveVersioned<ChecklistState>(weeklyKey, this.weeklyState);
   }
 
   isChecked(item: ChecklistItem): boolean {
@@ -131,7 +125,12 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     return !!state[item.id];
   }
 
-  toggleItem(item: ChecklistItem, checked: boolean): void {
+  onCheckboxChange(event: Event, item: ChecklistItem): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.toggleItem(item, checked);
+  }
+
+  private toggleItem(item: ChecklistItem, checked: boolean): void {
     const state = item.frequency === 'daily' ? this.dailyState : this.weeklyState;
 
     if (checked) {

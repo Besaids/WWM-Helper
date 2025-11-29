@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { RESET_CONFIG } from './reset-config';
 
 export type ChecklistFrequency = 'daily' | 'weekly';
 export type ChecklistImportance = 'core' | 'optional';
@@ -62,7 +63,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     importance: 'core',
     category: 'Sect & multiplayer',
     label:
-      'Do Blessed Land for Cultivation, Five Animal Frolics and Scholar’s Hearth (multiplayer).',
+      'Do Blessed Land for Cultivation, Five Animal Frolics and Scholar\'s Hearth (multiplayer).',
     description:
       'Low-stress online content that gives character XP, Coins and Adventure Slips; often overlaps with Jianghu Errands.',
     tags: ['multiplayer', 'social'],
@@ -106,7 +107,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     category: 'Leisure & cosmetics',
     label: 'Visit Springwave Pavilion baths (Kaifeng).',
     description:
-      'Give/receive massages for Coins, character XP and Adventure Slips. A 10-day streak grants the “Bathrobe: Golden Threads” outfit.',
+      'Give/receive massages for Coins, character XP and Adventure Slips. A 10-day streak grants the "Bathrobe: Golden Threads" outfit.',
     tags: ['leisure', 'social', 'economy', 'multiplayer'],
   },
   {
@@ -151,7 +152,7 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     frequency: 'weekly',
     importance: 'core',
     category: 'Group content',
-    label: 'Clear weekly Hero’s Realm (Wandering Paths).',
+    label: 'Clear weekly Hero\'s Realm (Wandering Paths).',
     description:
       'Up to 10-player raid. Two bosses per run; 1 weekly reward per boss. Costs no Energy and even grants Energy plus key weekly rewards.',
     tags: ['combat', 'multiplayer'],
@@ -161,7 +162,7 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     frequency: 'weekly',
     importance: 'core',
     category: 'Guild',
-    label: 'Clear weekly Guild Hero’s Realm.',
+    label: 'Clear weekly Guild Hero\'s Realm.',
     description:
       '5–10 guild members only; separate weekly reward for clearing both bosses together. No matchmaking and no Energy cost.',
     tags: ['guild', 'combat', 'multiplayer'],
@@ -171,7 +172,7 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     frequency: 'weekly',
     importance: 'core',
     category: 'Guild',
-    label: 'Do your Guild’s weekly Events.',
+    label: 'Do your Guild\'s weekly Events.',
     description:
       'Earn currencies used to upgrade yourself in the Technique tab and support guild progression.',
     tags: ['guild', 'multiplayer'],
@@ -183,9 +184,9 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     frequency: 'weekly',
     importance: 'optional',
     category: 'Economy',
-    label: 'Run trading at Feng’s Tradehall for Commerce Coins.',
+    label: 'Run trading at Feng\'s Tradehall for Commerce Coins.',
     description:
-      'Buy goods at Feng’s Tradehall and sell at the Trade Commission next door. Read a trading guide first; the system rewards understanding price trends.',
+      'Buy goods at Feng\'s Tradehall and sell at the Trade Commission next door. Read a trading guide first; the system rewards understanding price trends.',
     tags: ['economy', 'solo'],
   },
 
@@ -250,7 +251,7 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
 ];
 
 /**
- * “I’m lost, what can I do?” ideas
+ * "I'm lost, what can I do?" ideas
  */
 export const FREEPLAY_IDEAS: FreeplayIdea[] = [
   {
@@ -346,7 +347,7 @@ export const FREEPLAY_IDEAS: FreeplayIdea[] = [
     category: 'Leisure',
     label: 'Go fishing.',
     description:
-      'Relax, catch some fish, and fill Compendium entries. Occasionally tied to events or “catch X fish” style objectives, but mostly just a chill side activity.',
+      'Relax, catch some fish, and fill Compendium entries. Occasionally tied to events or "catch X fish" style objectives, but mostly just a chill side activity.',
     tags: ['leisure', 'solo'],
   },
   {
@@ -365,11 +366,10 @@ export const FREEPLAY_IDEAS: FreeplayIdea[] = [
  */
 
 export function getDailyCycleId(): string {
-  const resetHourUtc = 21; // 21:00 UTC daily reset
   const now = DateTime.utc();
   let resetBase = now.set({
-    hour: resetHourUtc,
-    minute: 0,
+    hour: RESET_CONFIG.DAILY_RESET_HOUR_UTC,
+    minute: RESET_CONFIG.DAILY_RESET_MINUTE_UTC,
     second: 0,
     millisecond: 0,
   });
@@ -382,13 +382,11 @@ export function getDailyCycleId(): string {
 }
 
 export function getWeeklyCycleId(): string {
-  const resetHourUtc = 21; // 21:00 UTC
-  const resetWeekday = 7; // Sunday in ISO (1=Mon..7=Sun)
   const now = DateTime.utc();
   let resetBase = now.set({
-    weekday: resetWeekday,
-    hour: resetHourUtc,
-    minute: 0,
+    weekday: RESET_CONFIG.WEEKLY_RESET_DAY,
+    hour: RESET_CONFIG.WEEKLY_RESET_HOUR_UTC,
+    minute: RESET_CONFIG.WEEKLY_RESET_MINUTE_UTC,
     second: 0,
     millisecond: 0,
   });
