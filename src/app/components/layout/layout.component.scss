@@ -2,7 +2,12 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at top, #121826 0, var(--color-bg-root) 55%, #03040a 100%);
+  background: radial-gradient(
+      circle at top,
+      #121826 0,
+      var(--color-bg-root) 55%,
+      #03040a 100%
+    );
   color: var(--color-text-primary);
 }
 
@@ -26,8 +31,7 @@
 }
 
 .app-footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
+  /* Width and horizontal centering come from .page-shell */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -42,15 +46,9 @@
 
 .app-footer-links {
   display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.app-footer-links {
-  display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.4rem; // a bit tighter since we add separators
+  gap: 0.4rem; /* a bit tighter since we add separators */
 }
 
 /* Put a "|" between consecutive links */

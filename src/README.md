@@ -27,7 +27,7 @@ The codebase is small but opinionated:
 - RxJS.
 - Luxon (time/date).
 - Bootstrap + Bootstrap Icons (for some base styling).
-- Custom SCSS design system under `src/styles/**`.
+- Custom SCSS design system under `src/styles/**`. :contentReference[oaicite:0]{index=0}
 
 **Entry files**
 
@@ -52,7 +52,7 @@ The codebase is small but opinionated:
 - `app/app.ts`
   - Root component (`<app-root>`).
   - Standalone.
-  - Renders `<app-layout>` (all real content is inside `LayoutComponent`).
+  - Renders `<app-layout>`; all real content is inside `LayoutComponent`.
 
 ---
 
@@ -77,7 +77,39 @@ The codebase is small but opinionated:
       </main>
 
       <footer class="app-footer">
-        <!-- footer links (Discord, Reddit, Suno playlist, etc.) -->
+        <div class="app-footer-inner page-shell">
+          <span class="app-footer-copy">
+            Unofficial helper for <span class="app-footer-game">Where Winds Meet</span>.
+          </span>
+
+          <nav class="app-footer-links">
+            <span>Find me on: </span>
+
+            <a
+              href="https://www.reddit.com/user/Besaids/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Reddit User
+            </a>
+
+            <a
+              href="https://discordapp.com/users/224358387448545280"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Discord User
+            </a>
+
+            <a
+              href="https://suno.com/playlist/cda7ce2e-c15f-47ad-bb20-885a9ee22513"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Where Winds Met - Suno Playlist
+            </a>
+          </nav>
+        </div>
       </footer>
     </div>
     ```
@@ -86,6 +118,7 @@ The codebase is small but opinionated:
 
 - `layout.component.scss`
   - Overall app background, main area padding, and footer styling.
+  - Footer inner width is aligned via the shared `.page-shell` helper from the styles system.
 
 **Key idea:**  
 `LayoutComponent` defines the chrome around the app; feature pages should focus only on their own content.
@@ -102,13 +135,13 @@ The codebase is small but opinionated:
 - Responsibility:
   - Sticky top bar with logo + navigation links (`Home / Timers / Checklist`).
   - Responsive behaviour (desktop nav vs mobile hamburger).
-  - Hosts the **music player** right below the nav.
+  - Sits at the top of the layout shell; does **not** use `.page-shell` (full-width header with padded edges). :contentReference[oaicite:1]{index=1}
 
 **Music player**
 
 - Folder: `app/components/music-player`
 - Responsibility:
-  - Small audio player pinned under the navbar.
+  - Small audio player pinned directly below the navbar (inside `NavbarComponent`).
   - Plays a curated playlist of tracks defined in `app/configs/music-tracks.ts`.
   - Keeps state in `localStorage`:
     - Current track id.
@@ -127,9 +160,10 @@ The codebase is small but opinionated:
 
 - Folder: `app/components/timer-strip`
 - Responsibility:
-  - Thin horizontal bar below the navbar.
+  - Thin horizontal bar below the navbar and music player.
   - Subscribes to `TimerService.timerChips$`.
   - Renders a row of “chips” showing current and upcoming timers (reset, arena, fireworks, etc.).
+  - Each pill uses the global `.chip` style plus a local modifier for timer-specific tweaks.
 
 **Timers page**
 
@@ -140,7 +174,7 @@ The codebase is small but opinionated:
     - Arena windows.
     - Fireworks seats & show.
     - Group content cadence, etc.
-  - Uses live timer chips inline in the text for context.
+  - Uses live timer chips inline in the text for context (global `.chip` + `.chip--timer`).
 
 **Timer service + configs**
 
@@ -200,7 +234,7 @@ The codebase is small but opinionated:
 - The component:
   - Maintains `dailyState` and `weeklyState` maps in memory.
   - Loads/saves them via `localStorage`.
-  - Checks once a minute whether the cycle id changed; if so, it reloads the page to clear state.
+  - Checks periodically whether the cycle id changed; if so, it reloads the page to clear state.
 
 ### 3.4 Home page
 
@@ -217,6 +251,7 @@ The codebase is small but opinionated:
   - Imports checklist definitions.
   - Picks “highlight” items for daily/weekly (small subset for display).
   - Mostly static layout + text.
+  - Uses global CTA buttons (`.btn-primary`, `.btn-secondary`) and card styles (`card-surface`, `card-padding`).
 
 ---
 
@@ -264,6 +299,8 @@ The codebase is small but opinionated:
 Global styles and design system live outside `app`:
 
 - Entry file: `../styles.scss`
+  - Wires in tokens, base, shared components, utilities.
+  - Also imports Bootstrap + Bootstrap Icons.
 - Design system: `../styles/**`
   - See `../styles/README.md` for full documentation.
 
@@ -281,7 +318,7 @@ Component–level SCSS in `app/components/**` should:
 1. Create a standalone component under `app/components/<feature>/`.
 2. Add a route in `app/app.routes.ts`.
 3. Use:
-   - `<div class="page-shell">` + card helpers from the styles system.
+   - A centered container pattern (e.g., your own wrapper or `.page-shell` + `card-surface` / `card-padding`).
    - Shared button/chip classes where appropriate.
 4. If the page has structured data, add it to `app/configs` instead of hardcoding in the component.
 
@@ -310,4 +347,4 @@ Component–level SCSS in `app/components/**` should:
   - Whenever you add a new feature, route, major component, or config file, update this README.
   - Whenever you significantly change how timers, checklist, or music player work, update the relevant section here.
 
-Keeping `src/README.md` and `styles/README.md` in sync with the codebase makes it much easier for tools (and future humans) to understand the project quickly without needing to re-discover the architecture from scratch.
+Keeping `src/README.md` and `styles/README.md` in sync with the codebase makes it much easier to understand the project quickly without re-discovering the architecture from scratch.
