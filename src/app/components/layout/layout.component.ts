@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../navbar';
 import { TimerStripComponent } from '../timer-strip';
@@ -10,5 +10,6 @@ import { TimerStripComponent } from '../timer-strip';
   imports: [CommonModule, RouterOutlet, NavbarComponent, TimerStripComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutComponent {}

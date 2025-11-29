@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { LayoutComponent } from './components/layout';
 
 @Component({
@@ -6,6 +6,7 @@ import { LayoutComponent } from './components/layout';
   standalone: true,
   imports: [LayoutComponent],
   template: `<app-layout></app-layout>`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   protected readonly title = signal('wwm-helper');

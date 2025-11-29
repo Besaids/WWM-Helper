@@ -3,7 +3,7 @@
 This folder contains the global design system for the WWM Helper app.
 
 It is split into **tokens**, **base**, **components**, and **utilities**.  
-Component-level SCSS files in `src/app/**` should *consume* these pieces, not re-invent them.
+Component-level SCSS files in `src/app/**` should _consume_ these pieces, not re-invent them.
 
 > Core rule: **no hard-coded colors or font sizes in shared styles**.  
 > All theme values live in `tokens/*.scss`. :contentReference[oaicite:2]{index=2}
@@ -37,3 +37,4 @@ src/styles/
     _layout.scss              # .u-flex, .u-stack, gap helpers
     _text.scss                # .text-muted, size utilities
     _visibility.scss          # .u-visually-hidden
+```

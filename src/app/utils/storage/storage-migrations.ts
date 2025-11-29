@@ -1,8 +1,4 @@
-import {
-  STORAGE_PREFIX,
-  STORAGE_SCHEMA_VERSION,
-  getSafeLocalStorage,
-} from './storage';
+import { STORAGE_PREFIX, STORAGE_SCHEMA_VERSION, getSafeLocalStorage } from './storage';
 
 const MIGRATION_KEY = `${STORAGE_PREFIX}schema-version`;
 

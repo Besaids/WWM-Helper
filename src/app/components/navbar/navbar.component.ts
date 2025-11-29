@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MusicPlayerComponent } from '../music-player';
 
@@ -9,15 +9,16 @@ import { MusicPlayerComponent } from '../music-player';
   imports: [CommonModule, RouterModule, MusicPlayerComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
-  isMenuOpen = false;
+  readonly isMenuOpen = signal(false);
 
   toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+    this.isMenuOpen.update((current) => !current);
   }
 
   closeMenu(): void {
-    this.isMenuOpen = false;
+    this.isMenuOpen.set(false);
   }
 }

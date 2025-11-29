@@ -1,5 +1,5 @@
 import { getSafeLocalStorage, STORAGE_PREFIX } from './storage';
-import { getDailyCycleId, getWeeklyCycleId } from '../configs';
+import { getDailyCycleId, getWeeklyCycleId } from '../../configs';
 
 /**
  * Keep only the current daily and weekly checklist entries in storage.

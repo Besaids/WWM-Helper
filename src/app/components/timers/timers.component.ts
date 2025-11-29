@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TimerService } from '../../services';
 import { TimerChip } from '../../models';
 
@@ -9,6 +9,7 @@ import { TimerChip } from '../../models';
   imports: [CommonModule],
   templateUrl: './timers.component.html',
   styleUrls: ['./timers.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimersComponent {
   private readonly timerService = inject(TimerService);

@@ -1,18 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, signal, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+} from '@angular/core';
 import { MUSIC_TRACKS, MusicTrack } from '../../configs';
-import { loadJsonFromStorage, loadVersioned, saveVersioned } from '../../utils';
-
-type TrackId = string;
-
-interface PlayerState {
-  currentTrackId: TrackId;
-  isPlaying: boolean;
-  volume: number; // 0..1
-  muted: boolean;
-  shuffle: boolean;
-  enabledTrackIds: TrackId[];
-}
+import { formatTime } from './time-format';
+import {
+  loadPlayerState,
+  PlayerAudioService,
+  PlayerStore,
+  savePlayerState,
+  TrackId,
+} from '../../services';
 
 @Component({
   selector: 'app-music-player',
@@ -20,93 +23,97 @@ interface PlayerState {
   imports: [CommonModule],
   templateUrl: './music-player.component.html',
   styleUrl: './music-player.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MusicPlayerComponent implements OnInit, OnDestroy {
-  private readonly storageKey = 'wwm-music-player-v1';
-
+  private readonly store = inject(PlayerStore);
+  private readonly audio = inject(PlayerAudioService);
   readonly tracks = MUSIC_TRACKS;
 
-  // UI state
-  readonly currentTrackId = signal<TrackId>(this.tracks[0]?.id ?? '');
-  readonly isPlaying = signal(false);
-  readonly volume = signal(0); // muted by default
-  readonly muted = signal(true);
-  readonly shuffle = signal(false);
-  readonly isPlaylistOpen = signal(false);
+  // Local UI-only signal
+  readonly isPlaylistOpen = this.store.isPlaylistOpen;
 
-  readonly enabledTrackIds = signal<Set<TrackId>>(new Set(this.tracks.map((t) => t.id)));
+  // Expose store signals to template
+  readonly currentTrackId = this.store.currentTrackId;
+  readonly isPlaying = this.store.isPlaying;
+  readonly volume = this.store.volume;
+  readonly muted = this.store.muted;
+  readonly shuffle = this.store.shuffle;
+  readonly enabledTrackIds = this.store.enabledTrackIds;
+  readonly currentTime = this.store.currentTime;
+  readonly duration = this.store.duration;
+  readonly enabledCount = this.store.enabledCount;
 
-  // playback progress
-  readonly currentTime = signal(0);
-  readonly duration = signal(0);
-
-  // derived
-  readonly enabledCount = computed(() => this.enabledTrackIds().size);
-
-  private audio: HTMLAudioElement | null = null;
   private lastNonZeroVolume = 0.5;
 
-  // Event handler references for proper cleanup
-  private readonly onEndedHandler = (): void => this.handleTrackEnded();
-  private readonly onTimeUpdateHandler = (): void => {
-    if (!this.audio) return;
-    this.currentTime.set(this.audio.currentTime || 0);
-  };
-  private readonly onLoadedMetadataHandler = (): void => {
-    if (!this.audio) return;
-    this.duration.set(this.audio.duration || 0);
-  };
+  // Derived
+  readonly enabledTracks = computed(() => {
+    const enabled = this.enabledTrackIds();
+    return this.tracks.filter((t) => enabled.has(t.id));
+  });
 
   ngOnInit(): void {
-    this.restoreState();
-    this.initAudio();
+    // Initialize store defaults
+    const allTrackIds = new Set(this.tracks.map((t) => t.id));
+    this.store.setEnabled(allTrackIds);
+    this.store.setVolume(0);
+    this.store.setMuted(true);
+    this.store.setShuffle(false);
+    this.store.setPlaying(false);
+    this.store.setCurrentTrack(this.tracks[0]?.id ?? '');
+
+    // Restore from storage (validated)
+    const persisted = loadPlayerState();
+    if (persisted) {
+      const validTrack =
+        persisted.currentTrackId && this.tracks.some((t) => t.id === persisted.currentTrackId);
+      if (validTrack) this.store.setCurrentTrack(persisted.currentTrackId!);
+
+      if (typeof persisted.volume === 'number') {
+        const v = Math.max(0, Math.min(1, persisted.volume));
+        this.store.setVolume(v);
+        if (v > 0) this.lastNonZeroVolume = v;
+      }
+      if (typeof persisted.muted === 'boolean') this.store.setMuted(persisted.muted);
+      if (typeof persisted.shuffle === 'boolean') this.store.setShuffle(persisted.shuffle);
+
+      if (Array.isArray(persisted.enabledTrackIds) && persisted.enabledTrackIds.length) {
+        const valid = persisted.enabledTrackIds.filter((id) => allTrackIds.has(id));
+        if (valid.length) this.store.setEnabled(new Set(valid));
+      }
+    }
+
+    // Init audio element
+    this.audio.init();
+    this.audio.setOnEnded(() => this.nextTrack(true));
+
+    // Apply current track + volume to audio
+    const current = this.getCurrentTrack();
+    if (current) this.audio.setSource(current.file);
+    this.audio.applyVolume();
+
+    // Do not auto-play on load
   }
 
   ngOnDestroy(): void {
-    if (this.audio) {
-      this.audio.pause();
-      this.audio.removeEventListener('ended', this.onEndedHandler);
-      this.audio.removeEventListener('timeupdate', this.onTimeUpdateHandler);
-      this.audio.removeEventListener('loadedmetadata', this.onLoadedMetadataHandler);
-      this.audio = null;
-    }
+    this.audio.dispose();
   }
 
-  // ---- Audio init / sync ----
+  // ---- Persistence ----
 
-  private initAudio(): void {
-    if (typeof Audio === 'undefined' || !this.tracks.length) return;
-
-    this.audio = new Audio();
-    this.audio.preload = 'metadata';
-    this.applyTrackToAudio();
-    this.applyVolumeToAudio();
-
-    this.audio.addEventListener('ended', this.onEndedHandler);
-    this.audio.addEventListener('timeupdate', this.onTimeUpdateHandler);
-    this.audio.addEventListener('loadedmetadata', this.onLoadedMetadataHandler);
+  private persist(): void {
+    const enabledArray = Array.from(this.enabledTrackIds());
+    savePlayerState({
+      currentTrackId: this.currentTrackId(),
+      isPlaying: this.isPlaying(),
+      volume: this.volume(),
+      muted: this.muted(),
+      shuffle: this.shuffle(),
+      enabledTrackIds: enabledArray,
+    });
   }
 
-  private applyTrackToAudio(): void {
-    if (!this.audio) return;
-    const track = this.getCurrentTrack();
-    if (!track) return;
-
-    this.currentTime.set(0);
-    this.duration.set(0);
-
-    this.audio.src = track.file;
-    this.audio.currentTime = 0;
-  }
-
-  private applyVolumeToAudio(): void {
-    if (!this.audio) return;
-    const muted = this.muted();
-    const vol = this.volume();
-
-    this.audio.muted = muted;
-    this.audio.volume = muted ? 0 : vol;
-  }
+  // ---- Helpers ----
 
   private getCurrentTrack(): MusicTrack {
     const id = this.currentTrackId();
@@ -114,75 +121,13 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
   }
 
   private getEnabledTracks(): MusicTrack[] {
-    const enabled = this.enabledTrackIds();
-    return this.tracks.filter((t) => enabled.has(t.id));
-  }
-
-  // ---- Persistence ----
-
-  private restoreState(): void {
-    // Not available in SSR / some environments
-    if (typeof window === 'undefined') return;
-
-    try {
-      // Try versioned payload first
-      const versioned = loadVersioned<PlayerState>(this.storageKey);
-      const parsed =
-        versioned?.data ?? loadJsonFromStorage<Partial<PlayerState>>(this.storageKey) ?? null;
-
-      if (!parsed) return;
-
-      if (parsed.currentTrackId && this.tracks.some((t) => t.id === parsed.currentTrackId)) {
-        this.currentTrackId.set(parsed.currentTrackId);
-      }
-
-      if (typeof parsed.volume === 'number') {
-        const v = Math.min(1, Math.max(0, parsed.volume));
-        this.volume.set(v);
-        if (v > 0) this.lastNonZeroVolume = v;
-      }
-
-      if (typeof parsed.muted === 'boolean') {
-        this.muted.set(parsed.muted);
-      }
-
-      if (typeof parsed.shuffle === 'boolean') {
-        this.shuffle.set(parsed.shuffle);
-      }
-
-      if (Array.isArray(parsed.enabledTrackIds) && parsed.enabledTrackIds.length) {
-        const valid = parsed.enabledTrackIds.filter((id) => this.tracks.some((t) => t.id === id));
-        if (valid.length) {
-          this.enabledTrackIds.set(new Set(valid));
-        }
-      }
-
-      // Do not auto-play on load
-    } catch {
-      // ignore malformed storage
-    }
-  }
-
-  private saveState(): void {
-    if (typeof window === 'undefined') return;
-
-    const enabledArray = Array.from(this.enabledTrackIds());
-    const state: PlayerState = {
-      currentTrackId: this.currentTrackId(),
-      isPlaying: this.isPlaying(),
-      volume: this.volume(),
-      muted: this.muted(),
-      shuffle: this.shuffle(),
-      enabledTrackIds: enabledArray,
-    };
-
-    saveVersioned<PlayerState>(this.storageKey, state);
+    return this.enabledTracks();
   }
 
   // ---- Controls ----
 
   togglePlaylist(): void {
-    this.isPlaylistOpen.update((v) => !v);
+    this.store.togglePlaylist();
   }
 
   togglePlayPause(): void {
@@ -193,38 +138,28 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  play(): void {
-    if (!this.audio) return;
-
-    this.isPlaying.set(true);
-    this.applyVolumeToAudio();
-
-    this.audio
-      .play()
-      .then(() => {
-        this.saveState();
-      })
-      .catch((error) => {
-        this.isPlaying.set(false);
-        // Log playback failures (autoplay policies, codec issues, etc.)
-        console.warn('Audio playback failed:', error);
-      });
+  async play(): Promise<void> {
+    try {
+      this.store.setPlaying(true);
+      this.audio.applyVolume();
+      await this.audio.play();
+      this.persist();
+    } catch (error) {
+      this.store.setPlaying(false);
+      console.warn('Audio playback failed:', error);
+    }
   }
 
   pause(): void {
-    if (!this.audio) return;
     this.audio.pause();
-    this.isPlaying.set(false);
-    this.saveState();
+    this.store.setPlaying(false);
+    this.persist();
   }
 
   stop(): void {
-    if (!this.audio) return;
-    this.audio.pause();
-    this.audio.currentTime = 0;
-    this.currentTime.set(0);
-    this.isPlaying.set(false);
-    this.saveState();
+    this.audio.stop();
+    this.store.setPlaying(false);
+    this.persist();
   }
 
   nextTrack(autoPlay = false): void {
@@ -232,8 +167,8 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
     if (!enabled.length) return;
 
     const current = this.getCurrentTrack();
-
     let next: MusicTrack;
+
     if (this.shuffle()) {
       if (enabled.length === 1) {
         next = enabled[0];
@@ -247,9 +182,9 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
       next = enabled[nextIndex];
     }
 
-    this.currentTrackId.set(next.id);
-    this.applyTrackToAudio();
-    this.saveState();
+    this.store.setCurrentTrack(next.id);
+    this.audio.setSource(next.file);
+    this.persist();
 
     if (autoPlay || this.isPlaying()) {
       this.play();
@@ -267,9 +202,9 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
     const prevIndex = idx <= 0 ? enabled.length - 1 : idx - 1;
     const prev = enabled[prevIndex];
 
-    this.currentTrackId.set(prev.id);
-    this.applyTrackToAudio();
-    this.saveState();
+    this.store.setCurrentTrack(prev.id);
+    this.audio.setSource(prev.file);
+    this.persist();
 
     if (this.isPlaying()) {
       this.play();
@@ -278,13 +213,9 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleTrackEnded(): void {
-    this.nextTrack(true);
-  }
-
   toggleShuffle(): void {
-    this.shuffle.update((v) => !v);
-    this.saveState();
+    this.store.setShuffle(!this.shuffle());
+    this.persist();
   }
 
   onVolumeInput(event: Event): void {
@@ -294,39 +225,37 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
   }
 
   setVolume(value: number): void {
-    const v = Math.min(1, Math.max(0, value));
-    this.volume.set(v);
+    const v = Math.max(0, Math.min(1, value));
+    this.store.setVolume(v);
     if (v > 0) {
       this.lastNonZeroVolume = v;
-      this.muted.set(false);
+      this.store.setMuted(false);
     } else {
-      this.muted.set(true);
+      this.store.setMuted(true);
     }
-    this.applyVolumeToAudio();
-    this.saveState();
+    this.audio.applyVolume();
+    this.persist();
   }
 
   toggleMute(): void {
     const currentlyMuted = this.muted();
     if (currentlyMuted) {
       if (this.volume() === 0) {
-        this.volume.set(this.lastNonZeroVolume || 0.5);
+        this.store.setVolume(this.lastNonZeroVolume || 0.5);
       }
-      this.muted.set(false);
+      this.store.setMuted(false);
     } else {
-      this.muted.set(true);
+      this.store.setMuted(true);
     }
-    this.applyVolumeToAudio();
-    this.saveState();
+    this.audio.applyVolume();
+    this.persist();
   }
 
   onSeek(event: Event): void {
-    if (!this.audio) return;
     const input = event.target as HTMLInputElement;
     const value = parseFloat(input.value);
     if (Number.isNaN(value)) return;
-    this.audio.currentTime = value;
-    this.currentTime.set(value);
+    this.audio.seek(value);
   }
 
   // ---- Playlist helpers ----
@@ -335,42 +264,36 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
     return this.enabledTrackIds().has(trackId);
   }
 
+  // Supports both the improved handler and current template usage.
   onTrackCheckboxChange(event: Event, trackId: TrackId): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.toggleTrackEnabled(trackId, checked);
   }
 
-  private toggleTrackEnabled(trackId: TrackId, checked: boolean): void {
-    const current = new Set(this.enabledTrackIds());
+  toggleTrackEnabled(trackId: TrackId, checked: boolean): void {
+    const updated = this.store.toggleEnabled(trackId, checked);
 
-    if (checked) {
-      current.add(trackId);
-    } else {
-      if (current.size <= 1) {
-        return;
-      }
-      current.delete(trackId);
-
-      if (trackId === this.currentTrackId()) {
-        const [first] = current;
-        if (first) {
-          this.currentTrackId.set(first);
-          this.applyTrackToAudio();
-        }
+    // If we disabled the currently playing/selected track, switch to first enabled.
+    if (!updated.has(this.currentTrackId())) {
+      const [first] = updated;
+      if (first) {
+        this.store.setCurrentTrack(first);
+        const track = this.tracks.find((t) => t.id === first);
+        if (track) this.audio.setSource(track.file);
       }
     }
 
-    this.enabledTrackIds.set(current);
-    this.saveState();
+    this.persist();
   }
 
   playTrack(trackId: TrackId): void {
     if (!this.isTrackEnabled(trackId)) {
       this.toggleTrackEnabled(trackId, true);
     }
-    this.currentTrackId.set(trackId);
-    this.applyTrackToAudio();
-    this.saveState();
+    this.store.setCurrentTrack(trackId);
+    const track = this.tracks.find((t) => t.id === trackId);
+    if (track) this.audio.setSource(track.file);
+    this.persist();
     this.play();
   }
 
@@ -388,10 +311,6 @@ export class MusicPlayerComponent implements OnInit, OnDestroy {
   }
 
   formatTime(seconds: number): string {
-    if (!seconds || !Number.isFinite(seconds)) return '0:00';
-    const total = Math.floor(seconds);
-    const m = Math.floor(total / 60);
-    const s = total % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
+    return formatTime(seconds);
   }
 }

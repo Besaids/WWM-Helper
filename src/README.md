@@ -2,7 +2,7 @@
 
 This folder contains the Angular 21 frontend for the **Where Winds Meet Helper**.
 
-The app is a single–page “companion” site focused on:
+The app is a single–page "companion" site focused on:
 
 - Surfacing important **timers / reset windows**.
 - Tracking **daily / weekly checklists**.
@@ -12,10 +12,12 @@ The app is a single–page “companion” site focused on:
 The codebase is small but opinionated:
 
 - Angular 21, **standalone components**, new control flow, Signals.
-- Centralised **config/data** (timers, checklist, music tracks) under `app/configs`.
+- **Service-based architecture** with clear separation of concerns.
+- Centralized **config/data** (timers, checklist, music tracks) under `app/configs`.
+- **Signal-based reactive state** with OnPush change detection throughout.
 - A single **layout shell** around all routed pages.
 - A separate **design system** in `src/styles/**` (see `styles/README.md`).
-- Centralised **localStorage handling** under `app/utils/**` with versioning and cleanup.
+- Centralized **localStorage handling** under `app/utils/storage/**` with versioning and cleanup.
 
 ---
 
@@ -24,24 +26,24 @@ The codebase is small but opinionated:
 **Tech**
 
 - Angular 21 (standalone components).
-- TypeScript.
-- RxJS.
-- Luxon (time/date).
-- Bootstrap + Bootstrap Icons (for some base styling).
+- TypeScript with strict mode enabled.
+- RxJS for reactive streams.
+- Luxon (time/date calculations).
+- Bootstrap + Bootstrap Icons (for base styling).
 - Custom SCSS design system under `src/styles/**`.
 
 **Entry files**
 
 - `main.ts`
   - Bootstraps the app with `bootstrapApplication(App, appConfig)`.
-  - Runs storage migrations and checklist cleanup before bootstrapping.
+  - Runs `runStorageMigrations()` and `cleanupChecklistStorage()` before bootstrapping.
 
 - `app/app.config.ts`
   - Application config:
     - `provideRouter(routes)` – routing.
-    - `provideHttpClient()` – HTTP (reserved for future use).
     - `provideZoneChangeDetection({ eventCoalescing: true })`.
     - `provideBrowserGlobalErrorListeners()`.
+    - `GlobalErrorHandler` as custom error handler.
 
 - `app/app.routes.ts`
   - Route table:
@@ -54,7 +56,7 @@ The codebase is small but opinionated:
 - `app/app.ts`
   - Root component (`<app-root>`).
   - Standalone.
-  - Renders `<app-layout>`; all real content is inside `LayoutComponent`.
+  - Renders `<app-layout>` with `ChangeDetectionStrategy.OnPush`.
 
 ---
 
@@ -63,11 +65,11 @@ The codebase is small but opinionated:
 **Location:** `app/components/layout`
 
 - `layout.component.ts`
-  - Standalone.
+  - Standalone component with OnPush change detection.
   - Imports `NavbarComponent`, `TimerStripComponent`, `RouterOutlet`.
 
 - `layout.component.html`
-  - High–level shell:
+  - High–level shell structure:
 
     ```html
     <div class="app-shell">
@@ -79,39 +81,7 @@ The codebase is small but opinionated:
       </main>
 
       <footer class="app-footer">
-        <div class="app-footer-inner page-shell">
-          <span class="app-footer-copy">
-            Unofficial helper for <span class="app-footer-game">Where Winds Meet</span>.
-          </span>
-
-          <nav class="app-footer-links">
-            <span>Find me on: </span>
-
-            <a
-              href="https://www.reddit.com/user/Besaids/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Reddit User
-            </a>
-
-            <a
-              href="https://discordapp.com/users/224358387448545280"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Discord User
-            </a>
-
-            <a
-              href="https://suno.com/playlist/cda7ce2e-c15f-47ad-bb20-885a9ee22513"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Where Winds Met - Suno Playlist
-            </a>
-          </nav>
-        </div>
+        <!-- Footer content with links -->
       </footer>
     </div>
     ```
@@ -120,10 +90,10 @@ The codebase is small but opinionated:
 
 - `layout.component.scss`
   - Overall app background, main area padding, and footer styling.
-  - Footer inner width is aligned via the shared `.page-shell` helper from the styles system.
+  - Footer inner width aligned via shared `.page-shell` helper from the styles system.
 
 **Key idea:**  
-`LayoutComponent` defines the chrome around the app; feature pages should focus only on their own content.
+`LayoutComponent` defines the chrome around the app; feature pages focus only on their own content.
 
 ---
 
@@ -136,8 +106,8 @@ The codebase is small but opinionated:
 - Folder: `app/components/navbar`
 - Responsibility:
   - Sticky top bar with logo + navigation links (`Home / Timers / Checklist`).
-  - Responsive behaviour (desktop nav vs mobile hamburger).
-  - Sits at the top of the layout shell; header is full-width with padded edges (no `.page-shell` here).
+  - Responsive behavior (desktop nav vs mobile hamburger).
+  - Mobile menu state managed with signal for OnPush compatibility: `isMenuOpen = signal(false)`.
 
 **Music player**
 
@@ -145,17 +115,24 @@ The codebase is small but opinionated:
 - Responsibility:
   - Small audio player pinned directly below the navbar (inside `NavbarComponent`).
   - Plays a curated playlist of tracks defined in `app/configs/music-tracks.ts`.
-  - Keeps state in `localStorage` via the shared storage helpers:
-    - Current track id.
-    - Volume, mute state.
-    - Shuffle on/off.
-    - Enabled/disabled tracks.
+  - Persists state in `localStorage` via `app/utils/storage/player-storage.ts`.
 
-- Implementation details:
-  - Uses a plain `HTMLAudioElement` under the hood.
-  - Tracks progress and duration with event listeners (`timeupdate`, `loadedmetadata`, `ended`).
-  - Uses Angular signals for reactive state (current track, playing flag, volume, etc.).
-  - Persists state using `loadVersioned` / `saveVersioned` from `app/utils/storage.ts`, with backward compatibility for pre-versioned data.
+- **Architecture:**
+  - **Component** (`music-player.component.ts`):
+    - Orchestrates UI interactions and delegates to services.
+    - Uses OnPush change detection.
+  - **Store** (`app/services/music-player/player-store.ts`):
+    - Signal-based reactive state (current track, playing, volume, muted, shuffle, enabled tracks).
+    - Computed signals for derived state (e.g., `enabledCount`).
+  - **Audio Service** (`app/services/music-player/player-audio.service.ts`):
+    - Manages HTML5 `Audio` element.
+    - Handles playback, seeking, volume, and event listeners.
+    - Updates store signals for time/duration changes.
+  - **Storage** (`app/utils/storage/player-storage.ts`):
+    - `loadPlayerState()` / `savePlayerState()` functions.
+    - Uses versioned storage with backward compatibility.
+  - **Utilities** (`app/components/music-player/time-format.ts`):
+    - Pure function for formatting time displays.
 
 ### 3.2 Timer strip + timers page
 
@@ -163,98 +140,97 @@ The codebase is small but opinionated:
 
 - Folder: `app/components/timer-strip`
 - Responsibility:
-  - Thin horizontal bar below the navbar and music player.
+  - Thin horizontal bar below navbar and music player.
   - Subscribes to `TimerService.timerChips$`.
-  - Renders a row of “chips” showing current and upcoming timers (reset, arena, fireworks, etc.).
-  - Each pill uses the global `.chip` style plus local tweaks.
+  - Renders a row of "chips" showing current and upcoming timers.
+  - Uses global `.chip` style plus local tweaks.
 
 **Timers page**
 
 - Folder: `app/components/timers`
 - Responsibility:
-  - Detailed explanation of each timer:
-    - Daily/weekly resets.
-    - Arena windows.
-    - Fireworks seats & show.
-    - Group content cadence, etc.
-  - Uses live timer chips inline in the text for context (global `.chip` + `.chip--timer`).
+  - Detailed explanation of each timer (resets, arena, fireworks, group content).
+  - Uses live timer chips inline in text for context (`.chip--timer`).
 
-**Timer service + configs**
+**Timer service + architecture**
 
-- `app/services/timer.service.ts`
-  - Core logic; converts static schedule definitions into live “chips”.
-  - Uses Luxon `DateTime` in UTC.
-  - `timerChips$`:
-    - Emits every second.
-    - For each tick:
-      - Reads current UTC time.
-      - Builds a `TimerChip` for every `TimerDefinition` (id, labels, icon, remaining text).
-  - Handles multiple schedule types:
-    - `daily`, `weekly`, `weekly-multi`, `weekly-range`, `daily-multi`.
-    - Computes “open vs closed”, next boundary, remaining durations.
+- **Service** (`app/services/timer/timer.service.ts`):
+  - Converts static definitions into live chips.
+  - `timerChips$` observable emits every second.
+  - Uses Luxon `DateTime` in UTC for all calculations.
 
-- `app/configs/timer-definitions.ts`
-  - Array of `TimerDefinition` objects that describe:
-    - Daily reset, weekly reset.
-    - Arena daily windows.
-    - Fireworks seat open/close range.
-    - Fireworks show schedule.
-  - Pure data; no time logic here.
+- **Builder** (`app/services/timer/timer-chip.builder.ts`):
+  - Pure function: `buildTimerChip(def, now)` → `TimerChip`.
+  - No side effects; easy to test.
 
-- `app/models/timer-definition.model.ts`
-  - Types for schedule shapes (`TimerSchedule` variants).
-- `app/models/timer-chip.model.ts`
-  - Shape of what the UI displays (`TimerChip`).
+- **Utilities** (`app/services/timer/timer-schedule.utils.ts`):
+  - Schedule calculation helpers:
+    - `getNextBoundary()` – For simple schedules (daily, weekly, weekly-multi).
+    - `getDailyMultiBoundary()` – For arena-style multi-window schedules.
+    - `getWeeklyRangeBoundary()` – For range-based schedules (e.g., Seats bidding).
+    - `formatRemaining()` – Duration formatting logic.
+
+- **Config** (`app/configs/timer-definitions.ts`):
+  - Array of `TimerDefinition` objects (daily reset, weekly reset, arena, fireworks).
+  - Pure data; no time logic.
+
+- **Models** (`app/models/`):
+  - `timer-definition.model.ts` – Types for schedule shapes.
+  - `timer-chip.model.ts` – UI representation.
 
 ### 3.3 Checklist page
 
 **Folder:** `app/components/checklist`
 
 - Responsibility:
-  - Two–tab page:
-    - **Daily** tab – daily tasks with core vs optional sections.
-    - **Weekly** tab – weekly tasks.
-  - A small **Freeplay ideas** section for “do when you feel like it” tasks.
-  - Persists completed state across sessions using shared storage helpers.
+  - Two–tab page: **Daily** and **Weekly** tasks.
+  - **Freeplay ideas** section for optional activities.
+  - Persists completed state across sessions with cycle-based keys.
 
-**Behaviour:**
+**Architecture:**
 
-- Reads task definitions from `app/configs/checklist-definitions.ts`:
-  - `DAILY_CHECKLIST`, `WEEKLY_CHECKLIST`, `FREEPLAY_IDEAS`.
-  - Each item has:
-    - `id`, `frequency`, `importance`, `category`, `label`, optional `description`, `tags`.
+- **Component** (`checklist.component.ts`):
+  - Delegates state management to `ChecklistStateService`.
+  - Uses `ResetWatchService` to detect cycle changes and reload the page.
+  - OnPush change detection with signal-based active tab.
 
-- Uses `localStorage` with cycle–based keys:
-  - Daily: `wwm-checklist-daily-<cycleId>`
-  - Weekly: `wwm-checklist-weekly-<cycleId>`
+- **Service** (`app/services/checklist/checklist-state.service.ts`):
+  - Encapsulates all checklist state logic.
+  - Methods: `isChecked()`, `toggle()`, `resetTab()`, `refreshCycleIds()`.
+  - Loads/saves state using versioned storage with cycle-based keys:
+    - `wwm-checklist-daily-<cycleId>`
+    - `wwm-checklist-weekly-<cycleId>`
+  - Falls back to legacy raw JSON for backward compatibility.
 
-- `cycleId`s are computed from Luxon in `checklist-definitions.ts`:
-  - `getDailyCycleId()`:
-    - Identifies the current daily cycle based on the game reset time (21:00 UTC).
-  - `getWeeklyCycleId()`:
-    - Same idea but weekly, anchored at Sunday 21:00 UTC.
+- **Reset Watch** (`app/services/reset/reset-watch.service.ts`):
+  - Observable stream `resetChange$` that emits when daily/weekly cycle changes.
+  - Checks once per minute using RxJS `interval`.
+  - Uses `distinctUntilChanged` to only emit on actual changes.
+  - Prevents repeated cycle ID calculations across components.
 
-- Persistence details:
-  - Uses `loadVersioned` / `saveVersioned` from `app/utils/storage.ts`.
-  - Falls back to reading legacy raw JSON if versioned data is not present (backward compatible for existing users).
-  - Keys are namespaced with `wwm-` (see storage section below).
+- **Config** (`app/configs/`):
+  - `daily-checklist.ts` – `DAILY_CHECKLIST` items.
+  - `weekly-checklist.ts` – `WEEKLY_CHECKLIST` items.
+  - `freeplay-ideas.ts` – `FREEPLAY_IDEAS` items.
+  - `cycle-ids.ts` – `getDailyCycleId()` and `getWeeklyCycleId()` functions.
+  - `reset-config.ts` – Centralized reset time constants.
+
+- **Models** (`app/models/checklist.model.ts`):
+  - Types: `ChecklistItem`, `FreeplayIdea`, `ChecklistFrequency`, `ChecklistImportance`, `ChecklistTag`.
 
 ### 3.4 Home page
 
 **Folder:** `app/components/home`
 
 - Responsibility:
-  - Entry dashboard; high–level overview + shortcuts.
-  - Cards for:
-    - Today’s key daily tasks.
-    - Weekly priorities.
-    - External resources (official site, Discord, wiki, subreddit, etc.).
+  - Entry dashboard with high-level overview + shortcuts.
+  - Cards for today's daily tasks, weekly priorities, and external resources.
 
-- Implementation details:
-  - Imports checklist definitions.
-  - Picks “highlight” items for daily/weekly (small subset for display).
-  - Mostly static layout + text.
-  - Uses global CTA buttons (`.btn-primary`, `.btn-secondary`) and card styles (`card-surface`, `card-padding`).
+- Implementation:
+  - Uses `signal(new Date())` for current date display.
+  - Updates date signal once per minute using `interval()` with `takeUntilDestroyed()`.
+  - Picks highlight items from checklist definitions (small subset for display).
+  - Uses global CTA buttons (`.btn-primary`, `.btn-secondary`) and card styles.
 
 ---
 
@@ -262,139 +238,181 @@ The codebase is small but opinionated:
 
 **Folder:** `app/configs`
 
-- `timer-definitions.ts`
-  - Structured definitions for all timers.
-  - Read by `TimerService`.
-
-- `checklist-definitions.ts`
-  - All checklist items and their metadata.
-  - Utility functions `getDailyCycleId` / `getWeeklyCycleId`.
-
-- `music-tracks.ts`
-  - List of music tracks available for the music player:
-    - `id`, title, optional description, file paths.
-
-- `index.ts`
-  - Re-exports config modules to simplify imports.
+- `timer-definitions.ts` – Timer schedule definitions.
+- `daily-checklist.ts` – Daily checklist items.
+- `weekly-checklist.ts` – Weekly checklist items.
+- `freeplay-ideas.ts` – Optional activity suggestions.
+- `cycle-ids.ts` – Cycle ID calculation utilities.
+- `reset-config.ts` – Reset time constants (hours, weekdays).
+- `music-tracks.ts` – Music player track list.
+- `index.ts` – Re-exports all configs.
 
 ---
 
-## 5. Models & services
+## 5. Models
 
 **Folder:** `app/models`
 
-- `timer-definition.model.ts`
-  - Types for timer schedule definitions (`TimerSchedule`, `TimerDefinition`).
-- `timer-chip.model.ts`
-  - UI representation of a timer chip.
-
-**Folder:** `app/services`
-
-- `timer.service.ts`
-  - Described above (timer computation).
-- `index.ts`
-  - Re-export for services.
+- `timer-definition.model.ts` – Timer schedule types.
+- `timer-chip.model.ts` – UI representation of timers.
+- `checklist.model.ts` – Checklist item and freeplay idea types.
+- `index.ts` – Re-exports all models.
 
 ---
 
-## 6. Styles
+## 6. Services
+
+**Folder:** `app/services`
+
+### Timer Services (`app/services/timer/`)
+- `timer.service.ts` – Core service exposing `timerChips$` observable.
+- `timer-chip.builder.ts` – Pure builder function.
+- `timer-schedule.utils.ts` – Schedule calculation utilities.
+
+### Checklist Services (`app/services/checklist/`)
+- `checklist-state.service.ts` – State management for checklist items.
+
+### Music Player Services (`app/services/music-player/`)
+- `player-store.ts` – Signal-based state store.
+- `player-audio.service.ts` – Audio element management.
+- Storage helpers in `app/utils/storage/player-storage.ts`.
+
+### Reset Services (`app/services/reset/`)
+- `reset-watch.service.ts` – Cycle change detection observable.
+
+All service folders have `index.ts` barrel exports.
+
+---
+
+## 7. Styles
 
 Global styles and design system live outside `app`:
 
-- Entry file: `../styles.scss`
-  - Wires in tokens, base, shared components, utilities.
-  - Imports Bootstrap CSS + Bootstrap Icons.
-- Design system: `../styles/**`
-  - See `../styles/README.md` for full documentation.
+- Entry file: `../styles.scss` – Wires in tokens, base, components, utilities.
+- Design system: `../styles/**` – See `../styles/README.md` for full documentation.
 
-Component–level SCSS in `app/components/**` should:
-
+Component-level SCSS in `app/components/**` should:
 - Use global tokens/utilities from `src/styles`.
 - Avoid duplicating card/chip/button/page patterns defined there.
 
 ---
 
-## 7. Utils & storage
+## 8. Utils & storage
 
 **Folder:** `app/utils`
 
-Current helpers:
+- `global-error-handler.ts` – Custom `ErrorHandler` for centralized error logging.
+- `storage/` – Centralized storage management:
 
-- `storage.ts`
-  - Core storage helpers.
-  - `STORAGE_PREFIX = 'wwm-'` – all keys we own start with this prefix.
-  - `STORAGE_SCHEMA_VERSION` – global storage schema version (number).
-  - `getSafeLocalStorage()` – safe access to `window.localStorage` (handles SSR / errors).
-  - `loadJsonFromStorage<T>(key)` / `saveJsonToStorage(key, value)` – raw JSON helpers.
-  - `Versioned<T>` – wrapper type `{ version, data }`.
-  - `loadVersioned<T>(key)` / `saveVersioned<T>(key, data)` – versioned payload helpers.
+### Storage Utilities (`app/utils/storage/`)
 
-- `storage-migrations.ts`
-  - `runStorageMigrations()` – central entrypoint to run migrations on app startup.
-  - Uses a special `wwm-schema-version` key to track which migrations have already been applied.
-  - Currently contains the framework only; real migrations can be added when `STORAGE_SCHEMA_VERSION` is bumped.
+- `storage.ts` – Core storage helpers:
+  - `STORAGE_PREFIX = 'wwm-'` – Prefix for all localStorage keys.
+  - `STORAGE_SCHEMA_VERSION` – Global schema version number.
+  - `getSafeLocalStorage()` – Safe access to localStorage (handles SSR/errors).
+  - `loadJsonFromStorage<T>(key)` / `saveJsonToStorage(key, value)` – Raw JSON helpers.
+  - `Versioned<T>` – Wrapper type `{ version, data }`.
+  - `loadVersioned<T>(key)` / `saveVersioned<T>(key, data)` – Versioned payload helpers.
 
-- `checklist-storage.ts`
-  - `cleanupChecklistStorage()` – called on startup to prune old checklist keys.
-  - Keeps only:
-    - `wwm-checklist-daily-<currentDailyCycleId>`
-    - `wwm-checklist-weekly-<currentWeeklyCycleId>`
-  - Deletes any older cycle keys, preventing unbounded localStorage growth.
+- `storage-migrations.ts` – Migration framework:
+  - `runStorageMigrations()` – Runs on app startup.
+  - Tracks applied migrations via `wwm-schema-version` key.
+  - Framework ready for future schema evolution.
 
-**Bootstrap behaviour (main.ts):**
+- `checklist-storage.ts` – Automatic cleanup:
+  - `cleanupChecklistStorage()` – Runs on app startup.
+  - Keeps only current daily and weekly cycle keys.
+  - Deletes old cycle keys to prevent unbounded growth.
 
-- `runStorageMigrations()` is called before Angular bootstraps.
-- `cleanupChecklistStorage()` is also called before Angular bootstraps.
-- This happens on every full page load (initial open or hard refresh), not on internal route changes.
+- `player-storage.ts` – Music player persistence:
+  - `loadPlayerState()` / `savePlayerState()` functions.
+  - Uses versioned storage with backward compatibility.
+
+**Bootstrap behavior (main.ts):**
+- `runStorageMigrations()` runs before Angular bootstraps.
+- `cleanupChecklistStorage()` runs before Angular bootstraps.
+- Happens on every full page load (not on route changes).
 
 ---
 
-## 8. How to add or change things
+## 9. How to add or change things
 
 ### Add a new page
 
 1. Create a standalone component under `app/components/<feature>/`.
-2. Add a route in `app/app.routes.ts`.
-3. Use:
-   - A centered container pattern (e.g., your own wrapper or `.page-shell` + `card-surface` / `card-padding`).
-   - Shared button/chip classes where appropriate.
-4. If the page has structured data, add it to `app/configs` instead of hardcoding in the component.
+2. Add OnPush change detection strategy.
+3. Add a route in `app/app.routes.ts`.
+4. Use `.page-shell` + `card-surface` / `card-padding` for consistent layout.
+5. If the page needs data, add it to `app/configs` instead of hardcoding.
+
+### Add a new service
+
+1. Create service under `app/services/<domain>/`.
+2. Use `@Injectable({ providedIn: 'root' })`.
+3. Export from domain's `index.ts`.
+4. For state, use signals for reactive values.
+5. Keep services focused on single responsibility.
 
 ### Add a new timer / checklist item
 
-- **Timer**
-  - Add a new entry to `TIMER_DEFINITIONS` in `app/configs/timer-definitions.ts`.
-  - Ensure the chosen `schedule.type` is supported by `TimerService`.
+- **Timer:**
+  - Add entry to `TIMER_DEFINITIONS` in `app/configs/timer-definitions.ts`.
+  - Ensure `schedule.type` is supported by timer utilities.
 
-- **Checklist**
-  - Add to `DAILY_CHECKLIST` / `WEEKLY_CHECKLIST` / `FREEPLAY_IDEAS` in `app/configs/checklist-definitions.ts`.
-  - Use a stable `id`; the id is part of the localStorage key.
+- **Checklist:**
+  - Add to `DAILY_CHECKLIST` / `WEEKLY_CHECKLIST` / `FREEPLAY_IDEAS`.
+  - Use a stable `id` (becomes part of localStorage key).
 
 ### Update styles / theme
 
 - Change tokens in `src/styles/tokens/*.scss`.
-- If a new reusable pattern appears in multiple components, promote it to:
-  - `src/styles/components/*.scss` (for structured components like cards/buttons/chips).
-  - or `src/styles/utilities/*.scss` (for small layout/text helpers).
+- If a new reusable pattern appears, promote it to:
+  - `src/styles/components/*.scss` (for structured components).
+  - `src/styles/utilities/*.scss` (for small helpers).
 
 ### Evolve storage structure
 
-When you need to change the shape of stored data:
+When changing stored data shape:
 
-1. Bump `STORAGE_SCHEMA_VERSION` in `app/utils/storage.ts`.
-2. Add migration functions in `app/utils/storage-migrations.ts` to:
+1. Bump `STORAGE_SCHEMA_VERSION` in `app/utils/storage/storage.ts`.
+2. Add migration functions in `app/utils/storage/storage-migrations.ts`:
    - Read old keys.
-   - Transform them into the new shape.
-   - Write them back as `Versioned<T>` payloads.
-3. Optionally update `cleanupChecklistStorage()` or add new cleanup helpers if key patterns change.
-4. Keep components reading via `loadVersioned` with a fallback to `loadJsonFromStorage` for legacy payloads.
+   - Transform to new shape.
+   - Write as `Versioned<T>` payloads.
+3. Update cleanup helpers if key patterns change.
+4. Keep fallback to `loadJsonFromStorage` for legacy payloads.
 
 ---
 
-## 9. Maintenance notes
+## 10. Architecture principles
 
-- This file is meant to stay **authoritative** over time:
-  - Whenever you add a new feature, route, major component, or config file, update this README.
-  - Whenever you significantly change how timers, checklist, music player, or storage work, update the relevant section here.
-- Keep `styles/README.md` in sync with any changes to tokens or shared components.
-- Optionally maintain a `project-log.md` with date-stamped bullet entries to quickly see what changed between sessions.
+### Service Layer
+- **Single responsibility:** Each service handles one domain (timer, checklist, music, reset).
+- **Dependency injection:** Services inject into components; components don't create service instances.
+- **Pure functions:** Utilities are pure where possible (builders, formatters, calculators).
+
+### State Management
+- **Signals:** All reactive state uses Angular signals.
+- **OnPush:** All components use OnPush change detection for performance.
+- **Computed values:** Derived state uses `computed()` signals.
+- **Immutability:** Signal updates create new references when needed.
+
+### Storage
+- **Versioning:** All persisted state uses versioned payloads.
+- **Backward compatibility:** Falls back to legacy formats when loading.
+- **Cleanup:** Automatic removal of stale keys on app startup.
+- **Namespacing:** All keys prefixed with `wwm-`.
+
+### Component Design
+- **Smart components:** Container components that inject services and manage state.
+- **Presentation components:** Components that receive data via signals and emit events.
+- **No business logic in templates:** Complex logic lives in services or component methods.
+
+---
+
+## 11. Maintenance notes
+
+- This file is **authoritative** – update it when adding features or changing architecture.
+- Keep `styles/README.md` in sync with token or component changes.
+- Use `project-log.md` for date-stamped bullet entries of what changed between sessions.
+- When bumping storage schema version, document the migration in both code and `project-log.md`.
