@@ -65,14 +65,21 @@
 
 /* Burger */
 
+/* Burger */
+
 .nav-toggle {
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
   font-size: 1.5rem;
   padding: 0;
-  display: none; // only on mobile
+
+  /* mobile-first: visible on small screens */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 /* Mobile menu */
 
@@ -128,9 +135,14 @@
     display: none;
   }
 
+  /* hide burger on desktop */
+  .nav-toggle {
+    display: none;
+  }
+
   .nav-music-player-container {
     flex: 0 0 auto;
-    margin-left: auto; // push player to the far right
+    margin-left: auto;
     justify-content: flex-end;
   }
 }

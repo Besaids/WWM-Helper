@@ -51,25 +51,43 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   // Fireworks hub – Kaifeng
   // ========================
 
-  // 1) Fireworks Festival – Every Saturday, Sunday at 12:30 (UTC)
+  // 0) Fireworks – Solo (Zi hour) – every evening at Zi hour (~23:00 local)
   {
-    id: 'fireworks-festival',
-    label: 'Fireworks Festival',
-    shortLabel: 'Festival',
-    icon: 'bi-brightness-high',
+    id: 'fireworks-solo-zi',
+    label: 'Fireworks – Solo (Zi hour)',
+    shortLabel: 'Solo',
+    icon: 'bi-moon-stars',
     schedule: {
-      type: 'weekly-multi',
-      weekdays: [6, 7], // Sat, Sun
-      hour: 12,
-      minute: 30,
+      type: 'daily',
+      hour: 23,
+      minute: 0,
     },
   },
 
-  // 2) Seats Bidding – Monday 1:00 → Friday 13:00 (UTC)
-  //    One long weekly window, with "open" / "closed" state.
+  // 1) Fireworks – Festival (Red Envelopes)
+  // Leisure card: Every Saturday at 12:30 and Every Sunday at 0:30 (local time)
+  // Modelled as a weekly window: open Sat 12:30, close Sun 0:30.
+  {
+    id: 'fireworks-festival',
+    label: 'Fireworks – Festival (Red Envelopes)',
+    shortLabel: 'Fest',
+    icon: 'bi-brightness-high',
+    schedule: {
+      type: 'weekly-range',
+      openWeekday: 6, // Saturday
+      openHour: 12,
+      openMinute: 30,
+      closeWeekday: 7, // Sunday
+      closeHour: 0,
+      closeMinute: 30,
+    },
+  },
+
+  // 2) Fireworks – Seats (Bidding)
+  // Map: Every Monday 1:00 → Every Friday 13:00 (local time)
   {
     id: 'fireworks-seats',
-    label: 'Fireworks Seats',
+    label: 'Fireworks – Seats (Bidding)',
     shortLabel: 'Seats',
     icon: 'bi-ticket-perforated',
     schedule: {
@@ -83,10 +101,11 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     },
   },
 
-  // 3) Fireworks Show – Event Time: Every Friday, Saturday at 20:30 (UTC)
+  // 3) Fireworks – Show (Big Night)
+  // Map: Event time Every Friday, Saturday at 20:30 (local time)
   {
     id: 'fireworks-show',
-    label: 'Fireworks Show',
+    label: 'Fireworks – Show (Big Night)',
     shortLabel: 'Show',
     icon: 'bi-stars',
     schedule: {
@@ -94,6 +113,38 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       weekdays: [5, 6], // Fri, Sat
       hour: 20,
       minute: 30,
+    },
+  },
+
+  // ========================
+  // Mirage Boat – Yellow River cruise
+  // ========================
+
+  // Leisure card: Every Sunday at 11:00 (local time)
+  {
+    id: 'mirage-boat-11',
+    label: 'Mirage Boat – 11:00',
+    shortLabel: 'Mirage 11:00',
+    icon: 'bi-tsunami',
+    schedule: {
+      type: 'weekly',
+      weekday: 7, // Sunday
+      hour: 11,
+      minute: 0,
+    },
+  },
+
+  // Leisure card: Every Sunday at 23:00 (local time)
+  {
+    id: 'mirage-boat-23',
+    label: 'Mirage Boat – 23:00',
+    shortLabel: 'Mirage 23:00',
+    icon: 'bi-tsunami',
+    schedule: {
+      type: 'weekly',
+      weekday: 7, // Sunday
+      hour: 23,
+      minute: 0,
     },
   },
 ];
