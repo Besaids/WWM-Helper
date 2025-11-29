@@ -1,0 +1,94 @@
+import { ChecklistItem } from '../models';
+
+export const DAILY_CHECKLIST: ChecklistItem[] = [
+  {
+    id: 'daily-energy',
+    frequency: 'daily',
+    importance: 'core',
+    category: 'Core loop',
+    label: 'Spend Energy on Wandering Paths (avoid capping).',
+    description:
+      'Use Campaign, Outpost or Sword Trial runs to burn Energy based on the rewards you want.',
+    tags: ['combat', 'solo', 'multiplayer'],
+  },
+  {
+    id: 'daily-jianghu-errands',
+    frequency: 'daily',
+    importance: 'core',
+    category: 'Sect & multiplayer',
+    label: 'Complete your Sect Jianghu Errands.',
+    description: 'Daily Merit for the Sect ladder plus Reputation (which has its own weekly cap).',
+    tags: ['social', 'solo'],
+  },
+  {
+    id: 'daily-multiplayer-routine',
+    frequency: 'daily',
+    importance: 'core',
+    category: 'Sect & multiplayer',
+    label:
+      'Do Blessed Land for Cultivation, Five Animal Frolics and Scholar’s Hearth (multiplayer).',
+    description:
+      'Low-stress online content that gives character XP, Coins and Adventure Slips; often overlaps with Jianghu Errands.',
+    tags: ['multiplayer', 'social'],
+  },
+  {
+    id: 'daily-merchants',
+    frequency: 'daily',
+    importance: 'core',
+    category: 'Economy',
+    label: 'Check daily-reset merchants.',
+    description:
+      'Buy only what you actually need; Coin income is limited and used in many systems.',
+    tags: ['economy', 'solo'],
+  },
+  {
+    id: 'daily-chess',
+    frequency: 'daily',
+    importance: 'core',
+    category: 'Economy',
+    label: 'Win up to 3 Ye Buxiu chess matches.',
+    description:
+      'Located in Qinghe – Dreamscape: Blissful Retreat. On Expert: up to 900 Commerce Coin per day; each loss costs 150 Coin.',
+    tags: ['economy', 'solo'],
+  },
+  {
+    id: 'daily-stamina',
+    frequency: 'daily',
+    importance: 'optional',
+    category: 'Economy',
+    label: 'Spend some Stamina on crafting (if near cap).',
+    description:
+      'Stamina caps at 2,500. Use it on gear, food, medicine, manuals or construction items if you are close to capping.',
+    tags: ['economy', 'solo'],
+  },
+  {
+    id: 'daily-baths',
+    frequency: 'daily',
+    importance: 'optional',
+    category: 'Leisure & cosmetics',
+    label: 'Visit Springwave Pavilion baths (Kaifeng).',
+    description:
+      'Give/receive massages for Coins, character XP and Adventure Slips. A 10-day streak grants the “Bathrobe: Golden Threads” outfit.',
+    tags: ['leisure', 'social', 'economy', 'multiplayer'],
+  },
+  {
+    id: 'daily-gathering',
+    frequency: 'daily',
+    importance: 'optional',
+    category: 'Preparation',
+    label: 'Gather flowers and materials used for Mystic Skill upgrades.',
+    description:
+      'Some flowers have low drop-rate mats for Mystic Skills; farming slowly over time reduces grind later.',
+    tags: ['exploration', 'solo'],
+  },
+  {
+    id: 'daily-bounties',
+    frequency: 'daily',
+    importance: 'optional',
+    category: 'Economy',
+    label: 'Do Bounties (NPC and player-posted).',
+    description:
+      'NPC Bounty pools reset daily; player bounties let you keep farming Fourfold Coin and climbing the Bounty leaderboard.',
+    tags: ['economy', 'combat', 'solo', 'multiplayer'],
+  },
+];

@@ -1,0 +1,49 @@
+@use 'tokens/colors' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/typography' as *;
+
+/* ===========================
+   Button variants (global CTA styles)
+   =========================== */
+
+/* Base shape shared by primary & secondary */
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.4rem;
+  border-radius: $radius-pill;
+  font-size: $font-size-sm;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* Gradient gold → teal CTA */
+
+.btn-primary {
+  background: linear-gradient(135deg, $accent-gold, $accent-teal);
+  color: $btn-accent-text;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+}
+
+/* Subtle outline CTA */
+
+.btn-secondary {
+  background: transparent;
+  color: $text-primary;
+  border-color: $btn-secondary-border;
+
+  &:hover {
+    border-color: $btn-secondary-border-hover;
+  }
+}

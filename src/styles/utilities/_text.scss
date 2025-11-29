@@ -1,0 +1,30 @@
+@use 'tokens/colors' as *;
+@use 'tokens/typography' as *;
+
+/* ===========================
+   Text utilities
+   =========================== */
+
+.text-muted {
+  color: $text-muted;
+}
+
+.text-muted-strong {
+  color: $text-muted-strong;
+}
+
+.u-text-xs {
+  font-size: $font-size-xs;
+}
+
+.u-text-sm {
+  font-size: $font-size-sm;
+}
+
+.u-text-lg {
+  font-size: $font-size-lg;
+}
+
+.u-text-center {
+  text-align: center;
+}

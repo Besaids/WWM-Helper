@@ -1,0 +1,15 @@
+/* ===========================
+   Radius tokens
+   =========================== */
+
+:root {
+  --radius-card: 14px;
+  --radius-pill: 999px;
+
+  /* Legacy alias used by music-player + playlist drawer */
+  --radius-lg: var(--radius-card);
+}
+
+$radius-card: var(--radius-card);
+$radius-pill: var(--radius-pill);
+$radius-lg: var(--radius-lg);

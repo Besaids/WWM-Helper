@@ -1,0 +1,51 @@
+@use 'tokens/spacing' as *;
+
+/* ===========================
+   Layout utilities
+   =========================== */
+
+.u-flex {
+  display: flex;
+}
+
+.u-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.u-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.u-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.u-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Simple gap helpers */
+.u-gap-2 {
+  gap: $space-2;
+}
+
+.u-gap-3 {
+  gap: $space-3;
+}
+
+.u-gap-4 {
+  gap: $space-4;
+}
+
+/* Vertical stack */
+.u-stack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}

@@ -1,0 +1,9 @@
+/* ===========================
+   Elevation / shadow tokens
+   =========================== */
+
+:root {
+  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
+}
+
+$shadow-soft: var(--shadow-soft);

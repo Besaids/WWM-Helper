@@ -40,11 +40,6 @@
   font-size: 0.72rem;
 }
 
-.music-player-subtitle {
-  font-size: 0.72rem;
-  // keep whatever you already had here
-}
-
 .music-player-subtitle-link {
   color: inherit;
   text-decoration: none;
@@ -129,11 +124,7 @@
 }
 
 .music-player-icon-btn--primary {
-  background: linear-gradient(
-    135deg,
-    rgba(234, 179, 8, 0.2),
-    rgba(45, 212, 191, 0.2)
-  );
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(45, 212, 191, 0.2));
   color: var(--color-text-primary);
 }
 

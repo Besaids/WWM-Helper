@@ -3,7 +3,7 @@
     <h1>Checklist</h1>
     <p class="text-muted-strong">
       Daily and weekly tasks for Where Winds Meet. Tick off what you have done; entries reset
-      automatically with the game’s daily and weekly resets.
+      automatically with the game's daily and weekly resets.
     </p>
 
     <div class="checklist-tabs">
@@ -12,6 +12,8 @@
         class="tab-pill"
         [class.tab-pill--active]="isActiveTab('daily')"
         (click)="setTab('daily')"
+        [attr.aria-pressed]="isActiveTab('daily')"
+        aria-label="Show daily checklist"
       >
         Daily
       </button>
@@ -20,6 +22,8 @@
         class="tab-pill"
         [class.tab-pill--active]="isActiveTab('weekly')"
         (click)="setTab('weekly')"
+        [attr.aria-pressed]="isActiveTab('weekly')"
+        aria-label="Show weekly checklist"
       >
         Weekly
       </button>
@@ -40,7 +44,14 @@
           </p>
         </div>
 
-        <button type="button" class="reset-link" (click)="resetCurrentTab()">
+        <button
+          type="button"
+          class="reset-link"
+          (click)="resetCurrentTab()"
+          [attr.aria-label]="
+            activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist'
+          "
+        >
           {{ activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist' }}
         </button>
       </header>
@@ -48,7 +59,7 @@
       <div class="checklist-card-body">
         <!-- Core section -->
         <section class="checklist-group">
-          <h3>Core priorities</h3>
+          <h3 id="core-heading">Core priorities</h3>
 
           @for (group of getCategoryGroups('core'); track group.category) {
             <div class="checklist-category">
@@ -61,7 +72,8 @@
                       <input
                         type="checkbox"
                         [checked]="isChecked(item)"
-                        (change)="toggleItem(item, $any($event.target).checked)"
+                        (change)="onCheckboxChange($event, item)"
+                        [attr.aria-describedby]="item.description ? 'desc-' + item.id : null"
                       />
 
                       <div class="checklist-item-content">
@@ -69,7 +81,10 @@
                           {{ item.label }}
                         </span>
                         @if (item.description) {
-                          <span class="checklist-item-description text-muted-strong">
+                          <span
+                            class="checklist-item-description text-muted-strong"
+                            [attr.id]="'desc-' + item.id"
+                          >
                             {{ item.description }}
                           </span>
                         }
@@ -106,7 +121,8 @@
                       <input
                         type="checkbox"
                         [checked]="isChecked(item)"
-                        (change)="toggleItem(item, $any($event.target).checked)"
+                        (change)="onCheckboxChange($event, item)"
+                        [attr.aria-describedby]="item.description ? 'desc-' + item.id : null"
                       />
 
                       <div class="checklist-item-content">
@@ -114,7 +130,10 @@
                           {{ item.label }}
                         </span>
                         @if (item.description) {
-                          <span class="checklist-item-description text-muted-strong">
+                          <span
+                            class="checklist-item-description text-muted-strong"
+                            [attr.id]="'desc-' + item.id"
+                          >
                             {{ item.description }}
                           </span>
                         }

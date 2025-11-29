@@ -1,0 +1,18 @@
+@use 'tokens/colors' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/elevation' as *;
+
+/* ===========================
+   Card surfaces
+   =========================== */
+
+.card-surface {
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  box-shadow: $shadow-soft;
+}
+
+.card-padding {
+  padding: 1.25rem;
+}

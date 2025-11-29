@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import {
-  ChecklistItem,
-  ChecklistImportance,
-  DAILY_CHECKLIST,
-  WEEKLY_CHECKLIST,
-} from '../../configs';
+import { DAILY_CHECKLIST, WEEKLY_CHECKLIST } from '../../configs';
+import { interval } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChecklistImportance, ChecklistItem } from '../../models';
 
 interface HighlightGroup {
   title: string;
@@ -20,8 +18,9 @@ interface HighlightGroup {
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
-  readonly today = new Date();
+export class HomeComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  readonly today = signal(new Date());
 
   readonly dailyHighlights: HighlightGroup = {
     title: 'Core daily priorities',
@@ -60,6 +59,23 @@ export class HomeComponent {
       href: 'https://www.reddit.com/r/WhereWindsMeet/',
     },
   ];
+
+  ngOnInit(): void {
+    // Poll once per minute; update signal when the calendar day changes.
+    interval(60_000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        const now = new Date();
+        const prev = this.today();
+        if (
+          prev.getFullYear() !== now.getFullYear() ||
+          prev.getMonth() !== now.getMonth() ||
+          prev.getDate() !== now.getDate()
+        ) {
+          this.today.set(now);
+        }
+      });
+  }
 
   private pickCore(source: ChecklistItem[], limit: number): ChecklistItem[] {
     return source

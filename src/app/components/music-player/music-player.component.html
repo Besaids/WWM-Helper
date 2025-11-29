@@ -21,13 +21,15 @@
     </div>
 
     <div class="music-player-header-actions">
-      <!-- Shuffle now lives to the left of volume -->
+      <!-- Shuffle -->
       <button
         type="button"
         class="music-player-icon-btn music-player-shuffle"
         [class.music-player-icon-btn--active]="shuffle()"
         (click)="toggleShuffle()"
         title="Shuffle playlist"
+        aria-label="Shuffle playlist"
+        [attr.aria-pressed]="shuffle()"
       >
         <i class="bi bi-shuffle"></i>
       </button>
@@ -37,15 +39,13 @@
           type="button"
           class="music-player-icon-btn"
           (click)="toggleMute()"
+          [attr.aria-label]="muted() ? 'Unmute' : 'Mute'"
+          [attr.aria-pressed]="muted()"
           title="Mute / Unmute"
         >
           <i
             class="bi"
-            [ngClass]="
-              muted() || volume() === 0
-                ? 'bi-volume-mute-fill'
-                : 'bi-volume-up-fill'
-            "
+            [ngClass]="muted() || volume() === 0 ? 'bi-volume-mute-fill' : 'bi-volume-up-fill'"
           ></i>
         </button>
 
@@ -56,6 +56,7 @@
           step="0.01"
           [value]="volume()"
           (input)="onVolumeInput($event)"
+          aria-label="Volume"
         />
       </div>
 
@@ -65,10 +66,7 @@
         (click)="togglePlaylist()"
         aria-label="Toggle playlist"
       >
-        <i
-          class="bi"
-          [ngClass]="isPlaylistOpen() ? 'bi-chevron-down' : 'bi-music-note-list'"
-        ></i>
+        <i class="bi" [ngClass]="isPlaylistOpen() ? 'bi-chevron-down' : 'bi-music-note-list'"></i>
       </button>
     </div>
   </header>
@@ -80,6 +78,7 @@
         class="music-player-icon-btn"
         (click)="prevTrack()"
         title="Previous track"
+        aria-label="Previous track"
       >
         <i class="bi bi-skip-backward-fill"></i>
       </button>
@@ -89,11 +88,9 @@
         class="music-player-icon-btn music-player-icon-btn--primary"
         (click)="togglePlayPause()"
         title="Play / Pause"
+        [attr.aria-label]="isPlaying() ? 'Pause' : 'Play'"
       >
-        <i
-          class="bi"
-          [ngClass]="isPlaying() ? 'bi-pause-fill' : 'bi-play-fill'"
-        ></i>
+        <i class="bi" [ngClass]="isPlaying() ? 'bi-pause-fill' : 'bi-play-fill'"></i>
       </button>
 
       <button
@@ -101,6 +98,7 @@
         class="music-player-icon-btn"
         (click)="stop()"
         title="Stop"
+        aria-label="Stop playback"
       >
         <i class="bi bi-stop-fill"></i>
       </button>
@@ -110,6 +108,7 @@
         class="music-player-icon-btn"
         (click)="nextTrack()"
         title="Next track"
+        aria-label="Next track"
       >
         <i class="bi bi-skip-forward-fill"></i>
       </button>
@@ -122,6 +121,8 @@
         [max]="duration() || 0"
         [value]="currentTime()"
         (input)="onSeek($event)"
+        aria-label="Seek"
+        [attr.aria-valuetext]="formatTime(currentTime()) + ' of ' + formatTime(duration())"
       />
       <span class="music-player-time text-muted-strong">
         {{ formatTime(currentTime()) }} / {{ formatTime(duration()) }}
@@ -144,19 +145,15 @@
           @for (track of tracks; track track.id) {
             <li
               class="music-player-playlist-item"
-              [class.music-player-playlist-item--current]="
-                track.id === currentTrackId()
-              "
+              [class.music-player-playlist-item--current]="track.id === currentTrackId()"
             >
               <label class="music-player-track-toggle">
                 <input
                   type="checkbox"
                   [checked]="isTrackEnabled(track.id)"
-                  (change)="
-                    toggleTrackEnabled(
-                      track.id,
-                      $any($event.target).checked
-                    )
+                  (change)="onTrackCheckboxChange($event, track.id)"
+                  [attr.aria-label]="
+                    (isTrackEnabled(track.id) ? 'Disable ' : 'Enable ') + track.title
                   "
                 />
               </label>
@@ -165,6 +162,7 @@
                 type="button"
                 class="music-player-track-button"
                 (click)="playTrack(track.id)"
+                [attr.aria-label]="'Play ' + track.title"
               >
                 <span class="music-player-track-title">
                   {{ track.title }}

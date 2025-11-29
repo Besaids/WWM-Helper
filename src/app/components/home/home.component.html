@@ -25,7 +25,7 @@
         <div>
           <h2>Today at a glance</h2>
           <p class="home-card-subtitle text-muted-strong">
-            {{ today | date: 'EEEE, d MMM' }} • Daily reset at 21:00 UTC.
+            {{ today() | date: 'EEEE, d MMM' }} • Daily reset at 21:00 UTC.
           </p>
         </div>
         <a routerLink="/checklist" [queryParams]="{ tab: 'daily' }" class="home-card-link">

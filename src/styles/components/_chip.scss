@@ -1,0 +1,19 @@
+@use 'tokens/colors' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/typography' as *;
+
+/* ===========================
+   Chip / pill
+   =========================== */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: $radius-pill;
+  background: $surface-chip;
+  border: 1px solid $border-subtle;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+}

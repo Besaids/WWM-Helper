@@ -13,44 +13,27 @@
   gap: 0.6rem;
   padding: 0.5rem var(--spacing-outer-x) 0.75rem;
   overflow-x: auto;
-
-  /* hide scrollbar visually, still scrollable */
-  scrollbar-width: none; /* Firefox */
-}
-.timer-strip-inner::-webkit-scrollbar {
-  display: none; /* Chrome / Edge / Safari */
 }
 
-/* Each timer pill */
+/* Pill content tweaks – visuals come from the global .chip class */
 .timer-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.85rem;
-  border-radius: var(--radius-pill);
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid var(--color-border-subtle);
-  font-size: 0.8rem;
-  color: #d1d5db;
   white-space: nowrap;
-
-  i {
-    font-size: 0.95rem;
-    opacity: 0.9;
-  }
-
-  .label {
-    opacity: 0.9;
-  }
-
-  .value {
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-    color: var(--color-accent-gold-soft);
-  }
 }
 
-/* On narrower screens, keep a single row and left-align */
+.timer-pill i {
+  font-size: 0.95rem;
+}
+
+.timer-pill .label {
+  margin-right: 0.1rem;
+}
+
+.timer-pill .value {
+  font-weight: 500;
+  color: var(--color-accent-gold-soft);
+}
+
+/* On narrower screens, keep wrapping but left-align and tighten padding */
 @media (max-width: 768px) {
   .timer-strip-inner {
     flex-wrap: wrap;
