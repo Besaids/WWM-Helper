@@ -1,0 +1,31 @@
+@use 'tokens/colors' as *;
+@use 'tokens/radius' as *;
+
+/* ===========================
+   Button variants (on top of Bootstrap)
+   =========================== */
+
+.btn-accent {
+  background: $accent-gold;
+  color: $btn-accent-text;
+  border-radius: $radius-pill;
+  border: 1px solid transparent;
+  font-weight: 500;
+
+  &:hover {
+    background: $accent-gold-soft;
+    color: $btn-accent-text;
+  }
+}
+
+.btn-accent-outline {
+  background: transparent;
+  color: $accent-gold;
+  border-radius: $radius-pill;
+  border: 1px solid $accent-gold;
+  font-weight: 500;
+
+  &:hover {
+    background: $accent-gold-overlay-soft;
+  }
+}

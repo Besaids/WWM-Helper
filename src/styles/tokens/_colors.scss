@@ -1,0 +1,59 @@
+/* ===========================
+   Color tokens
+   =========================== */
+
+:root {
+  /* Backgrounds */
+  --color-bg-root: #05070b;
+  --color-bg-elevated: #10141f;
+  --color-bg-soft: #151a26;
+  --color-bg-strip: #111827;
+
+  /* Surfaces */
+  --color-surface-card: rgba(15, 23, 42, 0.96);
+  --color-surface-chip: rgba(15, 23, 42, 0.9);
+
+  /* Accents */
+  --color-accent-gold: #e4b86a;
+  --color-accent-gold-soft: #f5d48c;
+  --color-accent-teal: #42c3c6;
+  --color-accent-red: #f46a5c;
+
+  /* Accent-related helpers */
+  --color-btn-accent-text: #020617;
+  --color-accent-gold-overlay-soft: rgba(228, 184, 106, 0.12);
+
+  /* Text */
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #a1a7b7;
+  --color-text-muted: #6b7280;
+  --color-text-muted-strong: #9da9c6;
+
+  /* Borders */
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+}
+
+/* SCSS aliases for convenience */
+
+$bg-root: var(--color-bg-root);
+$bg-elevated: var(--color-bg-elevated);
+$bg-soft: var(--color-bg-soft);
+$bg-strip: var(--color-bg-strip);
+
+$surface-card: var(--color-surface-card);
+$surface-chip: var(--color-surface-chip);
+
+$accent-gold: var(--color-accent-gold);
+$accent-gold-soft: var(--color-accent-gold-soft);
+$accent-teal: var(--color-accent-teal);
+$accent-red: var(--color-accent-red);
+
+$btn-accent-text: var(--color-btn-accent-text);
+$accent-gold-overlay-soft: var(--color-accent-gold-overlay-soft);
+
+$text-primary: var(--color-text-primary);
+$text-secondary: var(--color-text-secondary);
+$text-muted: var(--color-text-muted);
+$text-muted-strong: var(--color-text-muted-strong);
+
+$border-subtle: var(--color-border-subtle);

@@ -1,0 +1,11 @@
+/* ===========================
+   Radius tokens
+   =========================== */
+
+:root {
+  --radius-card: 14px;
+  --radius-pill: 999px;
+}
+
+$radius-card: var(--radius-card);
+$radius-pill: var(--radius-pill);

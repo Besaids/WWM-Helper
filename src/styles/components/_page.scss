@@ -1,0 +1,21 @@
+@use 'tokens/spacing' as *;
+
+/* ===========================
+   Page layout helpers
+   =========================== */
+
+/* Centered content column used by pages */
+.page-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* Generic page section spacing */
+.page-section {
+  margin-bottom: $space-5;
+}
+
+/* Header block spacing */
+.page-header {
+  margin-bottom: $space-4;
+}

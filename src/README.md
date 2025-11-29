@@ -1,0 +1,313 @@
+# WWM Helper – Frontend Overview
+
+This folder contains the Angular 21 frontend for the **Where Winds Meet Helper**.
+
+The app is a single–page “companion” site focused on:
+
+- Surfacing important **timers / reset windows**.
+- Tracking **daily / weekly checklists**.
+- Providing a small **in–page music player**.
+- Giving a lightweight **home dashboard** that links these pieces together.
+
+The codebase is small but opinionated:
+
+- Angular 21, **standalone components**, new control flow, Signals.
+- Centralised **config/data** (timers, checklist, music tracks) under `app/configs`.
+- A single **layout shell** around all routed pages.
+- A separate **design system** in `src/styles/**` (see `styles/README.md`).
+
+---
+
+## 1. Tech stack & entrypoints
+
+**Tech**
+
+- Angular 21 (standalone components).
+- TypeScript.
+- RxJS.
+- Luxon (time/date).
+- Bootstrap + Bootstrap Icons (for some base styling).
+- Custom SCSS design system under `src/styles/**`.
+
+**Entry files**
+
+- `main.ts`
+  - Bootstraps the app with `bootstrapApplication(App, appConfig)`.
+
+- `app/app.config.ts`
+  - Application config:
+    - `provideRouter(routes)` – routing.
+    - `provideHttpClient()` – HTTP (reserved for future use).
+    - `provideZoneChangeDetection({ eventCoalescing: true })`.
+    - `provideBrowserGlobalErrorListeners()`.
+
+- `app/app.routes.ts`
+  - Route table:
+    - `''` → redirect to `home`.
+    - `/home` → `HomeComponent`.
+    - `/timers` → `TimersComponent`.
+    - `/checklist` → `ChecklistComponent`.
+    - `**` → redirect to `home`.
+
+- `app/app.ts`
+  - Root component (`<app-root>`).
+  - Standalone.
+  - Renders `<app-layout>` (all real content is inside `LayoutComponent`).
+
+---
+
+## 2. Layout shell
+
+**Location:** `app/components/layout`
+
+- `layout.component.ts`
+  - Standalone.
+  - Imports `NavbarComponent`, `TimerStripComponent`, `RouterOutlet`.
+
+- `layout.component.html`
+  - High–level shell:
+
+    ```html
+    <div class="app-shell">
+      <app-navbar></app-navbar>
+      <app-timer-strip></app-timer-strip>
+
+      <main class="app-main">
+        <router-outlet></router-outlet>
+      </main>
+
+      <footer class="app-footer">
+        <!-- footer links (Discord, Reddit, Suno playlist, etc.) -->
+      </footer>
+    </div>
+    ```
+
+  - Every routed page (`Home`, `Timers`, `Checklist`) is injected into `<router-outlet>`.
+
+- `layout.component.scss`
+  - Overall app background, main area padding, and footer styling.
+
+**Key idea:**  
+`LayoutComponent` defines the chrome around the app; feature pages should focus only on their own content.
+
+---
+
+## 3. Components & feature areas
+
+### 3.1 Navbar & music player
+
+**Navbar**
+
+- Folder: `app/components/navbar`
+- Responsibility:
+  - Sticky top bar with logo + navigation links (`Home / Timers / Checklist`).
+  - Responsive behaviour (desktop nav vs mobile hamburger).
+  - Hosts the **music player** right below the nav.
+
+**Music player**
+
+- Folder: `app/components/music-player`
+- Responsibility:
+  - Small audio player pinned under the navbar.
+  - Plays a curated playlist of tracks defined in `app/configs/music-tracks.ts`.
+  - Keeps state in `localStorage`:
+    - Current track id.
+    - Volume, mute state.
+    - Shuffle on/off.
+    - Enabled/disabled tracks.
+
+- Implementation details:
+  - Uses a plain `HTMLAudioElement` under the hood.
+  - Tracks progress and duration with event listeners (`timeupdate`, `loadedmetadata`, `ended`).
+  - Uses Angular signals for reactive state (current track, playing flag, volume, etc.).
+
+### 3.2 Timer strip + timers page
+
+**Timer Strip**
+
+- Folder: `app/components/timer-strip`
+- Responsibility:
+  - Thin horizontal bar below the navbar.
+  - Subscribes to `TimerService.timerChips$`.
+  - Renders a row of “chips” showing current and upcoming timers (reset, arena, fireworks, etc.).
+
+**Timers page**
+
+- Folder: `app/components/timers`
+- Responsibility:
+  - Detailed explanation of each timer:
+    - Daily/weekly resets.
+    - Arena windows.
+    - Fireworks seats & show.
+    - Group content cadence, etc.
+  - Uses live timer chips inline in the text for context.
+
+**Timer service + configs**
+
+- `app/services/timer.service.ts`
+  - Core logic; converts static schedule definitions into live “chips”.
+  - Uses Luxon `DateTime` in UTC.
+  - `timerChips$`:
+    - Emits every second.
+    - For each tick:
+      - Reads current UTC time.
+      - Builds a `TimerChip` for every `TimerDefinition` (id, labels, icon, remaining text).
+  - Handles multiple schedule types:
+    - `daily`, `weekly`, `weekly-multi`, `weekly-range`, `daily-multi`.
+    - Computes “open vs closed”, next boundary, remaining durations.
+
+- `app/configs/timer-definitions.ts`
+  - Array of `TimerDefinition` objects that describe:
+    - Daily reset, weekly reset.
+    - Arena daily windows.
+    - Fireworks seat open/close range.
+    - Fireworks show schedule.
+  - Pure data; no time logic here.
+
+- `app/models/timer-definition.model.ts`
+  - Types for schedule shapes (`TimerSchedule` variants).
+- `app/models/timer-chip.model.ts`
+  - Shape of what the UI displays (`TimerChip`).
+
+### 3.3 Checklist page
+
+**Folder:** `app/components/checklist`
+
+- Responsibility:
+  - Two–tab page:
+    - **Daily** tab – daily tasks with core vs optional sections.
+    - **Weekly** tab – weekly tasks.
+  - A small **Freeplay ideas** section for “do when you feel like it” tasks.
+  - Persists completed state across sessions.
+
+**Behaviour:**
+
+- Reads task definitions from `app/configs/checklist-definitions.ts`:
+  - `DAILY_CHECKLIST`, `WEEKLY_CHECKLIST`, `FREEPLAY_IDEAS`.
+  - Each item has:
+    - `id`, `frequency`, `importance`, `category`, `label`, optional `description`, `tags`.
+
+- Uses `localStorage` with cycle–based keys:
+  - Daily: `wwm-checklist-daily-<cycleId>`
+  - Weekly: `wwm-checklist-weekly-<cycleId>`
+
+- `cycleId`s are computed from Luxon in `checklist-definitions.ts`:
+  - `getDailyCycleId()`:
+    - Identifies the current daily cycle based on the game reset time (21:00 UTC).
+  - `getWeeklyCycleId()`:
+    - Same idea but weekly, anchored at Sunday 21:00 UTC.
+
+- The component:
+  - Maintains `dailyState` and `weeklyState` maps in memory.
+  - Loads/saves them via `localStorage`.
+  - Checks once a minute whether the cycle id changed; if so, it reloads the page to clear state.
+
+### 3.4 Home page
+
+**Folder:** `app/components/home`
+
+- Responsibility:
+  - Entry dashboard; high–level overview + shortcuts.
+  - Cards for:
+    - Today’s key daily tasks.
+    - Weekly priorities.
+    - External resources (official site, Discord, wiki, subreddit, etc.).
+
+- Implementation details:
+  - Imports checklist definitions.
+  - Picks “highlight” items for daily/weekly (small subset for display).
+  - Mostly static layout + text.
+
+---
+
+## 4. Data/configuration modules
+
+**Folder:** `app/configs`
+
+- `timer-definitions.ts`
+  - Structured definitions for all timers.
+  - Read by `TimerService`.
+
+- `checklist-definitions.ts`
+  - All checklist items and their metadata.
+  - Utility functions `getDailyCycleId` / `getWeeklyCycleId`.
+
+- `music-tracks.ts`
+  - List of music tracks available for the music player:
+    - `id`, title, optional description, file paths.
+
+- `index.ts`
+  - Re-exports config modules to simplify imports.
+
+---
+
+## 5. Models & services
+
+**Folder:** `app/models`
+
+- `timer-definition.model.ts`
+  - Types for timer schedule definitions (`TimerSchedule`, `TimerDefinition`).
+- `timer-chip.model.ts`
+  - UI representation of a timer chip.
+
+**Folder:** `app/services`
+
+- `timer.service.ts`
+  - Described above (timer computation).
+- `index.ts`
+  - Re-export for services.
+
+---
+
+## 6. Styles
+
+Global styles and design system live outside `app`:
+
+- Entry file: `../styles.scss`
+- Design system: `../styles/**`
+  - See `../styles/README.md` for full documentation.
+
+Component–level SCSS in `app/components/**` should:
+
+- Use global tokens/utilities from `src/styles`.
+- Avoid duplicating card/chip/button/page patterns defined there.
+
+---
+
+## 7. How to add or change things
+
+### Add a new page
+
+1. Create a standalone component under `app/components/<feature>/`.
+2. Add a route in `app/app.routes.ts`.
+3. Use:
+   - `<div class="page-shell">` + card helpers from the styles system.
+   - Shared button/chip classes where appropriate.
+4. If the page has structured data, add it to `app/configs` instead of hardcoding in the component.
+
+### Add a new timer / checklist item
+
+- **Timer**
+  - Add a new entry to `TIMER_DEFINITIONS` in `app/configs/timer-definitions.ts`.
+  - Ensure the chosen `schedule.type` is supported by `TimerService`.
+
+- **Checklist**
+  - Add to `DAILY_CHECKLIST` / `WEEKLY_CHECKLIST` / `FREEPLAY_IDEAS` in `app/configs/checklist-definitions.ts`.
+  - Use a stable `id`; the id is part of the localStorage key.
+
+### Update styles / theme
+
+- Change tokens in `src/styles/tokens/*.scss`.
+- If a new reusable pattern appears in multiple components, promote it to:
+  - `src/styles/components/*.scss` (for structured components like cards/buttons/chips).
+  - or `src/styles/utilities/*.scss` (for small layout/text helpers).
+
+---
+
+## 8. Maintenance notes
+
+- This file is meant to stay **authoritative** over time:
+  - Whenever you add a new feature, route, major component, or config file, update this README.
+  - Whenever you significantly change how timers, checklist, or music player work, update the relevant section here.
+
+Keeping `src/README.md` and `styles/README.md` in sync with the codebase makes it much easier for tools (and future humans) to understand the project quickly without needing to re-discover the architecture from scratch.
