@@ -1,5 +1,86 @@
 ## 2025-11-30
 
+### Checklist Enhancements
+
+#### Detailed / Simple View Modes
+
+- Added a view-density toggle with two modes:
+  - **Detailed** – displays label, description, and tags.
+  - **Simple** – displays label only for a compact layout.
+- View preference is saved in `localStorage` separately for Daily and Weekly.
+- Completion visuals (strike-through + muted colors) apply consistently in both modes.
+
+#### New Diamond-Style Checklist Toggle
+
+- Replaced old dash/check toggle with a diamond indicator matching the Timers UI.
+- **Unchecked:** hollow gold diamond.
+- **Checked:** teal-filled diamond with glow animation.
+- Fully accessible (native checkbox under the hood).
+
+#### Improved Completion Styling
+
+- Completed items now:
+  - Strike through the label.
+  - Fade description and tags.
+  - Keep consistent appearance in both view modes.
+
+---
+
+### Checklist Layout & Styling Consistency
+
+#### Tabs & Reset Button
+
+- Daily/Weekly tab pills restyled to unify with Timers.
+- Reset checklist button given fixed width to prevent layout shift between "daily" and "weekly".
+
+#### Card Styling
+
+- Checklist cards now correctly inherit `.card-surface`:
+  - Subtle border
+  - Rounded radius
+  - Soft glow/shadow
+- Fixed SCSS overrides that previously removed the border.
+
+---
+
+### Background & App Shell Improvements
+
+#### Gradient & Noise Overhaul
+
+- Added layered background:
+  1. Radial/linear dark gradient.
+  2. Optional cyan bloom for atmospheric lighting.
+  3. Seamless 512×512 ink-paper noise texture (soft-light blend).
+- Eliminates banding and adds wuxia-inspired texture.
+
+#### Consistency Fix
+
+- Checklist and Timers now share identical background behavior.
+- Fixed issue where pages appeared to have different bloom intensity.
+
+---
+
+### Timers Mobile UX Fixes
+
+#### Auto-scrolling on “Details”
+
+- On mobile, opening a timer row now scrolls that row into view.
+- Prevents viewport jump caused by collapsing another row above/below.
+- Desktop unaffected.
+
+#### Mobile Alignment Fix
+
+- Timer row metadata now uses `justify-content: space-between`.
+- Countdown stays left; “Details” button aligns cleanly to the right.
+
+---
+
+### General Layout Cleanup
+
+- Removed local SCSS overrides that clashed with global card tokens.
+- Synced spacing, typography, and padding between Timers and Checklist.
+- Verified consistent use of radius, border, and shadow tokens across both screens.
+
 ### Timers UX overhaul
 
 **Timer visibility & preferences**
@@ -60,6 +141,7 @@
 ### Major Refactoring: Service-Based Architecture
 
 **Storage Layer Improvements**
+
 - Created centralized storage utilities under `app/utils/storage/`:
   - `storage.ts` – Core versioned storage helpers with `STORAGE_PREFIX` and `STORAGE_SCHEMA_VERSION`
   - `storage-migrations.ts` – Migration framework for schema evolution
@@ -69,6 +151,7 @@
 - Storage migrations and cleanup run automatically on app bootstrap (in `main.ts`)
 
 **Config Layer Restructuring**
+
 - Split `checklist-definitions.ts` into modular files:
   - `daily-checklist.ts` – Daily checklist items
   - `weekly-checklist.ts` – Weekly checklist items
@@ -78,25 +161,27 @@
 - Created `models/checklist.model.ts` for checklist-related types
 
 **Service Layer Introduction**
+
 - Created service-based architecture for core features:
-  
+
   **Checklist Services** (`app/services/checklist/`):
   - `checklist-state.service.ts` – Encapsulates checklist state management, persistence, and cycle tracking
-  
+
   **Music Player Services** (`app/services/music-player/`):
   - `player-store.ts` – Signal-based reactive state store
   - `player-audio.service.ts` – HTML5 audio element management and playback control
   - Storage helpers moved to `app/utils/storage/player-storage.ts`
-  
+
   **Reset Services** (`app/services/reset/`):
   - `reset-watch.service.ts` – Centralized cycle change detection with observable stream
-  
+
   **Timer Services** (`app/services/timer/`):
   - Refactored `timer.service.ts` to use modular helper functions
   - `timer-chip.builder.ts` – Pure function for building timer chips from definitions
   - `timer-schedule.utils.ts` – Schedule calculation utilities (`getNextBoundary`, `getDailyMultiBoundary`, etc.)
 
 **Component Updates**
+
 - `ChecklistComponent` – Refactored to delegate state management to `ChecklistStateService` and use `ResetWatchService` for cycle changes
 - `MusicPlayerComponent` – Refactored to use `PlayerStore`, `PlayerAudioService`, and modular storage helpers
 - `HomeComponent` – Added day change detection with RxJS `interval` and `takeUntilDestroyed`
@@ -104,14 +189,17 @@
 - All components now use `ChangeDetectionStrategy.OnPush` for optimal performance
 
 **Error Handling**
+
 - Added `global-error-handler.ts` as custom `ErrorHandler` implementation
 - Registered in `app.config.ts` to centralize error logging
 
 **Utilities**
+
 - Created `time-format.ts` helper in `app/components/music-player/` for consistent time formatting
 - Updated `app/utils/index.ts` to export only storage and error handler utilities
 
 **Architecture Benefits**
+
 - Clear separation of concerns (components, services, configs, models, utils)
 - Testable service layer with dependency injection
 - Centralized state management with signals

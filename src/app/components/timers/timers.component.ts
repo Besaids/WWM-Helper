@@ -37,14 +37,48 @@ export class TimersComponent {
   }
 
   toggleInfo(id: string): void {
-    const isSame = this.openTimerId === id;
-    this.openTimerId = isSame ? null : id;
+    const isOpening = this.openTimerId !== id;
 
-    // If we closed the outer drawer or switched to another timer,
-    // collapse the long body as well.
+    // Toggle which timer is open
+    this.openTimerId = isOpening ? id : null;
+
+    // If we are closing the currently-open one, also collapse the long body
     if (!this.openTimerId || this.openTimerId !== id) {
       this.longDetailsId = null;
     }
+
+    // When *opening* a timer, gently scroll it into view on mobile
+    if (isOpening) {
+      // Wait for the DOM to update so the details block actually exists
+      setTimeout(() => this.scrollTimerIntoView(id), 0);
+    }
+  }
+
+  private scrollTimerIntoView(id: string): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    // Only do this on mobile-ish widths; avoid jumping desktop viewport
+    if (window.innerWidth > 768) {
+      return;
+    }
+
+    const el = document.getElementById(`timer-${id}`);
+    if (!el) {
+      return;
+    }
+
+    // Offset so the row sits nicely below the top nav / timers strip
+    const headerOffset = 80; // tweak if needed
+
+    const rect = el.getBoundingClientRect();
+    const targetY = window.scrollY + rect.top - headerOffset;
+
+    window.scrollTo({
+      top: targetY,
+      behavior: 'smooth',
+    });
   }
 
   toggleLongDetails(id: string): void {

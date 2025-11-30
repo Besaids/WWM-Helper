@@ -2,7 +2,21 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at top, #121826 0, var(--color-bg-root) 55%, #03040a 100%);
+
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      #1b2436 0,
+      /* brighter than #121826 */ var(--color-bg-root) 55%,
+      #02030a 100%
+    ),
+    url('/assets/portal/noise.png'); /* put noise on top */
+
+  background-size:
+    auto,
+    512px 512px; /* bigger tiles = softer pattern */
+  background-blend-mode: normal, soft-light;
+  background-attachment: fixed;
   color: var(--color-text-primary);
 }
 

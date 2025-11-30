@@ -44,16 +44,37 @@
           </p>
         </div>
 
-        <button
-          type="button"
-          class="reset-link"
-          (click)="resetCurrentTab()"
-          [attr.aria-label]="
-            activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist'
-          "
-        >
-          {{ activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist' }}
-        </button>
+        <div class="checklist-card-header-actions">
+          <div class="checklist-view-toggle" role="group" aria-label="Checklist view density">
+            <button
+              type="button"
+              class="checklist-view-toggle__btn"
+              [class.checklist-view-toggle__btn--active]="!isCompactView"
+              (click)="setViewMode('detailed')"
+            >
+              Detailed
+            </button>
+            <button
+              type="button"
+              class="checklist-view-toggle__btn"
+              [class.checklist-view-toggle__btn--active]="isCompactView"
+              (click)="setViewMode('compact')"
+            >
+              Simple
+            </button>
+          </div>
+
+          <button
+            type="button"
+            class="reset-link"
+            (click)="resetCurrentTab()"
+            [attr.aria-label]="
+              activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist'
+            "
+          >
+            {{ activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist' }}
+          </button>
+        </div>
       </header>
 
       <div class="checklist-card-body">
@@ -68,37 +89,36 @@
               <ul>
                 @for (item of group.items; track item.id) {
                   <li>
-                    <label class="checklist-item">
-                      <input
-                        type="checkbox"
-                        [checked]="isChecked(item)"
-                        (change)="onCheckboxChange($event, item)"
-                        [attr.aria-describedby]="item.description ? 'desc-' + item.id : null"
-                      />
+                    <app-checklist-toggle
+                      [checked]="isChecked(item)"
+                      (checkedChange)="onToggleItem($event, item)"
+                      [ariaDescribedBy]="
+                        !isCompactView && item.description ? 'desc-' + item.id : null
+                      "
+                    >
+                      <span class="checklist-item-label">
+                        {{ item.label }}
+                      </span>
 
-                      <div class="checklist-item-content">
-                        <span class="checklist-item-label">
-                          {{ item.label }}
+                      @if (!isCompactView && item.description) {
+                        <span
+                          class="checklist-item-description text-muted-strong"
+                          [attr.id]="'desc-' + item.id"
+                        >
+                          {{ item.description }}
                         </span>
-                        @if (item.description) {
-                          <span
-                            class="checklist-item-description text-muted-strong"
-                            [attr.id]="'desc-' + item.id"
-                          >
-                            {{ item.description }}
-                          </span>
-                        }
-                        @if (item.tags?.length) {
-                          <div class="checklist-tags">
-                            @for (tag of item.tags; track tag) {
-                              <span class="checklist-tag">
-                                {{ tag }}
-                              </span>
-                            }
-                          </div>
-                        }
-                      </div>
-                    </label>
+                      }
+
+                      @if (!isCompactView && item.tags?.length) {
+                        <div class="checklist-tags">
+                          @for (tag of item.tags; track tag) {
+                            <span class="checklist-tag">
+                              {{ tag }}
+                            </span>
+                          }
+                        </div>
+                      }
+                    </app-checklist-toggle>
                   </li>
                 }
               </ul>
@@ -106,9 +126,9 @@
           }
         </section>
 
-        <!-- Optional section -->
+        <!-- Nice extras / optional section -->
         <section class="checklist-group checklist-group--optional">
-          <h3>Nice extras</h3>
+          <h3 id="optional-heading">Nice extras</h3>
 
           @for (group of getCategoryGroups('optional'); track group.category) {
             <div class="checklist-category">
@@ -117,37 +137,36 @@
               <ul>
                 @for (item of group.items; track item.id) {
                   <li>
-                    <label class="checklist-item">
-                      <input
-                        type="checkbox"
-                        [checked]="isChecked(item)"
-                        (change)="onCheckboxChange($event, item)"
-                        [attr.aria-describedby]="item.description ? 'desc-' + item.id : null"
-                      />
+                    <app-checklist-toggle
+                      [checked]="isChecked(item)"
+                      (checkedChange)="onToggleItem($event, item)"
+                      [ariaDescribedBy]="
+                        !isCompactView && item.description ? 'desc-' + item.id : null
+                      "
+                    >
+                      <span class="checklist-item-label">
+                        {{ item.label }}
+                      </span>
 
-                      <div class="checklist-item-content">
-                        <span class="checklist-item-label">
-                          {{ item.label }}
+                      @if (!isCompactView && item.description) {
+                        <span
+                          class="checklist-item-description text-muted-strong"
+                          [attr.id]="'desc-' + item.id"
+                        >
+                          {{ item.description }}
                         </span>
-                        @if (item.description) {
-                          <span
-                            class="checklist-item-description text-muted-strong"
-                            [attr.id]="'desc-' + item.id"
-                          >
-                            {{ item.description }}
-                          </span>
-                        }
-                        @if (item.tags?.length) {
-                          <div class="checklist-tags">
-                            @for (tag of item.tags; track tag) {
-                              <span class="checklist-tag">
-                                {{ tag }}
-                              </span>
-                            }
-                          </div>
-                        }
-                      </div>
-                    </label>
+                      }
+
+                      @if (!isCompactView && item.tags?.length) {
+                        <div class="checklist-tags">
+                          @for (tag of item.tags; track tag) {
+                            <span class="checklist-tag">
+                              {{ tag }}
+                            </span>
+                          }
+                        </div>
+                      }
+                    </app-checklist-toggle>
                   </li>
                 }
               </ul>

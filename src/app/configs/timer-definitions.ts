@@ -61,7 +61,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       type: 'weekly-times',
       times: [
         { weekday: 6, hour: 12, minute: 30 }, // Saturday 12:30
-        { weekday: 7, hour: 0, minute: 30 },  // Sunday 00:30
+        { weekday: 7, hour: 0, minute: 30 }, // Sunday 00:30
       ],
     },
   },

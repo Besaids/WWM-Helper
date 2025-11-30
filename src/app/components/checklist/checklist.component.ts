@@ -13,13 +13,22 @@ import { DAILY_CHECKLIST, WEEKLY_CHECKLIST, FREEPLAY_IDEAS } from '../../configs
 import { ChecklistStateService } from '../../services/checklist/checklist-state.service';
 import { ResetWatchService } from '../../services/reset/reset-watch.service';
 import { ChecklistImportance, ChecklistItem } from '../../models';
+import { ChecklistToggleComponent } from '../ui';
 
 type ChecklistTab = 'daily' | 'weekly';
+type ChecklistViewMode = 'detailed' | 'compact';
+
+const CHECKLIST_VIEW_MODE_STORAGE_KEY = 'wwm-helper.checklist.view-mode';
+
+interface ChecklistCategoryGroup {
+  category: string;
+  items: ChecklistItem[];
+}
 
 @Component({
   selector: 'app-checklist',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ChecklistToggleComponent],
   templateUrl: './checklist.component.html',
   styleUrl: './checklist.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,13 +43,25 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   readonly FREEPLAY_IDEAS = FREEPLAY_IDEAS;
 
   readonly activeTab = signal<ChecklistTab>('daily');
+  readonly viewMode = signal<ChecklistViewMode>('detailed');
 
   private subs = new Subscription();
 
   ngOnInit(): void {
+    // Initial tab from query param
     const tabParam = this.route.snapshot.queryParamMap.get('tab');
     if (tabParam === 'daily' || tabParam === 'weekly') {
       this.activeTab.set(tabParam);
+    }
+
+    // Restore view mode from localStorage
+    try {
+      const stored = window.localStorage.getItem(CHECKLIST_VIEW_MODE_STORAGE_KEY);
+      if (stored === 'detailed' || stored === 'compact') {
+        this.viewMode.set(stored);
+      }
+    } catch {
+      // ignore – localStorage not available
     }
 
     // Subscribe to cycle changes and reload when they occur
@@ -66,14 +87,31 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     return this.activeTab() === tab;
   }
 
+  // --- View mode handling ---
+
+  setViewMode(mode: ChecklistViewMode): void {
+    if (this.viewMode() === mode) {
+      return;
+    }
+    this.viewMode.set(mode);
+    try {
+      window.localStorage.setItem(CHECKLIST_VIEW_MODE_STORAGE_KEY, mode);
+    } catch {
+      // ignore
+    }
+  }
+
+  get isCompactView(): boolean {
+    return this.viewMode() === 'compact';
+  }
+
   // --- State proxy methods for template ---
 
   isChecked(item: ChecklistItem): boolean {
     return this.state.isChecked(item);
   }
 
-  onCheckboxChange(event: Event, item: ChecklistItem): void {
-    const checked = (event.target as HTMLInputElement).checked;
+  onToggleItem(checked: boolean, item: ChecklistItem): void {
     this.state.toggle(item, checked);
   }
 
@@ -90,25 +128,24 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   getItemsForTab(importance: ChecklistImportance): ChecklistItem[] {
     const tab = this.activeTab();
     const source = tab === 'daily' ? this.DAILY_ITEMS : this.WEEKLY_ITEMS;
-
-    return source
-      .filter((i) => i.importance === importance)
-      .sort((a, b) => a.category.localeCompare(b.category) || a.label.localeCompare(b.label));
+    return source.filter((item) => item.importance === importance);
   }
 
-  getCategoryGroups(
-    importance: ChecklistImportance,
-  ): { category: string; items: ChecklistItem[] }[] {
+  getCategoryGroups(importance: ChecklistImportance): ChecklistCategoryGroup[] {
     const items = this.getItemsForTab(importance);
-    const byCategory = new Map<string, ChecklistItem[]>();
 
+    const grouped: Record<string, ChecklistItem[]> = {};
     for (const item of items) {
-      if (!byCategory.has(item.category)) byCategory.set(item.category, []);
-      byCategory.get(item.category)!.push(item);
+      const category = item.category ?? 'Other';
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+      grouped[category].push(item);
     }
 
-    return Array.from(byCategory.entries())
-      .map(([category, group]) => ({ category, items: group }))
-      .sort((a, b) => a.category.localeCompare(b.category));
+    return Object.entries(grouped).map(([category, categoryItems]) => ({
+      category,
+      items: categoryItems,
+    }));
   }
 }

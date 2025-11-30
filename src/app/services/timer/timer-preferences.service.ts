@@ -14,7 +14,7 @@ const DEFAULT_ENABLED_IDS: string[] = ['daily-reset', 'weekly-reset', 'arena-1v1
 @Injectable({ providedIn: 'root' })
 export class TimerPreferencesService {
   private readonly enabledIdsSubject = new BehaviorSubject<Set<string>>(
-    new Set(this.loadInitialIds())
+    new Set(this.loadInitialIds()),
   );
 
   /** Observable set of enabled timer IDs */
@@ -53,11 +53,7 @@ export class TimerPreferencesService {
 
   private loadInitialIds(): string[] {
     const stored = loadJsonFromStorage<TimerPreferencesStorage>(STORAGE_KEY);
-    if (
-      stored &&
-      stored.version === STORAGE_VERSION &&
-      Array.isArray(stored.enabledIds)
-    ) {
+    if (stored && stored.version === STORAGE_VERSION && Array.isArray(stored.enabledIds)) {
       return stored.enabledIds;
     }
     return DEFAULT_ENABLED_IDS;

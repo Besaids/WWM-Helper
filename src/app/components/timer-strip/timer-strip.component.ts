@@ -27,9 +27,7 @@ export class TimerStripComponent {
         .filter((chip) => enabledIds.has(chip.id))
         .slice() // avoid mutating source array
         .sort(
-          (a, b) =>
-            this.getRemainingSortKey(a.remaining) -
-            this.getRemainingSortKey(b.remaining),
+          (a, b) => this.getRemainingSortKey(a.remaining) - this.getRemainingSortKey(b.remaining),
         ),
     ),
   );

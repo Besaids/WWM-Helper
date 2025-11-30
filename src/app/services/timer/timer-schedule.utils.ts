@@ -93,14 +93,7 @@ export function getWeeklyRangeBoundary(
   schedule: Extract<TimerSchedule, { type: 'weekly-range' }>,
   now: DateTime,
 ): { nextBoundary: DateTime; isOpen: boolean } {
-  const {
-    openWeekday,
-    openHour,
-    openMinute,
-    closeWeekday,
-    closeHour,
-    closeMinute,
-  } = schedule;
+  const { openWeekday, openHour, openMinute, closeWeekday, closeHour, closeMinute } = schedule;
 
   const computeWindow = (base: DateTime) => {
     const todayWeekday = base.weekday;
@@ -207,9 +200,7 @@ function getWeeklyTimesBoundary(
     const todayWeekday = now.weekday;
     const daysToAdd = (weekday - todayWeekday + 7) % 7;
 
-    let candidate = now
-      .plus({ days: daysToAdd })
-      .set({ hour, minute, second: 0, millisecond: 0 });
+    let candidate = now.plus({ days: daysToAdd }).set({ hour, minute, second: 0, millisecond: 0 });
 
     if (candidate <= now) {
       candidate = candidate.plus({ days: 7 });
@@ -243,4 +234,3 @@ export function formatRemaining(duration: Duration): string {
   // < 1 day: Xh Ym Zs
   return `${hours}h ${minutes}m ${seconds}s`;
 }
-

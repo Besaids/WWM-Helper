@@ -278,20 +278,24 @@ The codebase is small but opinionated:
 **Folder:** `app/services`
 
 ### Timer Services (`app/services/timer/`)
+
 - `timer.service.ts` – Core service exposing `timerChips$` observable.
 - `timer-chip.builder.ts` – Pure builder function.
 - `timer-schedule.utils.ts` – Schedule calculation utilities.
 - `timer-preferences.service.ts` – Persists which timers are visible in the strip using versioned localStorage and exposes `enabledTimerIds$` plus sensible defaults (Daily / Weekly / Arena 1v1).
 
 ### Checklist Services (`app/services/checklist/`)
+
 - `checklist-state.service.ts` – State management for checklist items.
 
 ### Music Player Services (`app/services/music-player/`)
+
 - `player-store.ts` – Signal-based state store.
 - `player-audio.service.ts` – Audio element management.
 - Storage helpers in `app/utils/storage/player-storage.ts`.
 
 ### Reset Services (`app/services/reset/`)
+
 - `reset-watch.service.ts` – Cycle change detection observable.
 
 All service folders have `index.ts` barrel exports.
@@ -306,6 +310,7 @@ Global styles and design system live outside `app`:
 - Design system: `../styles/**` – See `../styles/README.md` for full documentation.
 
 Component-level SCSS in `app/components/**` should:
+
 - Use global tokens/utilities from `src/styles`.
 - Avoid duplicating card/chip/button/page patterns defined there.
 
@@ -343,6 +348,7 @@ Component-level SCSS in `app/components/**` should:
   - Uses versioned storage with backward compatibility.
 
 **Bootstrap behavior (main.ts):**
+
 - `runStorageMigrations()` runs before Angular bootstraps.
 - `cleanupChecklistStorage()` runs before Angular bootstraps.
 - Happens on every full page load (not on route changes).
@@ -401,23 +407,27 @@ When changing stored data shape:
 ## 10. Architecture principles
 
 ### Service Layer
+
 - **Single responsibility:** Each service handles one domain (timer, checklist, music, reset).
 - **Dependency injection:** Services inject into components; components don't create service instances.
 - **Pure functions:** Utilities are pure where possible (builders, formatters, calculators).
 
 ### State Management
+
 - **Signals:** All reactive state uses Angular signals.
 - **OnPush:** All components use OnPush change detection for performance.
 - **Computed values:** Derived state uses `computed()` signals.
 - **Immutability:** Signal updates create new references when needed.
 
 ### Storage
+
 - **Versioning:** All persisted state uses versioned payloads.
 - **Backward compatibility:** Falls back to legacy formats when loading.
 - **Cleanup:** Automatic removal of stale keys on app startup.
 - **Namespacing:** All keys prefixed with `wwm-`.
 
 ### Component Design
+
 - **Smart components:** Container components that inject services and manage state.
 - **Presentation components:** Components that receive data via signals and emit events.
 - **No business logic in templates:** Complex logic lives in services or component methods.

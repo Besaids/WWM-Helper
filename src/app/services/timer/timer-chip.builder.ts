@@ -1,6 +1,11 @@
 import { DateTime } from 'luxon';
 import { TimerChip, TimerDefinition, TimerSchedule } from '../../models';
-import { formatRemaining, getDailyMultiBoundary, getNextBoundary, getWeeklyRangeBoundary } from './timer-schedule.utils';
+import {
+  formatRemaining,
+  getDailyMultiBoundary,
+  getNextBoundary,
+  getWeeklyRangeBoundary,
+} from './timer-schedule.utils';
 
 /**
  * Build a TimerChip from a TimerDefinition and current UTC time.

@@ -1,21 +1,19 @@
 <section class="timers-page">
+  <header class="timers-settings-header">
+    <h1>Timers</h1>
+    <p class="text-muted-strong">
+      Toggle which timers appear in the strip at the top. Changes are saved in your browser.
+    </p>
+  </header>
   @if (timers$ | async; as timers) {
-
     <!-- =======================
          Timer visibility settings
          ======================= -->
-    <section class="timers-settings card-surface card-padding">
-      <header class="timers-settings-header">
-        <h2>Timers</h2>
-        <p class="text-muted-strong">
-          Toggle which timers appear in the strip at the top. Changes are saved in your browser.
-        </p>
-      </header>
-
+    <article class="timers-settings card-surface card-padding">
       @if (enabledIds$ | async; as enabledIds) {
         <div class="timer-settings-list">
           @for (t of timers; track t.id) {
-            <div class="timer-settings-row">
+            <div class="timer-settings-row" [attr.id]="'timer-' + t.id">
               <div class="timer-settings-row__header">
                 <div class="timer-settings-row__main">
                   <app-diamond-toggle
@@ -46,10 +44,7 @@
                         Hide
                       }
                     </span>
-                    <span
-                      class="timer-settings-row__details-btn-caret"
-                      aria-hidden="true"
-                    ></span>
+                    <span class="timer-settings-row__details-btn-caret" aria-hidden="true"></span>
                   </button>
                 </div>
               </div>
@@ -93,9 +88,8 @@
                                 to your personal cap (e.g. 500). Spent on
                                 <strong>Campaign Challenge</strong>,
                                 <strong>Outpost Challenge</strong> and
-                                <strong>Sword Trial</strong> (20 Energy for
-                                Campaign/Outpost/Joint Battle, 60 Energy for boss trials like
-                                Formless Mountain Pass).
+                                <strong>Sword Trial</strong> (20 Energy for Campaign/Outpost/Joint
+                                Battle, 60 Energy for boss trials like Formless Mountain Pass).
                               </li>
                               <li>
                                 <strong>Stamina</strong> – Crafting resource with a 2,500 cap. You
@@ -120,10 +114,10 @@
                                 tied into Jianghu Errands; their participation rewards reset daily.
                               </li>
                               <li>
-                                <strong>Bounties</strong> – NPC bounty list refreshes. Once you clear
-                                all NPC bounties you can only continue with player-posted bounties
-                                (for <strong>Fourfold Coin</strong> and leaderboard progress) until
-                                next reset.
+                                <strong>Bounties</strong> – NPC bounty list refreshes. Once you
+                                clear all NPC bounties you can only continue with player-posted
+                                bounties (for <strong>Fourfold Coin</strong> and leaderboard
+                                progress) until next reset.
                               </li>
                               <li>
                                 <strong>Ye Buxiu Betting Match (Chess)</strong> – Located in
@@ -322,13 +316,14 @@
                           <section class="timers-section">
                             <h3>Arena 1v1 windows</h3>
                             <p>
-                              Use this timer to line up PvP sessions with friends or guildmates. When the timer shows
-                              <strong>open</strong>, ranked 1v1 is available; when it counts down, it is showing time
-                              until the next open window.
+                              Use this timer to line up PvP sessions with friends or guildmates.
+                              When the timer shows
+                              <strong>open</strong>, ranked 1v1 is available; when it counts down,
+                              it is showing time until the next open window.
                             </p>
                             <p>
-                              Keeping this pinned makes it easier to choose between queuing now or focusing on other
-                              activities first.
+                              Keeping this pinned makes it easier to choose between queuing now or
+                              focusing on other activities first.
                             </p>
                           </section>
                         </div>
@@ -362,20 +357,21 @@
                         <div class="timer-settings-row__details-body">
                           <section class="timers-section">
                             <h3>Bidding tips</h3>
-                          <ul>
-                            <li>
-                              <strong>When</strong> – Every <strong>Monday 01:00</strong> to
-                              <strong>Friday 13:00</strong> (UTC).
-                            </li>
-                            <li>
-                              <strong>What</strong> – Bid on sponsored seats for the Fireworks Show
-                              and set custom fireworks messages that will appear to other players.
-                            </li>
-                            <li>
-                              The helper shows this timer as <strong>open</strong> while bidding is
-                              live and counts down to the next close.
-                            </li>
-                          </ul>
+                            <ul>
+                              <li>
+                                <strong>When</strong> – Every <strong>Monday 01:00</strong> to
+                                <strong>Friday 13:00</strong> (UTC).
+                              </li>
+                              <li>
+                                <strong>What</strong> – Bid on sponsored seats for the Fireworks
+                                Show and set custom fireworks messages that will appear to other
+                                players.
+                              </li>
+                              <li>
+                                The helper shows this timer as <strong>open</strong> while bidding
+                                is live and counts down to the next close.
+                              </li>
+                            </ul>
                           </section>
                         </div>
                       }
@@ -408,25 +404,26 @@
                         <div class="timer-settings-row__details-body">
                           <section class="timers-section">
                             <h3>Festival notes</h3>
-                          <ul>
-                            <li>
-                              <strong>When</strong> – Every
-                              <strong>Saturday at 12:30 and Sunday at 00:30 (UTC)</strong>.
-                            </li>
-                            <li>
-                              <strong>Where</strong> –
-                              <strong>Velvet Shade → Pearlglow Lake</strong> in Kaifeng.
-                            </li>
-                            <li>
-                              <strong>What</strong> – Live Fireworks Festival with
-                              <strong>red envelopes</strong> dropped to all attendees.
-                            </li>
-                            <li>
-                              You can also trigger related quests by talking to
-                              <strong>Zhao Rui</strong> and <strong>Sun Jinyuan</strong> near Velvet
-                              Shade between <strong>Chen</strong> and <strong>You</strong> hours.
-                            </li>
-                          </ul>
+                            <ul>
+                              <li>
+                                <strong>When</strong> – Every
+                                <strong>Saturday at 12:30 and Sunday at 00:30 (UTC)</strong>.
+                              </li>
+                              <li>
+                                <strong>Where</strong> –
+                                <strong>Velvet Shade → Pearlglow Lake</strong> in Kaifeng.
+                              </li>
+                              <li>
+                                <strong>What</strong> – Live Fireworks Festival with
+                                <strong>red envelopes</strong> dropped to all attendees.
+                              </li>
+                              <li>
+                                You can also trigger related quests by talking to
+                                <strong>Zhao Rui</strong> and <strong>Sun Jinyuan</strong> near
+                                Velvet Shade between <strong>Chen</strong> and
+                                <strong>You</strong> hours.
+                              </li>
+                            </ul>
                           </section>
                         </div>
                       }
@@ -458,20 +455,21 @@
                         <div class="timer-settings-row__details-body">
                           <section class="timers-section">
                             <h3>Show windows</h3>
-                          <ul>
-                            <li>
-                              <strong>Multiplayer</strong> – Every
-                              <strong>Friday &amp; Saturday at 20:30 (UTC)</strong>. Main Fireworks
-                              Show instance where sponsored seats and custom messages appear; best
-                              time for <strong>red envelopes</strong> with other players.
-                            </li>
-                            <li>
-                              <strong>Solo</strong> – Every night at <strong>Zi hour</strong> a
-                              Fireworks Festival runs at Pearlglow Lake in your own world. You can
-                              fast-forward time to Zi hour to see it; rewards may differ from the
-                              full multiplayer event.
-                            </li>
-                          </ul>
+                            <ul>
+                              <li>
+                                <strong>Multiplayer</strong> – Every
+                                <strong>Friday &amp; Saturday at 20:30 (UTC)</strong>. Main
+                                Fireworks Show instance where sponsored seats and custom messages
+                                appear; best time for <strong>red envelopes</strong> with other
+                                players.
+                              </li>
+                              <li>
+                                <strong>Solo</strong> – Every night at <strong>Zi hour</strong> a
+                                Fireworks Festival runs at Pearlglow Lake in your own world. You can
+                                fast-forward time to Zi hour to see it; rewards may differ from the
+                                full multiplayer event.
+                              </li>
+                            </ul>
                           </section>
                         </div>
                       }
@@ -483,8 +481,8 @@
                     @case ('mirage-boat') {
                       <p class="timer-settings-row__details-summary">
                         Server-wide <strong>Mirage Boat</strong> “Painted Cruise” event. Use this
-                        timer to see when the next cruise window is about to start so you can hop
-                        on for rewards and try cosmetic outfits.
+                        timer to see when the next cruise window is about to start so you can hop on
+                        for rewards and try cosmetic outfits.
                       </p>
 
                       <button
@@ -598,6 +596,6 @@
           }
         </div>
       }
-    </section>
+    </article>
   }
 </section>
