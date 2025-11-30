@@ -17,17 +17,16 @@
           @for (t of timers; track t.id) {
             <div class="timer-settings-row">
               <div class="timer-settings-row__header">
-                <label class="timer-settings-row__main">
-                  <input
-                    type="checkbox"
-                    class="timer-settings-row__checkbox"
+                <div class="timer-settings-row__main">
+                  <app-diamond-toggle
                     [checked]="isEnabled(enabledIds, t.id)"
-                    (change)="onToggleTimer(t.id)"
-                  />
-                  <span class="timer-settings-row__label">
-                    {{ t.label }}
-                  </span>
-                </label>
+                    (checkedChange)="onToggleTimer(t.id)"
+                  >
+                    <span class="timer-settings-row__label">
+                      {{ t.label }}
+                    </span>
+                  </app-diamond-toggle>
+                </div>
 
                 <div class="timer-settings-row__meta">
                   <span class="timer-settings-row__countdown">
@@ -37,13 +36,20 @@
                   <button
                     type="button"
                     class="timer-settings-row__details-btn"
+                    [class.timer-settings-row__details-btn--open]="openTimerId === t.id"
                     (click)="toggleInfo(t.id)"
                   >
-                    @if (openTimerId !== t.id) {
-                      <span>Details ▾</span>
-                    } @else {
-                      <span>Hide ▲</span>
-                    }
+                    <span class="timer-settings-row__details-btn-label">
+                      @if (openTimerId !== t.id) {
+                        Details
+                      } @else {
+                        Hide
+                      }
+                    </span>
+                    <span
+                      class="timer-settings-row__details-btn-caret"
+                      aria-hidden="true"
+                    ></span>
                   </button>
                 </div>
               </div>
@@ -67,6 +73,7 @@
                       <button
                         type="button"
                         class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
                         (click)="toggleLongDetails(t.id)"
                       >
                         @if (longDetailsId === t.id) {
@@ -143,8 +150,8 @@
                             <h3>Nice extras around reset</h3>
                             <ul>
                               <li>
-                                <strong>Visit your home</strong> for the free daily hairstyles and to pick up any
-                                time-gated home rewards before the next reset.
+                                <strong>Visit your home</strong> for the free daily hairstyles and
+                                to pick up any time-gated home rewards before the next reset.
                               </li>
                             </ul>
                           </section>
@@ -164,6 +171,7 @@
                       <button
                         type="button"
                         class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
                         (click)="toggleLongDetails(t.id)"
                       >
                         @if (longDetailsId === t.id) {
@@ -266,17 +274,20 @@
                             <h3>Weekly shop priorities</h3>
                             <ul>
                               <li>
-                                In the <strong>Jade Fish / Season shop</strong>, prioritize progression items such as
-                                <strong>Martial Arts Combat Tips</strong> and <strong>Inner Way Note</strong> chests over
-                                random gear boxes.
+                                In the <strong>Jade Fish / Season shop</strong>, prioritize
+                                progression items such as
+                                <strong>Martial Arts Combat Tips</strong> and
+                                <strong>Inner Way Note</strong> chests over random gear boxes.
                               </li>
                               <li>
-                                Under the appearance tab, pick up your weekly <strong>Lingering Melody</strong>; it is used
-                                for cosmetic banners and is easy to forget.
+                                Under the appearance tab, pick up your weekly
+                                <strong>Lingering Melody</strong>; it is used for cosmetic banners
+                                and is easy to forget.
                               </li>
                               <li>
-                                If you use <strong>Healer</strong> or <strong>Scholar</strong> professions, grab their
-                                weekly profession boxes before reset so you do not miss skill-progress items.
+                                If you use <strong>Healer</strong> or <strong>Scholar</strong>
+                                professions, grab their weekly profession boxes before reset so you
+                                do not miss skill-progress items.
                               </li>
                             </ul>
                           </section>
@@ -296,6 +307,7 @@
                       <button
                         type="button"
                         class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
                         (click)="toggleLongDetails(t.id)"
                       >
                         @if (longDetailsId === t.id) {
@@ -307,15 +319,18 @@
 
                       @if (longDetailsId === t.id) {
                         <div class="timer-settings-row__details-body">
-                          <p>
-                            Use this timer to line up PvP sessions with friends or guildmates. When
-                            the timer shows <strong>open</strong>, ranked 1v1 is available; when it
-                            counts down, it is showing time until the next open window.
-                          </p>
-                          <p>
-                            Keeping this pinned in the strip makes it easy to decide whether to
-                            queue now or focus on other activities first.
-                          </p>
+                          <section class="timers-section">
+                            <h3>Arena 1v1 windows</h3>
+                            <p>
+                              Use this timer to line up PvP sessions with friends or guildmates. When the timer shows
+                              <strong>open</strong>, ranked 1v1 is available; when it counts down, it is showing time
+                              until the next open window.
+                            </p>
+                            <p>
+                              Keeping this pinned makes it easier to choose between queuing now or focusing on other
+                              activities first.
+                            </p>
+                          </section>
                         </div>
                       }
                     }
@@ -333,6 +348,7 @@
                       <button
                         type="button"
                         class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
                         (click)="toggleLongDetails(t.id)"
                       >
                         @if (longDetailsId === t.id) {
@@ -344,6 +360,8 @@
 
                       @if (longDetailsId === t.id) {
                         <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Bidding tips</h3>
                           <ul>
                             <li>
                               <strong>When</strong> – Every <strong>Monday 01:00</strong> to
@@ -358,6 +376,7 @@
                               live and counts down to the next close.
                             </li>
                           </ul>
+                          </section>
                         </div>
                       }
                     }
@@ -375,6 +394,7 @@
                       <button
                         type="button"
                         class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
                         (click)="toggleLongDetails(t.id)"
                       >
                         @if (longDetailsId === t.id) {
@@ -386,14 +406,16 @@
 
                       @if (longDetailsId === t.id) {
                         <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Festival notes</h3>
                           <ul>
                             <li>
                               <strong>When</strong> – Every
                               <strong>Saturday at 12:30 and Sunday at 00:30 (UTC)</strong>.
                             </li>
                             <li>
-                              <strong>Where</strong> – <strong>Velvet Shade → Pearlglow Lake</strong>
-                              in Kaifeng.
+                              <strong>Where</strong> –
+                              <strong>Velvet Shade → Pearlglow Lake</strong> in Kaifeng.
                             </li>
                             <li>
                               <strong>What</strong> – Live Fireworks Festival with
@@ -405,6 +427,7 @@
                               Shade between <strong>Chen</strong> and <strong>You</strong> hours.
                             </li>
                           </ul>
+                          </section>
                         </div>
                       }
                     }
@@ -421,6 +444,7 @@
                       <button
                         type="button"
                         class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
                         (click)="toggleLongDetails(t.id)"
                       >
                         @if (longDetailsId === t.id) {
@@ -432,6 +456,8 @@
 
                       @if (longDetailsId === t.id) {
                         <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Show windows</h3>
                           <ul>
                             <li>
                               <strong>Multiplayer</strong> – Every
@@ -446,6 +472,7 @@
                               full multiplayer event.
                             </li>
                           </ul>
+                          </section>
                         </div>
                       }
                     }
@@ -455,13 +482,15 @@
                          ======================= -->
                     @case ('mirage-boat') {
                       <p class="timer-settings-row__details-summary">
-                        Server-wide <strong>Mirage Boat</strong> “Painted Cruise” event. Use this timer to see when the
-                        next cruise window is about to start so you can hop on for rewards and try cosmetic outfits.
+                        Server-wide <strong>Mirage Boat</strong> “Painted Cruise” event. Use this
+                        timer to see when the next cruise window is about to start so you can hop
+                        on for rewards and try cosmetic outfits.
                       </p>
 
                       <button
                         type="button"
                         class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
                         (click)="toggleLongDetails(t.id)"
                       >
                         @if (longDetailsId === t.id) {
@@ -478,17 +507,17 @@
                             <ul>
                               <li>
                                 Premium, ultra-rare boat mount unlocked by collecting
-                                <strong>170 Mirage Torn Pages</strong> from the Celestial Draw and exchanging them in the
-                                Draw Shop.
+                                <strong>170 Mirage Torn Pages</strong> from the Celestial Draw and
+                                exchanging them in the Draw Shop.
                               </li>
                               <li>
-                                Let’s the owner start a server-wide social event called the
-                                <strong>Painted Cruise / Mirage Boat Event</strong>, effectively a moving party on the
-                                rivers around Kaifeng.
+                                Lets the owner start a server-wide social event called the
+                                <strong>Painted Cruise / Mirage Boat Event</strong>, effectively a
+                                moving party on the rivers around Kaifeng.
                               </li>
                               <li>
-                                Mostly cosmetic and social; it is a flex mount and an event trigger rather than a direct
-                                power boost.
+                                Mostly cosmetic and social; it is a flex mount and an event trigger
+                                rather than a direct power boost.
                               </li>
                             </ul>
                           </section>
@@ -497,13 +526,15 @@
                             <h3>When the event runs</h3>
                             <ul>
                               <li>
-                                There is a <strong>fixed weekly cruise</strong> every <strong>Sunday evening</strong> and
-                                <strong>Monday morning</strong> (UTC; check this timer’s countdown and the in-game event
-                                panel for the exact times on your server).
+                                There is a <strong>fixed weekly cruise</strong> every
+                                <strong>Sunday evening</strong> and
+                                <strong>Monday morning</strong> (UTC; check this timer’s countdown
+                                and the in-game event panel for the exact times on your server).
                               </li>
                               <li>
-                                Mirage Boat owners can also spend currency to trigger extra cruises outside the fixed
-                                windows, so you may occasionally see additional departures.
+                                Mirage Boat owners can also spend currency to trigger extra cruises
+                                outside the fixed windows, so you may occasionally see additional
+                                departures.
                               </li>
                             </ul>
                           </section>
@@ -512,16 +543,17 @@
                             <h3>How to join</h3>
                             <ul>
                               <li>
-                                When a cruise is active, an event icon appears on your UI; follow it to the dock and board
-                                the Mirage Boat with other players.
+                                When a cruise is active, an event icon appears on your UI; follow it
+                                to the dock and board the Mirage Boat with other players.
                               </li>
                               <li>
-                                The boat follows a set route; you can roam the deck, emote, and join small mini-activities
-                                while it sails.
+                                The boat follows a set route; you can roam the deck, emote, and join
+                                small mini-activities while it sails.
                               </li>
                               <li>
-                                You <strong>do not need to own the Mirage Boat</strong> to participate; any player can join as
-                                a guest when a cruise is running.
+                                You <strong>do not need to own the Mirage Boat</strong> to
+                                participate; any player can join as a guest when a cruise is
+                                running.
                               </li>
                             </ul>
                           </section>
@@ -530,17 +562,19 @@
                             <h3>Rewards and perks</h3>
                             <ul>
                               <li>
-                                You earn <strong>Fortune Points</strong> simply by staying on the boat and participating in
-                                its mini-games; at <strong>1,000 Fortune Points</strong> you can claim your reward via the
-                                Mirage Boat icon at the top-right of the screen.
+                                You earn <strong>Fortune Points</strong> simply by staying on the
+                                boat and participating in its mini-games; at
+                                <strong>1,000 Fortune Points</strong> you can claim your reward via
+                                the Mirage Boat icon at the top-right of the screen.
                               </li>
                               <li>
-                                Rewards are mailed to you if you leave early; the quality scales with how much the owner
-                                spends to fund the cruise.
+                                Rewards are mailed to you if you leave early; the quality scales
+                                with how much the owner spends to fund the cruise.
                               </li>
                               <li>
-                                During the event you can temporarily wear <strong>any outfits owned by the boat’s
-                                owner</strong>, letting you test premium cosmetics for free while you’re on board.
+                                During the event you can temporarily wear
+                                <strong>any outfits owned by the boat’s owner</strong>, letting you
+                                test premium cosmetics for free while you’re on board.
                               </li>
                             </ul>
                           </section>

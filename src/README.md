@@ -141,16 +141,29 @@ The codebase is small but opinionated:
 - Folder: `app/components/timer-strip`
 - Responsibility:
   - Thin horizontal bar below navbar and music player.
-  - Subscribes to `TimerService.timerChips$`.
+  - Subscribes to `TimerService.timerChips$` and the user’s enabled timer IDs.
   - Renders a row of "chips" showing current and upcoming timers.
-  - Uses global `.chip` style plus local tweaks.
+  - **Chips are sorted by soonest upcoming reset / event** so the leftmost chip is always “next up”.
+  - Uses global `.chip` style plus local tweaks for icons, spacing and countdown typography.
 
 **Timers page**
 
 - Folder: `app/components/timers`
 - Responsibility:
-  - Detailed explanation of each timer (resets, arena, fireworks, group content).
-  - Uses live timer chips inline in text for context (`.chip--timer`).
+  - Let players choose **which timers appear in the strip** and read contextual info about each one.
+  - Top **“Timers” settings card**:
+    - Lists all timers with:
+      - Custom **diamond-shaped toggles** (CSS-only, backed by real checkboxes for accessibility).
+      - Timer label.
+      - Live countdown text.
+      - A pill **Details / Hide** button with fixed width and a right-aligned chevron.
+    - Visibility state is persisted per-browser so choices survive reloads.
+    - New users start with **Daily Reset**, **Weekly Reset**, and **Arena 1v1** enabled.
+  - Per-timer **details drawers**:
+    - Clicking **Details / Hide** expands a short textual summary.
+    - A **Show more / Show less** link reveals or hides the full long-form guide (daily/weekly resets, Arena windows, Fireworks events, Mirage Boat, etc.).
+    - All time references in these guides are expressed explicitly in **UTC**; the live countdowns still drive the practical usage.
+  - The previous static “Timers & resets” three-column section has been replaced by these drawers so the page stays compact but all depth is still available on demand.
 
 **Timer service + architecture**
 
@@ -171,7 +184,7 @@ The codebase is small but opinionated:
     - `formatRemaining()` – Duration formatting logic.
 
 - **Config** (`app/configs/timer-definitions.ts`):
-  - Array of `TimerDefinition` objects (daily reset, weekly reset, arena, fireworks).
+  - Array of `TimerDefinition` objects (daily reset, weekly reset, arena, fireworks, Mirage Boat, etc.).
   - Pure data; no time logic.
 
 - **Models** (`app/models/`):
@@ -268,6 +281,7 @@ The codebase is small but opinionated:
 - `timer.service.ts` – Core service exposing `timerChips$` observable.
 - `timer-chip.builder.ts` – Pure builder function.
 - `timer-schedule.utils.ts` – Schedule calculation utilities.
+- `timer-preferences.service.ts` – Persists which timers are visible in the strip using versioned localStorage and exposes `enabledTimerIds$` plus sensible defaults (Daily / Weekly / Arena 1v1).
 
 ### Checklist Services (`app/services/checklist/`)
 - `checklist-state.service.ts` – State management for checklist items.

@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TimerPreferencesService, TimerService } from '../../services';
 import { TimerChip } from '../../models';
+import { DiamondToggleComponent } from '../ui';
 
 @Component({
   selector: 'app-timers',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DiamondToggleComponent],
   templateUrl: './timers.component.html',
   styleUrls: ['./timers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

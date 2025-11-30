@@ -6,3 +6,4 @@ export * from './music-player';
 export * from './navbar';
 export * from './timer-strip';
 export * from './timers';
+export * from './ui';
