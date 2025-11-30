@@ -1,0 +1,21 @@
+@use '../tokens/surfaces' as *;
+@use '../tokens/shadows' as *;
+@use '../tokens/radius' as *;
+@use '../tokens/motion' as *;
+
+@mixin capsule($layer: 3, $radius: $radius-card, $padding-y: 0.75rem, $padding-x: 1rem) {
+  background: var(--surface-layer-#{$layer});
+  border-radius: $radius;
+  padding: $padding-y $padding-x;
+  box-shadow: $shadow-depth-2;
+  transition:
+    background-color $motion-base $motion-ease,
+    box-shadow $motion-base $motion-ease;
+}
+
+@mixin capsule-hover($layer: 4) {
+  &:hover {
+    background: var(--surface-layer-#{$layer});
+    box-shadow: $shadow-depth-3;
+  }
+}

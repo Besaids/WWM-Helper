@@ -1,173 +1,254 @@
+@use 'sass:map';
+@use 'mixins/capsule' as capsule;
+@use 'mixins/pill' as pill;
+@use 'tokens/colors' as *;
+@use 'tokens/surfaces' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
+/* Root layout */
 .checklist-page {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
+/* =========================
+ * Header + tabs
+ * ========================= */
+
 .checklist-header {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  margin-bottom: 0.75rem;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    max-width: 48rem;
+  }
 }
 
-.checklist-header h1 {
-  margin: 0;
-  font-size: 1.6rem;
-}
-
-/* Tabs */
-
+/* Segmented control: Daily / Weekly */
 .checklist-tabs {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0; // slimmer; no big pill background
-  background: transparent;
-  border: none;
+  gap: 0.25rem;
+  padding: 0.15rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+
+  border-radius: 999px;
+  background: var(--surface-layer-2);
+  box-shadow:
+    var(--shadow-depth-1),
+    0 4px 12px rgba(0, 0, 0, 0.35);
+
+  width: fit-content;
+  max-width: 100%;
+  align-self: flex-start;
 }
 
+/* Base pill button */
 .tab-pill {
-  border: none;
+  @include pill.pill-base(0.25rem, 0.8rem, 0.8rem);
+  border: 1px solid transparent;
   background: transparent;
-  color: var(--color-text-secondary);
-  padding: 0.35rem 0.9rem;
-  border-radius: var(--radius-pill);
-  font-size: 0.9rem;
-  cursor: pointer;
+  color: var(--color-text-muted-strong);
+  transition:
+    background-color $motion-fast $motion-ease,
+    border-color $motion-fast $motion-ease,
+    color $motion-fast $motion-ease,
+    transform 100ms $motion-ease;
+
+  &:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-btn-secondary-border);
+    background: var(--surface-layer-2);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
+/* Active pill – echo nav/timer accent */
 .tab-pill--active {
-  background: linear-gradient(135deg, rgba(234, 179, 8, 0.14), rgba(56, 189, 248, 0.14));
+  padding: 0.25rem 1rem;
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--color-accent-gold-soft);
   color: var(--color-text-primary);
+  box-shadow:
+    0 0 8px rgba(56, 189, 248, 0.15),
+    0 0 0 1px rgba(250, 204, 21, 0.15);
 }
 
-/* Layout */
+/* =========================
+ * Grid: main card + ideas card
+ * ========================= */
 
 .checklist-grid {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1.25fr);
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
+  gap: 1.25rem;
+  align-items: flex-start;
+
+  @media (max-width: 960px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
+/* Cards – retain structure */
 .checklist-card {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  overflow: hidden;
 }
 
-/* Card headers + reset */
+.checklist-card--ideas {
+  align-self: stretch;
+}
 
 .checklist-card-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .checklist-card-header-main {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .checklist-card-subtitle {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
 }
 
-.checklist-card-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-.checklist-card-subtitle {
-  margin: 0;
-  font-size: 0.85rem;
-}
-
+/* Reset button – pill similar to Timers action buttons */
 .reset-link {
-  border: none;
-  background: transparent;
-  color: var(--color-text-secondary);
+  margin-left: auto;
+  align-self: flex-start;
+  display: inline-flex; /* NEW: so we can center text inside fixed width */
+  justify-content: center; /* NEW: center label */
+
+  @include pill.pill-outline(var(--color-btn-secondary-border), 2);
   font-size: 0.8rem;
-  padding: 0.25rem 0;
-  cursor: pointer;
-  white-space: nowrap;
+  min-width: 23ch;
+
+  &:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-accent-gold-soft);
+    box-shadow:
+      0 0 0 1px rgba(250, 204, 21, 0.18),
+      var(--shadow-depth-3);
+    background: var(--surface-layer-3);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
-.reset-link:hover {
-  color: var(--color-text-primary);
-  text-decoration: underline;
-}
+/* =========================
+ * Checklist body / groups
+ * ========================= */
 
 .checklist-card-body {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.75rem;
 }
-
-/* Groups & categories */
 
 .checklist-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
 }
 
-.checklist-group h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.checklist-group--optional h3 {
-  margin-top: 0.25rem;
+.checklist-group--optional {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 1.5rem;
 }
 
 .checklist-category {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.25rem;
+
+  h4 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: none;
+    color: var(--color-text-muted-strong);
+    margin-bottom: 0.25rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  li {
+    list-style: none;
+  }
 }
 
-.checklist-category h4 {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
+/* Checklist rows – unified capsule surface */
+.checklist-category li app-checklist-toggle {
+  display: block;
 }
 
-.checklist-category ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.checklist-category li + li {
-  margin-top: 0.35rem;
-}
-
-/* Checklist item */
-
-.checklist-item {
+.checklist-category li app-checklist-toggle .checklist-toggle {
+  @include capsule.capsule(3, var(--radius-lg), 0.45rem, 0.6rem);
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
-  cursor: pointer;
+  transition:
+    background-color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease,
+    transform 80ms $motion-ease;
 }
 
-.checklist-item input[type='checkbox'] {
-  margin-top: 0.15rem;
-  cursor: pointer;
+/* Hover – slight lift and brighter edge */
+.checklist-category li app-checklist-toggle .checklist-toggle:hover {
+  background: var(--surface-layer-4);
+  box-shadow: var(--shadow-depth-1);
 }
 
-.checklist-item-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+/* Checked row – a touch of teal/gold, like an enabled timer row */
+.checklist-category li app-checklist-toggle .checklist-toggle.checklist-toggle--checked {
+  background: var(--surface-layer-4);
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.18),
+    var(--shadow-depth-2);
 }
 
+/* Shared text + tags */
 .checklist-item-label {
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .checklist-item-description {
   font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .checklist-tags {
@@ -181,53 +262,54 @@
   font-size: 0.7rem;
   padding: 0.12rem 0.45rem;
   border-radius: var(--radius-pill);
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  border: 1px solid var(--color-btn-secondary-border);
+  background: var(--color-surface-chip);
   text-transform: lowercase;
 }
 
-/* Ideas card */
-
-.checklist-card--ideas {
-  align-self: flex-start;
-}
+/* =========================
+ * Ideas card
+ * ========================= */
 
 .checklist-card-body--ideas {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .idea {
-  padding: 0.5rem 0;
-  border-top: 1px dashed var(--color-border-subtle);
-}
+  padding: 0.6rem 0.2rem;
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.35);
 
-.idea:first-of-type {
-  border-top: none;
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .idea h3 {
-  margin: 0 0 0.2rem;
-  font-size: 0.95rem;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.5rem;
-}
+  margin-bottom: 0.25rem;
 
-.idea-title {
-  font-weight: 600;
-}
+  .idea-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
 
-.idea-category {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  .idea-category {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted-strong);
+  }
 }
 
 .idea-description {
-  margin: 0 0 0.25rem;
   font-size: 0.8rem;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
 }
 
 .idea-tags {
@@ -236,24 +318,53 @@
   gap: 0.25rem;
 }
 
-/* Responsive */
-
-@media (max-width: 992px) {
-  .checklist-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .checklist-card--ideas {
-    order: 2;
-  }
+/* Header actions alignment */
+.checklist-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .checklist-header h1 {
-    font-size: 1.4rem;
-  }
+.checklist-card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 
-  .checklist-tabs {
-    width: fit-content;
+/* View toggle – keep local simple styling */
+.checklist-view-toggle {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.checklist-view-toggle__btn {
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.15rem 0.9rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  cursor: pointer;
+  color: var(--color-text-muted-strong);
+  white-space: nowrap;
+}
+
+.checklist-view-toggle__btn--active {
+  background: rgba(148, 163, 184, 0.12);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) inset;
+  color: var(--color-text-primary);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .checklist-card-header {
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 }

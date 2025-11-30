@@ -30,7 +30,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   },
 
   // ========================
-  // Arena
+  // Arena / competitive
   // ========================
   {
     id: 'arena-1v1',
@@ -41,7 +41,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       type: 'daily-multi',
       times: [
         { hour: 10, minute: 0 }, // 10:00–16:00
-        { hour: 22, minute: 0 }, // 22:00–04:00 (cross-midnight)
+        { hour: 22, minute: 0 }, // 22:00–04:00
       ],
       windowHours: 6,
     },
@@ -51,25 +51,25 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   // Fireworks hub – Kaifeng
   // ========================
 
-  // 1) Fireworks Festival – Every Saturday, Sunday at 12:30 (UTC)
+  // Festival (Red Envelopes) – Every Saturday at 12:30 and Sunday at 00:30
   {
     id: 'fireworks-festival',
-    label: 'Fireworks Festival',
-    shortLabel: 'Festival',
+    label: 'Fireworks – Festival (Red Envelopes)',
+    shortLabel: 'Fest',
     icon: 'bi-brightness-high',
     schedule: {
-      type: 'weekly-multi',
-      weekdays: [6, 7], // Sat, Sun
-      hour: 12,
-      minute: 30,
+      type: 'weekly-times',
+      times: [
+        { weekday: 6, hour: 12, minute: 30 }, // Saturday 12:30
+        { weekday: 7, hour: 0, minute: 30 }, // Sunday 00:30
+      ],
     },
   },
 
-  // 2) Seats Bidding – Monday 1:00 → Friday 13:00 (UTC)
-  //    One long weekly window, with "open" / "closed" state.
+  // Seats (Bidding) – Monday 1:00 → Friday 13:00
   {
     id: 'fireworks-seats',
-    label: 'Fireworks Seats',
+    label: 'Fireworks – Seats (Bidding)',
     shortLabel: 'Seats',
     icon: 'bi-ticket-perforated',
     schedule: {
@@ -83,17 +83,35 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     },
   },
 
-  // 3) Fireworks Show – Event Time: Every Friday, Saturday at 20:30 (UTC)
+  // Big show – Every Friday & Saturday at 20:30
   {
     id: 'fireworks-show',
-    label: 'Fireworks Show',
+    label: 'Fireworks – Show (Big Night)',
     shortLabel: 'Show',
     icon: 'bi-stars',
     schedule: {
       type: 'weekly-multi',
-      weekdays: [5, 6], // Fri, Sat
+      weekdays: [5, 6], // Friday, Saturday
       hour: 20,
       minute: 30,
+    },
+  },
+
+  // ========================
+  // Mirage Boat – Yellow River cruise
+  // ========================
+
+  {
+    id: 'mirage-boat',
+    label: 'Mirage Boat',
+    shortLabel: 'Mirage',
+    icon: 'bi-tsunami', // change if that icon doesn’t exist
+    schedule: {
+      type: 'weekly-times',
+      times: [
+        { weekday: 7, hour: 11, minute: 0 }, // Sunday 11:00
+        { weekday: 7, hour: 23, minute: 0 }, // Sunday 23:00
+      ],
     },
   },
 ];

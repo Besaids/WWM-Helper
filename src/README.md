@@ -1,418 +1,497 @@
-# WWM Helper – Frontend Overview
+# WWM Helper – Styles / Design System
 
-This folder contains the Angular 21 frontend for the **Where Winds Meet Helper**.
+This folder contains the global design system for the WWM Helper app.
 
-The app is a single–page "companion" site focused on:
+It is split into **tokens**, **mixins**, **base**, **components**, and **utilities**.  
+Component-level SCSS files in `src/app/**` should _consume_ these pieces, not re-invent them.
 
-- Surfacing important **timers / reset windows**.
-- Tracking **daily / weekly checklists**.
-- Providing a small **in–page music player**.
-- Giving a lightweight **home dashboard** that links these pieces together.
-
-The codebase is small but opinionated:
-
-- Angular 21, **standalone components**, new control flow, Signals.
-- **Service-based architecture** with clear separation of concerns.
-- Centralized **config/data** (timers, checklist, music tracks) under `app/configs`.
-- **Signal-based reactive state** with OnPush change detection throughout.
-- A single **layout shell** around all routed pages.
-- A separate **design system** in `src/styles/**` (see `styles/README.md`).
-- Centralized **localStorage handling** under `app/utils/storage/**` with versioning and cleanup.
+> Core rule: **no hard-coded colors or font sizes in component SCSS**.  
+> All theme values live in `tokens/*.scss`.  
+> Common patterns use `mixins/*.scss`.
 
 ---
 
-## 1. Tech stack & entrypoints
+## 1. Folder structure
 
-**Tech**
+```text
+src/styles.scss               # Global entrypoint (wired in angular.json)
 
-- Angular 21 (standalone components).
-- TypeScript with strict mode enabled.
-- RxJS for reactive streams.
-- Luxon (time/date calculations).
-- Bootstrap + Bootstrap Icons (for base styling).
-- Custom SCSS design system under `src/styles/**`.
+src/styles/
+  base/
+    _globals.scss             # html/body, base typography, links
+    _reset.scss               # box-sizing reset
 
-**Entry files**
+  components/
+    _buttons.scss             # .btn-primary, .btn-secondary (global CTAs)
+    _card.scss                # .card-surface, .card-padding
+    _chip.scss                # .chip pills used in timer strip, timers, etc.
+    _page.scss                # .page-shell / .page-section helpers
 
-- `main.ts`
-  - Bootstraps the app with `bootstrapApplication(App, appConfig)`.
-  - Runs `runStorageMigrations()` and `cleanupChecklistStorage()` before bootstrapping.
+  mixins/
+    _capsule.scss             # capsule($layer, $radius, $padding) – card/row surfaces
+    _pill.scss                # pill-base / pill-outline – button variants
+    _toggle.scss              # diamond-toggle – shared toggle pattern
+    _glow.scss                # glow($color, $intensity) – accent glow helper
 
-- `app/app.config.ts`
-  - Application config:
-    - `provideRouter(routes)` – routing.
-    - `provideZoneChangeDetection({ eventCoalescing: true })`.
-    - `provideBrowserGlobalErrorListeners()`.
-    - `GlobalErrorHandler` as custom error handler.
+  tokens/
+    _colors.scss              # color palette + CSS custom properties
+    _surfaces.scss            # layered surface alpha scale (layer-1 through layer-5)
+    _gradients.scss           # radial gradients for backgrounds and toggles
+    _motion.scss              # animation timing tokens (fast/base/slow/emphasize)
+    _shadows.scss             # elevation depths + accent glows (teal/gold)
+    _radius.scss              # border-radius tokens
+    _spacing.scss             # spacing scale + outer padding
+    _typography.scss          # font stack, font sizes, heading helpers
+    _elevation.scss           # legacy shadows (deprecated in favor of _shadows.scss)
 
-- `app/app.routes.ts`
-  - Route table:
-    - `''` → redirect to `home`.
-    - `/home` → `HomeComponent`.
-    - `/timers` → `TimersComponent`.
-    - `/checklist` → `ChecklistComponent`.
-    - `**` → redirect to `home`.
-
-- `app/app.ts`
-  - Root component (`<app-root>`).
-  - Standalone.
-  - Renders `<app-layout>` with `ChangeDetectionStrategy.OnPush`.
-
----
-
-## 2. Layout shell
-
-**Location:** `app/components/layout`
-
-- `layout.component.ts`
-  - Standalone component with OnPush change detection.
-  - Imports `NavbarComponent`, `TimerStripComponent`, `RouterOutlet`.
-
-- `layout.component.html`
-  - High–level shell structure:
-
-    ```html
-    <div class="app-shell">
-      <app-navbar></app-navbar>
-      <app-timer-strip></app-timer-strip>
-
-      <main class="app-main">
-        <router-outlet></router-outlet>
-      </main>
-
-      <footer class="app-footer">
-        <!-- Footer content with links -->
-      </footer>
-    </div>
-    ```
-
-  - Every routed page (`Home`, `Timers`, `Checklist`) is injected into `<router-outlet>`.
-
-- `layout.component.scss`
-  - Overall app background, main area padding, and footer styling.
-  - Footer inner width aligned via shared `.page-shell` helper from the styles system.
-
-**Key idea:**  
-`LayoutComponent` defines the chrome around the app; feature pages focus only on their own content.
+  utilities/
+    _layout.scss              # .u-flex, .u-stack, gap helpers
+    _text.scss                # .text-muted, size utilities
+    _visibility.scss          # .u-visually-hidden
+```
 
 ---
 
-## 3. Components & feature areas
+## 2. Design System Quick Rules
 
-### 3.1 Navbar & music player
+### 2.1 Token Usage
 
-**Navbar**
+**Always use tokens for:**
 
-- Folder: `app/components/navbar`
-- Responsibility:
-  - Sticky top bar with logo + navigation links (`Home / Timers / Checklist`).
-  - Responsive behavior (desktop nav vs mobile hamburger).
-  - Mobile menu state managed with signal for OnPush compatibility: `isMenuOpen = signal(false)`.
+- **Colors:** Use `$text-primary`, `$accent-teal`, `$accent-gold-soft`, etc. from `tokens/_colors.scss`
+- **Surfaces:** Use `$surface-layer-1` through `$surface-layer-5` from `tokens/_surfaces.scss`
+- **Gradients:** Use `$gradient-radial-base`, `$gradient-radial-teal-core`, etc. from `tokens/_gradients.scss`
+- **Shadows:** Use `$shadow-depth-1` through `$shadow-depth-4` and `$glow-teal-soft/strong` from `tokens/_shadows.scss`
+- **Motion:** Use `$motion-fast`, `$motion-base`, `$motion-slow` from `tokens/_motion.scss`
+- **Spacing:** Use `$spacing-outer-x` and scale (`$space-1` through `$space-6`) from `tokens/_spacing.scss`
+- **Radius:** Use `$radius-card`, `$radius-pill`, `$radius-toggle` from `tokens/_radius.scss`
+- **Typography:** Use `$font-size-xs/sm/md/lg/xl` from `tokens/_typography.scss`
 
-**Music player**
+**Never use:**
 
-- Folder: `app/components/music-player`
-- Responsibility:
-  - Small audio player pinned directly below the navbar (inside `NavbarComponent`).
-  - Plays a curated playlist of tracks defined in `app/configs/music-tracks.ts`.
-  - Persists state in `localStorage` via `app/utils/storage/player-storage.ts`.
+- Raw hex colors like `#f5d28b`, `#42c3c6`, etc. in component SCSS
+- Raw RGBA values like `rgba(15, 23, 42, 0.84)` outside token files
+- Inline gradient definitions
+- Hard-coded animation timings
 
-- **Architecture:**
-  - **Component** (`music-player.component.ts`):
-    - Orchestrates UI interactions and delegates to services.
-    - Uses OnPush change detection.
-  - **Store** (`app/services/music-player/player-store.ts`):
-    - Signal-based reactive state (current track, playing, volume, muted, shuffle, enabled tracks).
-    - Computed signals for derived state (e.g., `enabledCount`).
-  - **Audio Service** (`app/services/music-player/player-audio.service.ts`):
-    - Manages HTML5 `Audio` element.
-    - Handles playback, seeking, volume, and event listeners.
-    - Updates store signals for time/duration changes.
-  - **Storage** (`app/utils/storage/player-storage.ts`):
-    - `loadPlayerState()` / `savePlayerState()` functions.
-    - Uses versioned storage with backward compatibility.
-  - **Utilities** (`app/components/music-player/time-format.ts`):
-    - Pure function for formatting time displays.
+### 2.2 Mixin Patterns
 
-### 3.2 Timer strip + timers page
+**Capsule mixin** (`mixins/_capsule.scss`):
 
-**Timer Strip**
+```scss
+@use 'mixins/capsule' as *;
 
-- Folder: `app/components/timer-strip`
-- Responsibility:
-  - Thin horizontal bar below navbar and music player.
-  - Subscribes to `TimerService.timerChips$`.
-  - Renders a row of "chips" showing current and upcoming timers.
-  - Uses global `.chip` style plus local tweaks.
+.my-row {
+  @include capsule($layer: 3, $radius: 0.75rem, $padding: 1rem);
+}
+```
 
-**Timers page**
+- Use for card-like rows, list items, or any surface needing consistent layering
+- `$layer` accepts 1-5 (matches `$surface-layer-1` through `$surface-layer-5`)
+- Includes border, shadow, and transitions automatically
 
-- Folder: `app/components/timers`
-- Responsibility:
-  - Detailed explanation of each timer (resets, arena, fireworks, group content).
-  - Uses live timer chips inline in text for context (`.chip--timer`).
+**Pill button mixins** (`mixins/_pill.scss`):
 
-**Timer service + architecture**
+```scss
+@use 'mixins/pill' as *;
 
-- **Service** (`app/services/timer/timer.service.ts`):
-  - Converts static definitions into live chips.
-  - `timerChips$` observable emits every second.
-  - Uses Luxon `DateTime` in UTC for all calculations.
+.my-button {
+  @include pill-base; // Solid background with hover states
+}
 
-- **Builder** (`app/services/timer/timer-chip.builder.ts`):
-  - Pure function: `buildTimerChip(def, now)` → `TimerChip`.
-  - No side effects; easy to test.
+.my-outline-button {
+  @include pill-outline; // Transparent with border
+}
+```
 
-- **Utilities** (`app/services/timer/timer-schedule.utils.ts`):
-  - Schedule calculation helpers:
-    - `getNextBoundary()` – For simple schedules (daily, weekly, weekly-multi).
-    - `getDailyMultiBoundary()` – For arena-style multi-window schedules.
-    - `getWeeklyRangeBoundary()` – For range-based schedules (e.g., Seats bidding).
-    - `formatRemaining()` – Duration formatting logic.
+- Use for pill-shaped buttons (tabs, action buttons, toggles)
+- Consistent sizing, padding, and transition timing
+- Handles hover, active, and focus states
 
-- **Config** (`app/configs/timer-definitions.ts`):
-  - Array of `TimerDefinition` objects (daily reset, weekly reset, arena, fireworks).
-  - Pure data; no time logic.
+**Diamond toggle mixin** (`mixins/_toggle.scss`):
 
-- **Models** (`app/models/`):
-  - `timer-definition.model.ts` – Types for schedule shapes.
-  - `timer-chip.model.ts` – UI representation.
+```scss
+@use 'mixins/toggle' as *;
 
-### 3.3 Checklist page
+.my-toggle {
+  @include diamond-toggle;
+}
 
-**Folder:** `app/components/checklist`
+// Add inner core element in your template:
+// <div class="my-toggle">
+//   <div class="my-toggle__inner"></div>
+// </div>
+```
 
-- Responsibility:
-  - Two–tab page: **Daily** and **Weekly** tasks.
-  - **Freeplay ideas** section for optional activities.
-  - Persists completed state across sessions with cycle-based keys.
+- Use for checkbox-style toggles with diamond indicator
+- Requires inner element with `__inner` suffix (e.g., `.my-toggle__inner`)
+- Handles unchecked (gold outline) and checked (teal core with glow) states
 
-**Architecture:**
+**Glow helper** (`mixins/_glow.scss`):
 
-- **Component** (`checklist.component.ts`):
-  - Delegates state management to `ChecklistStateService`.
-  - Uses `ResetWatchService` to detect cycle changes and reload the page.
-  - OnPush change detection with signal-based active tab.
+```scss
+@use 'mixins/glow' as *;
 
-- **Service** (`app/services/checklist/checklist-state.service.ts`):
-  - Encapsulates all checklist state logic.
-  - Methods: `isChecked()`, `toggle()`, `resetTab()`, `refreshCycleIds()`.
-  - Loads/saves state using versioned storage with cycle-based keys:
-    - `wwm-checklist-daily-<cycleId>`
-    - `wwm-checklist-weekly-<cycleId>`
-  - Falls back to legacy raw JSON for backward compatibility.
+.my-element:hover {
+  @include glow(teal, soft);
+}
+```
 
-- **Reset Watch** (`app/services/reset/reset-watch.service.ts`):
-  - Observable stream `resetChange$` that emits when daily/weekly cycle changes.
-  - Checks once per minute using RxJS `interval`.
-  - Uses `distinctUntilChanged` to only emit on actual changes.
-  - Prevents repeated cycle ID calculations across components.
+- Use for adding accent glows on hover or active states
+- Supports `teal`/`gold` colors and `soft`/`strong` intensities
+- Uses tokenized shadow values
 
-- **Config** (`app/configs/`):
-  - `daily-checklist.ts` – `DAILY_CHECKLIST` items.
-  - `weekly-checklist.ts` – `WEEKLY_CHECKLIST` items.
-  - `freeplay-ideas.ts` – `FREEPLAY_IDEAS` items.
-  - `cycle-ids.ts` – `getDailyCycleId()` and `getWeeklyCycleId()` functions.
-  - `reset-config.ts` – Centralized reset time constants.
+### 2.3 Import Paths
 
-- **Models** (`app/models/checklist.model.ts`):
-  - Types: `ChecklistItem`, `FreeplayIdea`, `ChecklistFrequency`, `ChecklistImportance`, `ChecklistTag`.
+Angular 21 requires relative imports **without** the `styles/` prefix:
 
-### 3.4 Home page
+```scss
+// ✅ Correct
+@use 'tokens/colors' as *;
+@use 'mixins/capsule' as *;
 
-**Folder:** `app/components/home`
+// ❌ Wrong
+@use 'styles/tokens/colors' as *;
+@use 'styles/mixins/capsule' as *;
+```
 
-- Responsibility:
-  - Entry dashboard with high-level overview + shortcuts.
-  - Cards for today's daily tasks, weekly priorities, and external resources.
+### 2.4 Component SCSS Guidelines
 
-- Implementation:
-  - Uses `signal(new Date())` for current date display.
-  - Updates date signal once per minute using `interval()` with `takeUntilDestroyed()`.
-  - Picks highlight items from checklist definitions (small subset for display).
-  - Uses global CTA buttons (`.btn-primary`, `.btn-secondary`) and card styles.
+**Do:**
+
+- Import only the tokens/mixins you need
+- Use `@use` with namespaces (e.g., `@use 'tokens/colors' as *`)
+- Leverage global components (`.card-surface`, `.card-padding`, `.chip`)
+- Apply mixins for common patterns (capsules, pills, toggles)
+- Keep component styles minimal and specific to that component
+
+**Don't:**
+
+- Set page-level backgrounds (use layout's global background)
+- Re-invent card surfaces, pills, or toggles
+- Use raw colors or RGBA values
+- Define gradients inline
+- Override global token values
 
 ---
 
-## 4. Data/configuration modules
+## 3. Token Reference
 
-**Folder:** `app/configs`
+### 3.1 Colors (`tokens/_colors.scss`)
 
-- `timer-definitions.ts` – Timer schedule definitions.
-- `daily-checklist.ts` – Daily checklist items.
-- `weekly-checklist.ts` – Weekly checklist items.
-- `freeplay-ideas.ts` – Optional activity suggestions.
-- `cycle-ids.ts` – Cycle ID calculation utilities.
-- `reset-config.ts` – Reset time constants (hours, weekdays).
-- `music-tracks.ts` – Music player track list.
-- `index.ts` – Re-exports all configs.
+**Backgrounds:**
 
----
+- `$bg-root`, `$bg-elevated`, `$bg-soft`, `$bg-strip`
 
-## 5. Models
+**Surfaces:**
 
-**Folder:** `app/models`
+- `$surface-card`, `$surface-chip`
 
-- `timer-definition.model.ts` – Timer schedule types.
-- `timer-chip.model.ts` – UI representation of timers.
-- `checklist.model.ts` – Checklist item and freeplay idea types.
-- `index.ts` – Re-exports all models.
+**Accents:**
 
----
+- `$accent-gold`, `$accent-gold-soft`, `$accent-gold-highlight`, `$accent-gold-dim`, `$accent-gold-active`
+- `$accent-teal`, `$accent-red`
 
-## 6. Services
+**Text:**
 
-**Folder:** `app/services`
+- `$text-primary`, `$text-secondary`, `$text-muted`, `$text-muted-strong`
 
-### Timer Services (`app/services/timer/`)
-- `timer.service.ts` – Core service exposing `timerChips$` observable.
-- `timer-chip.builder.ts` – Pure builder function.
-- `timer-schedule.utils.ts` – Schedule calculation utilities.
+**Borders:**
 
-### Checklist Services (`app/services/checklist/`)
-- `checklist-state.service.ts` – State management for checklist items.
+- `$border-subtle`
 
-### Music Player Services (`app/services/music-player/`)
-- `player-store.ts` – Signal-based state store.
-- `player-audio.service.ts` – Audio element management.
-- Storage helpers in `app/utils/storage/player-storage.ts`.
+**Buttons:**
 
-### Reset Services (`app/services/reset/`)
-- `reset-watch.service.ts` – Cycle change detection observable.
+- `$btn-accent-text`, `$btn-secondary-border`, `$btn-secondary-border-hover`
 
-All service folders have `index.ts` barrel exports.
+### 3.2 Surfaces (`tokens/_surfaces.scss`)
 
----
+Five-layer alpha scale over `rgba(15, 23, 42)`:
 
-## 7. Styles
+- `$surface-layer-1` – 0.6 alpha (most transparent)
+- `$surface-layer-2` – 0.72 alpha
+- `$surface-layer-3` – 0.84 alpha
+- `$surface-layer-4` – 0.92 alpha
+- `$surface-layer-5` – 0.96 alpha (most opaque)
 
-Global styles and design system live outside `app`:
+Use higher layers for more prominent surfaces (modals, drawers), lower layers for subtle backgrounds.
 
-- Entry file: `../styles.scss` – Wires in tokens, base, components, utilities.
-- Design system: `../styles/**` – See `../styles/README.md` for full documentation.
+### 3.3 Gradients (`tokens/_gradients.scss`)
 
-Component-level SCSS in `app/components/**` should:
-- Use global tokens/utilities from `src/styles`.
-- Avoid duplicating card/chip/button/page patterns defined there.
+**Background:**
 
----
+- `$gradient-radial-base` – Main app background gradient
 
-## 8. Utils & storage
+**Toggle cores:**
 
-**Folder:** `app/utils`
+- `$gradient-radial-teal-core` – Active toggle fill
+- `$gradient-radial-teal-soft` – Soft teal gradient
+- `$gradient-radial-teal-hover` – Teal hover state
+- `$gradient-radial-gold-core` – Gold accent gradient
 
-- `global-error-handler.ts` – Custom `ErrorHandler` for centralized error logging.
-- `storage/` – Centralized storage management:
+### 3.4 Motion (`tokens/_motion.scss`)
 
-### Storage Utilities (`app/utils/storage/`)
+**Timing:**
 
-- `storage.ts` – Core storage helpers:
-  - `STORAGE_PREFIX = 'wwm-'` – Prefix for all localStorage keys.
-  - `STORAGE_SCHEMA_VERSION` – Global schema version number.
-  - `getSafeLocalStorage()` – Safe access to localStorage (handles SSR/errors).
-  - `loadJsonFromStorage<T>(key)` / `saveJsonToStorage(key, value)` – Raw JSON helpers.
-  - `Versioned<T>` – Wrapper type `{ version, data }`.
-  - `loadVersioned<T>(key)` / `saveVersioned<T>(key, data)` – Versioned payload helpers.
+- `$motion-fast` – 120ms (quick interactions)
+- `$motion-base` – 160ms (standard transitions)
+- `$motion-slow` – 240ms (deliberate animations)
+- `$motion-emphasize` – 300ms (emphasized state changes)
 
-- `storage-migrations.ts` – Migration framework:
-  - `runStorageMigrations()` – Runs on app startup.
-  - Tracks applied migrations via `wwm-schema-version` key.
-  - Framework ready for future schema evolution.
+**Easing:**
 
-- `checklist-storage.ts` – Automatic cleanup:
-  - `cleanupChecklistStorage()` – Runs on app startup.
-  - Keeps only current daily and weekly cycle keys.
-  - Deletes old cycle keys to prevent unbounded growth.
+- `$motion-ease` – Cubic-bezier for smooth acceleration/deceleration
 
-- `player-storage.ts` – Music player persistence:
-  - `loadPlayerState()` / `savePlayerState()` functions.
-  - Uses versioned storage with backward compatibility.
+### 3.5 Shadows (`tokens/_shadows.scss`)
 
-**Bootstrap behavior (main.ts):**
-- `runStorageMigrations()` runs before Angular bootstraps.
-- `cleanupChecklistStorage()` runs before Angular bootstraps.
-- Happens on every full page load (not on route changes).
+**Elevation:**
 
----
+- `$shadow-depth-1` – Subtle depth (cards)
+- `$shadow-depth-2` – Moderate depth (raised cards)
+- `$shadow-depth-3` – Strong depth (modals)
+- `$shadow-depth-4` – Maximum depth (drawers)
 
-## 9. How to add or change things
+**Glows:**
 
-### Add a new page
+- `$glow-teal-soft`, `$glow-teal-strong` – Teal accent glows
+- `$glow-gold-soft` – Gold accent glow
 
-1. Create a standalone component under `app/components/<feature>/`.
-2. Add OnPush change detection strategy.
-3. Add a route in `app/app.routes.ts`.
-4. Use `.page-shell` + `card-surface` / `card-padding` for consistent layout.
-5. If the page needs data, add it to `app/configs` instead of hardcoding.
+### 3.6 Radius (`tokens/_radius.scss`)
 
-### Add a new service
+- `$radius-card` – 0.75rem (cards, panels)
+- `$radius-pill` – 2rem (pill buttons, chips)
+- `$radius-toggle` – 0.35rem (toggles, small controls)
 
-1. Create service under `app/services/<domain>/`.
-2. Use `@Injectable({ providedIn: 'root' })`.
-3. Export from domain's `index.ts`.
-4. For state, use signals for reactive values.
-5. Keep services focused on single responsibility.
+### 3.7 Spacing (`tokens/_spacing.scss`)
 
-### Add a new timer / checklist item
+**Layout:**
 
-- **Timer:**
-  - Add entry to `TIMER_DEFINITIONS` in `app/configs/timer-definitions.ts`.
-  - Ensure `schedule.type` is supported by timer utilities.
+- `$spacing-outer-x` – 1.75rem (horizontal page padding)
 
-- **Checklist:**
-  - Add to `DAILY_CHECKLIST` / `WEEKLY_CHECKLIST` / `FREEPLAY_IDEAS`.
-  - Use a stable `id` (becomes part of localStorage key).
+**Scale:**
 
-### Update styles / theme
+- `$space-1` through `$space-6` (0.25rem to 2rem)
 
-- Change tokens in `src/styles/tokens/*.scss`.
-- If a new reusable pattern appears, promote it to:
-  - `src/styles/components/*.scss` (for structured components).
-  - `src/styles/utilities/*.scss` (for small helpers).
+### 3.8 Typography (`tokens/_typography.scss`)
 
-### Evolve storage structure
+**Font stack:**
 
-When changing stored data shape:
+- `$font-family-base` – System font stack with fallbacks
 
-1. Bump `STORAGE_SCHEMA_VERSION` in `app/utils/storage/storage.ts`.
-2. Add migration functions in `app/utils/storage/storage-migrations.ts`:
-   - Read old keys.
-   - Transform to new shape.
-   - Write as `Versioned<T>` payloads.
-3. Update cleanup helpers if key patterns change.
-4. Keep fallback to `loadJsonFromStorage` for legacy payloads.
+**Sizes:**
+
+- `$font-size-xs`, `$font-size-sm`, `$font-size-md`, `$font-size-lg`, `$font-size-xl`
+
+**Line heights:**
+
+- `$line-height-base`, `$line-height-headings`
 
 ---
 
-## 10. Architecture principles
+## 4. Common Patterns
 
-### Service Layer
-- **Single responsibility:** Each service handles one domain (timer, checklist, music, reset).
-- **Dependency injection:** Services inject into components; components don't create service instances.
-- **Pure functions:** Utilities are pure where possible (builders, formatters, calculators).
+### 4.1 Card Surfaces
 
-### State Management
-- **Signals:** All reactive state uses Angular signals.
-- **OnPush:** All components use OnPush change detection for performance.
-- **Computed values:** Derived state uses `computed()` signals.
-- **Immutability:** Signal updates create new references when needed.
+Use global `.card-surface` + `.card-padding` for consistent cards:
 
-### Storage
-- **Versioning:** All persisted state uses versioned payloads.
-- **Backward compatibility:** Falls back to legacy formats when loading.
-- **Cleanup:** Automatic removal of stale keys on app startup.
-- **Namespacing:** All keys prefixed with `wwm-`.
+```html
+<div class="card-surface card-padding">
+  <!-- Card content -->
+</div>
+```
 
-### Component Design
-- **Smart components:** Container components that inject services and manage state.
-- **Presentation components:** Components that receive data via signals and emit events.
-- **No business logic in templates:** Complex logic lives in services or component methods.
+### 4.2 Pill Buttons
+
+For inline action buttons, use pill mixins:
+
+```scss
+.my-action-btn {
+  @include pill-outline;
+  // Add component-specific overrides if needed
+}
+```
+
+### 4.3 Timer/Checklist Rows
+
+For list rows with consistent surfaces, use capsule mixin:
+
+```scss
+.my-list-row {
+  @include capsule($layer: 3, $radius: 0.5rem, $padding: 0.75rem 1rem);
+  // Add row-specific layout
+}
+```
+
+### 4.4 Diamond Toggles
+
+For visibility toggles or checkboxes with diamond indicators:
+
+```scss
+.my-toggle {
+  @include diamond-toggle;
+  // Ensure template has inner element:
+  // <div class="my-toggle"><div class="my-toggle__inner"></div></div>
+}
+```
 
 ---
 
-## 11. Maintenance notes
+## 5. Migration Guide
 
-- This file is **authoritative** – update it when adding features or changing architecture.
-- Keep `styles/README.md` in sync with token or component changes.
-- Use `project-log.md` for date-stamped bullet entries of what changed between sessions.
-- When bumping storage schema version, document the migration in both code and `project-log.md`.
+### 5.1 Replacing Raw Colors
+
+**Before:**
+
+```scss
+.my-element {
+  color: #f5d28b;
+  background: rgba(15, 23, 42, 0.84);
+}
+```
+
+**After:**
+
+```scss
+@use 'tokens/colors' as *;
+@use 'tokens/surfaces' as *;
+
+.my-element {
+  color: $accent-gold-soft;
+  background: $surface-layer-3;
+}
+```
+
+### 5.2 Replacing Inline Gradients
+
+**Before:**
+
+```scss
+.my-element {
+  background: radial-gradient(circle at center, rgba(66, 195, 198, 0.4), transparent);
+}
+```
+
+**After:**
+
+```scss
+@use 'tokens/gradients' as *;
+
+.my-element {
+  background: $gradient-radial-teal-soft;
+}
+```
+
+### 5.3 Replacing Bespoke Card Styles
+
+**Before:**
+
+```scss
+.my-card {
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+```
+
+**After:**
+
+```scss
+@use 'mixins/capsule' as *;
+
+.my-card {
+  @include capsule($layer: 5, $radius: 0.75rem, $padding: 1.25rem);
+}
+```
+
+### 5.4 Replacing Pill Buttons
+
+**Before:**
+
+```scss
+.my-button {
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  background: transparent;
+  border: 1px solid rgba(228, 184, 106, 0.5);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: rgba(228, 184, 106, 0.12);
+    border-color: #e4b86a;
+  }
+}
+```
+
+**After:**
+
+```scss
+@use 'mixins/pill' as *;
+
+.my-button {
+  @include pill-outline;
+}
+```
+
+---
+
+## 6. Future Enhancements
+
+### 6.1 Stylelint Integration
+
+Add `stylelint.config.js` to enforce token usage:
+
+```js
+module.exports = {
+  rules: {
+    'color-no-hex': true, // Disallow hex colors outside tokens/
+    'function-disallowed-list': ['rgba', 'rgb'], // Disallow raw rgba/rgb
+  },
+};
+```
+
+### 6.2 Consistency Scripts
+
+Create `scripts/verify-style-consistency.mjs` to scan for violations:
+
+```bash
+npm run lint:styles      # Run stylelint
+npm run check:styles     # Verify no raw colors in components
+```
+
+### 6.3 Additional Tokens
+
+Consider adding:
+
+- `--glow-red-soft` for urgent timer states
+- `--motion-spring` for playful animations
+- Additional surface layers for complex overlays
+
+### 6.4 Dark Mode Support
+
+Prepare for theme switching:
+
+- Keep all colors in CSS custom properties (already done)
+- Add `[data-theme="light"]` variants in token files
+- Test component isolation from hard-coded values
+
+---
+
+## 7. Maintenance Notes
+
+- Treat this README as **authoritative** for style system guidelines
+- When adding new tokens:
+  - Add to appropriate `tokens/*.scss` file
+  - Document in this README's token reference section
+  - Update migration guide with usage examples
+- When creating new mixins:
+  - Add to `mixins/*.scss`
+  - Document in "Mixin Patterns" section with usage example
+  - Consider adding to "Common Patterns" if widely applicable
+- When refactoring components:
+  - Ensure all raw colors/RGBA values are replaced with tokens
+  - Apply appropriate mixins for common patterns
+  - Update component-specific documentation in `src/README.md` if needed

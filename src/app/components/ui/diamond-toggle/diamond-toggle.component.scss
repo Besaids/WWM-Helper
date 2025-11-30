@@ -1,0 +1,73 @@
+@use 'tokens/motion' as *;
+@use 'tokens/colors' as *;
+@use 'mixins/toggle' as toggle;
+
+.diamond-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Hide real checkbox */
+.diamond-toggle__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Diamond outline shape — unified via mixin */
+.diamond-toggle__box {
+  @include toggle.diamond-toggle(1.15rem);
+}
+
+/* Inner core element required by mixin: map to existing class name */
+.diamond-toggle__box .diamond-toggle__inner {
+  position: absolute;
+  inset: 0.18rem;
+  border-radius: 0.2rem;
+  background: var(--gradient-radial-gold-core);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.8),
+    inset 0 0 6px rgba(0, 0, 0, 0.6);
+  transition:
+    background $motion-base $motion-ease,
+    box-shadow $motion-base $motion-ease;
+}
+
+/* Checked (ON) state */
+.diamond-toggle--checked .diamond-toggle__box {
+  border-color: var(--color-accent-gold-highlight);
+  box-shadow:
+    0 0 0 1px rgba(255, 215, 150, 0.25),
+    var(--glow-teal-strong);
+}
+
+.diamond-toggle--checked .diamond-toggle__inner {
+  background: var(--gradient-radial-teal-core);
+  box-shadow:
+    inset 0 0 3px rgba(255, 255, 255, 0.25),
+    var(--glow-teal-soft);
+}
+
+/* Hover transitions */
+.diamond-toggle:not(.diamond-toggle--checked):hover .diamond-toggle__inner {
+  background: var(--gradient-radial-teal-hover);
+}
+
+.diamond-toggle.diamond-toggle--checked:hover .diamond-toggle__inner {
+  background: var(--gradient-radial-teal-soft);
+}
+
+/* Label text beside the diamond */
+.diamond-toggle__label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Disabled */
+.diamond-toggle--disabled {
+  opacity: 0.55;
+  cursor: default;
+}

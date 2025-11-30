@@ -1,0 +1,21 @@
+<label
+  class="diamond-toggle"
+  [class.diamond-toggle--checked]="checked"
+  [class.diamond-toggle--disabled]="disabled"
+>
+  <input
+    type="checkbox"
+    class="diamond-toggle__input"
+    [checked]="checked"
+    [disabled]="disabled"
+    (change)="onInputChange($event)"
+  />
+
+  <span class="diamond-toggle__box" aria-hidden="true">
+    <span class="diamond-toggle__inner"></span>
+  </span>
+
+  <span class="diamond-toggle__label">
+    <ng-content></ng-content>
+  </span>
+</label>

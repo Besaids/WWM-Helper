@@ -2,10 +2,15 @@
   <div class="timer-strip-inner">
     @if (timers$ | async; as timers) {
       @for (t of timers; track t.id) {
-        <div class="timer-pill chip" [attr.aria-label]="t.label + ' — ' + t.remaining" role="group">
+        <div
+          class="timer-pill chip"
+          [class.timer-pill--urgent]="isUrgent(t.remaining)"
+          [attr.aria-label]="t.label + ' — ' + t.remaining"
+          role="group"
+        >
           <i class="bi" [ngClass]="t.icon" aria-hidden="true"></i>
           <span class="label">{{ t.label }}</span>
-          <span class="value">{{ t.remaining }}</span>
+          <span class="value" aria-live="polite">{{ t.remaining }}</span>
         </div>
       }
     }

@@ -1,8 +1,21 @@
+@use 'mixins/capsule' as capsule;
+@use 'mixins/pill' as pill;
+@use 'tokens/colors' as *;
+@use 'tokens/surfaces' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
+/* =======================
+   Page layout
+   ======================= */
+
 .timers-page {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
+
+/* Header */
 
 .timers-page-header {
   display: flex;
@@ -15,7 +28,142 @@
   font-size: 1.6rem;
 }
 
-/* Layout */
+/* Settings block */
+
+.timers-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timers-settings-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    max-width: 48rem;
+  }
+}
+
+.timer-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Row capsule */
+.timer-settings-row {
+  @include capsule.capsule(4, var(--radius-lg), 0.75rem, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timer-settings-row:hover {
+  background: var(--surface-layer-5);
+  box-shadow: var(--shadow-depth-3);
+}
+
+.timer-settings-row__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timer-settings-row__main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.timer-settings-row__label {
+  font-weight: 500;
+}
+
+.timer-settings-row__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.timer-settings-row__countdown {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+/* Details / Hide button */
+
+.timer-settings-row__details-btn {
+  @include pill.pill-outline(var(--color-accent-gold-soft), 3);
+  min-height: 2rem;
+  min-width: 6rem;
+}
+
+.timer-settings-row__details-btn--open {
+  background: var(--surface-layer-4);
+  color: var(--color-accent-gold-highlight);
+  box-shadow: var(--glow-gold-soft), var(--shadow-depth-2);
+}
+
+.timer-settings-row__details-btn-label {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.timer-settings-row__details-btn-caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid currentColor;
+  transition: transform $motion-base $motion-ease;
+}
+
+.timer-settings-row__details-btn--open .timer-settings-row__details-btn-caret {
+  transform: rotate(180deg);
+}
+
+/* Expanded details */
+
+.timer-settings-row__details {
+  margin-top: 0.4rem;
+  animation: fadeSlide $motion-base ease-out;
+}
+
+.timer-settings-row__details-summary {
+  font-size: 0.86rem;
+  color: var(--color-text-secondary);
+}
+
+.timer-settings-row__details-toggle {
+  @include pill.pill-outline(var(--color-accent-gold-soft), 2);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.85rem;
+  &--less {
+    color: var(--color-accent-gold-dim);
+    &:hover {
+      color: var(--color-accent-gold-active);
+    }
+  }
+}
+
+.timer-settings-row__details-body {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: fadeSlide $motion-base ease-out;
+}
+
+/* Original timers grid */
 
 .timers-grid {
   display: grid;
@@ -81,6 +229,17 @@
   margin-top: 0.35rem;
 }
 
+.timers-section p {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.35;
+}
+
+.timers-section p + p {
+  margin-top: 0.35rem;
+}
+
 /* Fireworks subtimers */
 
 .timers-section--sub {
@@ -106,10 +265,10 @@
   color: var(--color-text-muted);
 }
 
-/* Chip tweaks reused from global .chip */
+/* Chip tweaks */
 
 .chip--timer {
-  white-space: nowrap; /* keep compact on desktop */
+  white-space: nowrap;
 }
 
 .chip-label {
@@ -134,10 +293,32 @@
 
   .chip--timer {
     margin-top: 0.25rem;
-    white-space: normal; /* allow wrapping so it doesn’t overflow on phones */
+    white-space: normal;
   }
 
   .timers-grid {
     grid-template-columns: 1fr;
+  }
+
+  .timer-settings-row__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timer-settings-row__meta {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

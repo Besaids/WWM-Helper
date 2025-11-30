@@ -1,0 +1,27 @@
+<label
+  class="checklist-toggle"
+  [class.checklist-toggle--checked]="checked"
+  [class.checklist-toggle--disabled]="disabled"
+>
+  <!-- Real checkbox for a11y -->
+  <input
+    type="checkbox"
+    class="checklist-toggle__input"
+    [checked]="checked"
+    [disabled]="disabled"
+    (change)="onInputChange($event)"
+    [attr.aria-describedby]="ariaDescribedBy"
+  />
+
+  <!-- Mini diamond icon -->
+  <span class="checklist-toggle__icon" aria-hidden="true">
+    <span class="checklist-toggle__diamond">
+      <span class="checklist-toggle__diamond-core"></span>
+    </span>
+  </span>
+
+  <!-- Projected text (label + description + tags) -->
+  <div class="checklist-toggle__content">
+    <ng-content></ng-content>
+  </div>
+</label>

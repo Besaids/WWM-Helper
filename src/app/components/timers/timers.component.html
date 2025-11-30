@@ -1,313 +1,601 @@
 <section class="timers-page">
+  <header class="timers-settings-header">
+    <h1>Timers</h1>
+    <p class="text-muted-strong">
+      Toggle which timers appear in the strip at the top. Changes are saved in your browser.
+    </p>
+  </header>
   @if (timers$ | async; as timers) {
-    <header class="timers-page-header">
-      <h1>Timers &amp; resets</h1>
-      <p class="text-muted-strong">
-        Summary of daily / weekly resets and Fireworks events. Helper timers use UTC; in-game
-        descriptions show local server time.
-      </p>
-    </header>
+    <!-- =======================
+         Timer visibility settings
+         ======================= -->
+    <article class="timers-settings card-surface card-padding">
+      @if (enabledIds$ | async; as enabledIds) {
+        <div class="timer-settings-list">
+          @for (t of timers; track t.id) {
+            <div class="timer-settings-row" [attr.id]="'timer-' + t.id">
+              <div class="timer-settings-row__header">
+                <div class="timer-settings-row__main">
+                  <app-diamond-toggle
+                    [checked]="isEnabled(enabledIds, t.id)"
+                    (checkedChange)="onToggleTimer(t.id)"
+                  >
+                    <span class="timer-settings-row__label">
+                      {{ t.label }}
+                    </span>
+                  </app-diamond-toggle>
+                </div>
 
-    <div class="timers-grid">
-      <!-- =======================
-           Daily Reset
-           ======================= -->
-      <article class="timers-card card-surface card-padding">
-        <header class="timers-card-header">
-          <div>
-            <h2>Daily Reset</h2>
-            <p class="timers-card-subtitle">What refreshes every day at server reset.</p>
-          </div>
+                <div class="timer-settings-row__meta">
+                  <span class="timer-settings-row__countdown">
+                    {{ t.remaining }}
+                  </span>
 
-          @if (getChip(timers, 'daily-reset'); as chip) {
-            <div class="chip chip--timer">
-              <i class="bi" [ngClass]="chip.icon"></i>
-              <span class="chip-label">{{ chip.label }}</span>
-              <span class="chip-value">{{ chip.remaining }}</span>
+                  <button
+                    type="button"
+                    class="timer-settings-row__details-btn"
+                    [class.timer-settings-row__details-btn--open]="openTimerId === t.id"
+                    (click)="toggleInfo(t.id)"
+                  >
+                    <span class="timer-settings-row__details-btn-label">
+                      @if (openTimerId !== t.id) {
+                        Details
+                      } @else {
+                        Hide
+                      }
+                    </span>
+                    <span class="timer-settings-row__details-btn-caret" aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
+
+              @if (openTimerId === t.id) {
+                <div class="timer-settings-row__details">
+                  @switch (t.id) {
+                    <!-- =======================
+                         Daily Reset
+                         ======================= -->
+                    @case ('daily-reset') {
+                      <p class="timer-settings-row__details-summary">
+                        At daily reset you regain <strong>Stamina</strong>, Jianghu Errands refresh,
+                        Bounties rotate, and daily-limited activities like
+                        <strong>Blessed Land</strong>, <strong>Five Animal Frolics</strong> and
+                        <strong>Scholar’s Hearth</strong> reset. <strong>Energy</strong> keeps
+                        regenerating passively (1 every 9 minutes), but this breakpoint is where
+                        most daily activities and shops flip over.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Core resources</h3>
+                            <ul>
+                              <li>
+                                <strong>Energy</strong> – Regenerates 1 every 9 real-time minutes up
+                                to your personal cap (e.g. 500). Spent on
+                                <strong>Campaign Challenge</strong>,
+                                <strong>Outpost Challenge</strong> and
+                                <strong>Sword Trial</strong> (20 Energy for Campaign/Outpost/Joint
+                                Battle, 60 Energy for boss trials like Formless Mountain Pass).
+                              </li>
+                              <li>
+                                <strong>Stamina</strong> – Crafting resource with a 2,500 cap. You
+                                gain <strong>450 Stamina</strong> back at each daily reset for
+                                crafting gear, food, medicine, manuals and construction items.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Daily-limited activities</h3>
+                            <ul>
+                              <li>
+                                <strong>Jianghu Errands</strong> – Sect daily missions reset here.
+                                Grant <strong>Merit</strong> plus <strong>Reputation</strong>
+                                (Reputation has its own weekly gain cap).
+                              </li>
+                              <li>
+                                <strong>Blessed Land for Cultivation</strong>,
+                                <strong>Five Animal Frolics</strong>,
+                                <strong>Scholar&apos;s Hearth</strong> – Online activities usually
+                                tied into Jianghu Errands; their participation rewards reset daily.
+                              </li>
+                              <li>
+                                <strong>Bounties</strong> – NPC bounty list refreshes. Once you
+                                clear all NPC bounties you can only continue with player-posted
+                                bounties (for <strong>Fourfold Coin</strong> and leaderboard
+                                progress) until next reset.
+                              </li>
+                              <li>
+                                <strong>Ye Buxiu Betting Match (Chess)</strong> – Located in
+                                <em>Qinghe – Dreamscape: Blissful Retreat</em>. You can win up to
+                                <strong>3 times per day</strong>. On Expert difficulty that is up to
+                                <strong>900 Commerce Coin</strong> for 3 wins; each loss costs 150
+                                Commerce Coin.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Merchant daily stock</h3>
+                            <ul>
+                              <li>
+                                Certain NPC merchants have items flagged as
+                                <strong>daily stock</strong>; those purchase limits refresh at daily
+                                reset. Others are weekly or one-time.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Nice extras around reset</h3>
+                            <ul>
+                              <li>
+                                <strong>Visit your home</strong> for the free daily hairstyles and
+                                to pick up any time-gated home rewards before the next reset.
+                              </li>
+                            </ul>
+                          </section>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Weekly Reset
+                         ======================= -->
+                    @case ('weekly-reset') {
+                      <p class="timer-settings-row__details-summary">
+                        Weekly reset for raid lockouts, weekly currency caps and weekly shop stock.
+                        Use this to line up your long-term goals and big-ticket rewards.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Weekly group content</h3>
+                            <ul>
+                              <li>
+                                <strong>Hero&apos;s Realm (Wandering Paths)</strong> – Up to
+                                10-player raid-style instance. Two bosses per run; you get
+                                <strong>one weekly reward per boss</strong> (two rewards total). No
+                                Energy cost; gated by weekly loot.
+                              </li>
+                              <li>
+                                <strong>Guild Hero&apos;s Realm</strong> – 5–10 guild members;
+                                separate weekly reward for clearing both bosses together as a guild.
+                                No matchmaking and no Energy cost; has its own weekly lockout.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Weekly currency caps</h3>
+                            <ul>
+                              <li>
+                                <strong>Coin</strong> – 175,000 weekly gain cap from repeatable
+                                content.
+                              </li>
+                              <li>
+                                <strong>Harmony Charm</strong> – 2,000 weekly cap; earned from
+                                Partnership, Discipleship and Sworn Cohort activities and spent in
+                                the Social Shop.
+                              </li>
+                              <li>
+                                <strong>Treasure Token</strong> – 2,500 weekly cap from Guild
+                                Events; used in <strong>Red Gold Boutique</strong>.
+                              </li>
+                              <li>
+                                <strong>Jade Fish</strong> – 20,000 weekly cap as the current Season
+                                currency; used in the Season Shop. Many Season items also have their
+                                own weekly purchase limits.
+                              </li>
+                              <li>
+                                <strong>Reputation</strong> – 1,200 weekly gain cap from Jianghu
+                                Errands; used in Sect shops.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Social XP caps</h3>
+                            <ul>
+                              <li>
+                                <strong>Partnership</strong> – 2,000 XP per week from activities
+                                with your Partner; unlocks perks and Partnership shop items.
+                              </li>
+                              <li>
+                                <strong>Discipleship</strong> – 2,000 XP per week from activities
+                                with your Disciple(s) and Master; unlocks levels and shop options.
+                              </li>
+                              <li>
+                                <strong>Sworn Cohort</strong> – 2,000 XP per week from activities
+                                with Cohort members; tied to Cohort shop unlocks.
+                              </li>
+                              <li>
+                                <strong>Intimacy</strong> – Weekly cap exists but the exact value is
+                                hidden. Increased by travelling together, chatting, and gifting
+                                friends; affects long-term friendship perks.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Weekly shop stock</h3>
+                            <ul>
+                              <li>
+                                <strong>Season / Jade Fish Shop</strong> – Many items refresh
+                                weekly, on top of the Jade Fish weekly cap.
+                              </li>
+                              <li>
+                                <strong>Battle Pass Token Shop</strong> – Some rewards also have
+                                weekly limits.
+                              </li>
+                              <li>
+                                Other merchants carry items with <strong>weekly</strong> rather than
+                                daily stock. Some high-end items also use <strong>monthly</strong>
+                                caps; check in-game tooltips.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Weekly shop priorities</h3>
+                            <ul>
+                              <li>
+                                In the <strong>Jade Fish / Season shop</strong>, prioritize
+                                progression items such as
+                                <strong>Martial Arts Combat Tips</strong> and
+                                <strong>Inner Way Note</strong> chests over random gear boxes.
+                              </li>
+                              <li>
+                                Under the appearance tab, pick up your weekly
+                                <strong>Lingering Melody</strong>; it is used for cosmetic banners
+                                and is easy to forget.
+                              </li>
+                              <li>
+                                If you use <strong>Healer</strong> or <strong>Scholar</strong>
+                                professions, grab their weekly profession boxes before reset so you
+                                do not miss skill-progress items.
+                              </li>
+                            </ul>
+                          </section>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Arena 1v1
+                         ======================= -->
+                    @case ('arena-1v1') {
+                      <p class="timer-settings-row__details-summary">
+                        Countdown to the current / next <strong>1v1 Arena</strong> ranked window.
+                        When it shows <strong>open</strong>, ranked 1v1 is available.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Arena 1v1 windows</h3>
+                            <p>
+                              Use this timer to line up PvP sessions with friends or guildmates.
+                              When the timer shows
+                              <strong>open</strong>, ranked 1v1 is available; when it counts down,
+                              it is showing time until the next open window.
+                            </p>
+                            <p>
+                              Keeping this pinned makes it easier to choose between queuing now or
+                              focusing on other activities first.
+                            </p>
+                          </section>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Fireworks – Seats (Bidding)
+                         ======================= -->
+                    @case ('fireworks-seats') {
+                      <p class="timer-settings-row__details-summary">
+                        Bidding window for <strong>Fireworks Seats</strong> at Velvet Shade /
+                        Pearlglow Lake. The timer shows <strong>open</strong> while bidding is live
+                        and counts down to the next close.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Bidding tips</h3>
+                            <ul>
+                              <li>
+                                <strong>When</strong> – Every <strong>Monday 01:00</strong> to
+                                <strong>Friday 13:00</strong> (UTC).
+                              </li>
+                              <li>
+                                <strong>What</strong> – Bid on sponsored seats for the Fireworks
+                                Show and set custom fireworks messages that will appear to other
+                                players.
+                              </li>
+                              <li>
+                                The helper shows this timer as <strong>open</strong> while bidding
+                                is live and counts down to the next close.
+                              </li>
+                            </ul>
+                          </section>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Fireworks – Festival (Red Envelopes)
+                         ======================= -->
+                    @case ('fireworks-festival') {
+                      <p class="timer-settings-row__details-summary">
+                        Weekend <strong>Fireworks Festival</strong> at Pearlglow Lake with red
+                        envelopes for all attendees; runs twice per weekend (Sat 12:30, Sun 00:30
+                        UTC).
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Festival notes</h3>
+                            <ul>
+                              <li>
+                                <strong>When</strong> – Every
+                                <strong>Saturday at 12:30 and Sunday at 00:30 (UTC)</strong>.
+                              </li>
+                              <li>
+                                <strong>Where</strong> –
+                                <strong>Velvet Shade → Pearlglow Lake</strong> in Kaifeng.
+                              </li>
+                              <li>
+                                <strong>What</strong> – Live Fireworks Festival with
+                                <strong>red envelopes</strong> dropped to all attendees.
+                              </li>
+                              <li>
+                                You can also trigger related quests by talking to
+                                <strong>Zhao Rui</strong> and <strong>Sun Jinyuan</strong> near
+                                Velvet Shade between <strong>Chen</strong> and
+                                <strong>You</strong> hours.
+                              </li>
+                            </ul>
+                          </section>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Fireworks – Show (Big Night)
+                         ======================= -->
+                    @case ('fireworks-show') {
+                      <p class="timer-settings-row__details-summary">
+                        Night-time <strong>Fireworks Show</strong> at Pearlglow Lake; prime-time
+                        multiplayer version on weekends plus a nightly solo version.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>Show windows</h3>
+                            <ul>
+                              <li>
+                                <strong>Multiplayer</strong> – Every
+                                <strong>Friday &amp; Saturday at 20:30 (UTC)</strong>. Main
+                                Fireworks Show instance where sponsored seats and custom messages
+                                appear; best time for <strong>red envelopes</strong> with other
+                                players.
+                              </li>
+                              <li>
+                                <strong>Solo</strong> – Every night at <strong>Zi hour</strong> a
+                                Fireworks Festival runs at Pearlglow Lake in your own world. You can
+                                fast-forward time to Zi hour to see it; rewards may differ from the
+                                full multiplayer event.
+                              </li>
+                            </ul>
+                          </section>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Mirage Boat
+                         ======================= -->
+                    @case ('mirage-boat') {
+                      <p class="timer-settings-row__details-summary">
+                        Server-wide <strong>Mirage Boat</strong> “Painted Cruise” event. Use this
+                        timer to see when the next cruise window is about to start so you can hop on
+                        for rewards and try cosmetic outfits.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>What the Mirage Boat is</h3>
+                            <ul>
+                              <li>
+                                Premium, ultra-rare boat mount unlocked by collecting
+                                <strong>170 Mirage Torn Pages</strong> from the Celestial Draw and
+                                exchanging them in the Draw Shop.
+                              </li>
+                              <li>
+                                Lets the owner start a server-wide social event called the
+                                <strong>Painted Cruise / Mirage Boat Event</strong>, effectively a
+                                moving party on the rivers around Kaifeng.
+                              </li>
+                              <li>
+                                Mostly cosmetic and social; it is a flex mount and an event trigger
+                                rather than a direct power boost.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>When the event runs</h3>
+                            <ul>
+                              <li>
+                                There is a <strong>fixed weekly cruise</strong> every
+                                <strong>Sunday evening</strong> and
+                                <strong>Monday morning</strong> (UTC; check this timer’s countdown
+                                and the in-game event panel for the exact times on your server).
+                              </li>
+                              <li>
+                                Mirage Boat owners can also spend currency to trigger extra cruises
+                                outside the fixed windows, so you may occasionally see additional
+                                departures.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>How to join</h3>
+                            <ul>
+                              <li>
+                                When a cruise is active, an event icon appears on your UI; follow it
+                                to the dock and board the Mirage Boat with other players.
+                              </li>
+                              <li>
+                                The boat follows a set route; you can roam the deck, emote, and join
+                                small mini-activities while it sails.
+                              </li>
+                              <li>
+                                You <strong>do not need to own the Mirage Boat</strong> to
+                                participate; any player can join as a guest when a cruise is
+                                running.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Rewards and perks</h3>
+                            <ul>
+                              <li>
+                                You earn <strong>Fortune Points</strong> simply by staying on the
+                                boat and participating in its mini-games; at
+                                <strong>1,000 Fortune Points</strong> you can claim your reward via
+                                the Mirage Boat icon at the top-right of the screen.
+                              </li>
+                              <li>
+                                Rewards are mailed to you if you leave early; the quality scales
+                                with how much the owner spends to fund the cruise.
+                              </li>
+                              <li>
+                                During the event you can temporarily wear
+                                <strong>any outfits owned by the boat’s owner</strong>, letting you
+                                test premium cosmetics for free while you’re on board.
+                              </li>
+                            </ul>
+                          </section>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Default
+                         ======================= -->
+                    @default {
+                      <p class="timer-settings-row__details-summary">
+                        Helper timer for an in-game event or reset. Full details will be added
+                        later.
+                      </p>
+                    }
+                  }
+                </div>
+              }
             </div>
           }
-        </header>
-
-        <div class="timers-card-body">
-          <section class="timers-section">
-            <h3>Core resources</h3>
-            <ul>
-              <li>
-                <strong>Energy</strong> – Regenerates 1 every 9 real-time minutes up to your
-                personal cap (e.g. 500). Spent on <strong>Campaign Challenge</strong>,
-                <strong>Outpost Challenge</strong> and <strong>Sword Trial</strong> (20 Energy for
-                Campaign/Outpost/Joint Battle, 60 Energy for boss trials like Formless Mountain
-                Pass).
-              </li>
-              <li>
-                <strong>Stamina</strong> – Crafting resource with a 2,500 cap. You gain
-                <strong>450 Stamina</strong> back at each daily reset for crafting gear, food,
-                medicine, manuals and construction items.
-              </li>
-            </ul>
-          </section>
-
-          <section class="timers-section">
-            <h3>Daily-limited activities</h3>
-            <ul>
-              <li>
-                <strong>Jianghu Errands</strong> – Sect daily missions reset here. Grant
-                <strong>Merit</strong> plus <strong>Reputation</strong> (Reputation has its own
-                weekly gain cap).
-              </li>
-              <li>
-                <strong>Blessed Land for Cultivation</strong>, <strong>Five Animal Frolics</strong>,
-                <strong>Scholar&apos;s Hearth</strong> – Online activities usually tied into Jianghu
-                Errands; their participation rewards reset daily.
-              </li>
-              <li>
-                <strong>Bounties</strong> – NPC bounty list refreshes. Once you clear all NPC
-                bounties you can only continue with player-posted bounties (for
-                <strong>Fourfold Coin</strong> and leaderboard progress) until next reset.
-              </li>
-              <li>
-                <strong>Ye Buxiu Betting Match (Chess)</strong> – Located in
-                <em>Qinghe – Dreamscape: Blissful Retreat</em>. You can win up to
-                <strong>3 times per day</strong>. On Expert difficulty that is up to
-                <strong>900 Commerce Coin</strong> for 3 wins; each loss costs 150 Commerce Coin.
-              </li>
-            </ul>
-          </section>
-
-          <section class="timers-section">
-            <h3>Merchant daily stock</h3>
-            <ul>
-              <li>
-                Certain NPC merchants have items flagged as <strong>daily stock</strong>; those
-                purchase limits refresh at daily reset. Others are weekly or one-time.
-              </li>
-            </ul>
-          </section>
         </div>
-      </article>
-
-      <!-- =======================
-           Weekly Reset
-           ======================= -->
-      <article class="timers-card card-surface card-padding">
-        <header class="timers-card-header">
-          <div>
-            <h2>Weekly Reset</h2>
-            <p class="timers-card-subtitle">Weekly lockouts, caps and stock refresh.</p>
-          </div>
-
-          @if (getChip(timers, 'weekly-reset'); as chip) {
-            <div class="chip chip--timer">
-              <i class="bi" [ngClass]="chip.icon"></i>
-              <span class="chip-label">{{ chip.label }}</span>
-              <span class="chip-value">{{ chip.remaining }}</span>
-            </div>
-          }
-        </header>
-
-        <div class="timers-card-body">
-          <section class="timers-section">
-            <h3>Weekly group content</h3>
-            <ul>
-              <li>
-                <strong>Hero&apos;s Realm (Wandering Paths)</strong> – Up to 10-player raid-style
-                instance. Two bosses per run; you get <strong>one weekly reward per boss</strong>
-                (two rewards total). No Energy cost; gated by weekly loot.
-              </li>
-              <li>
-                <strong>Guild Hero&apos;s Realm</strong> – 5–10 guild members; separate weekly
-                reward for clearing both bosses together as a guild. No matchmaking and no Energy
-                cost; has its own weekly lockout.
-              </li>
-            </ul>
-          </section>
-
-          <section class="timers-section">
-            <h3>Weekly currency caps</h3>
-            <ul>
-              <li><strong>Coin</strong> – 175,000 weekly gain cap from repeatable content.</li>
-              <li>
-                <strong>Harmony Charm</strong> – 2,000 weekly cap; earned from Partnership,
-                Discipleship and Sworn Cohort activities and spent in the Social Shop.
-              </li>
-              <li>
-                <strong>Treasure Token</strong> – 2,500 weekly cap from Guild Events; used in
-                <strong>Red Gold Boutique</strong>.
-              </li>
-              <li>
-                <strong>Jade Fish</strong> – 20,000 weekly cap as the current Season currency; used
-                in the Season Shop. Many Season items also have their own weekly purchase limits.
-              </li>
-              <li>
-                <strong>Reputation</strong> – 1,200 weekly gain cap from Jianghu Errands; used in
-                Sect shops.
-              </li>
-            </ul>
-          </section>
-
-          <section class="timers-section">
-            <h3>Social XP caps</h3>
-            <ul>
-              <li>
-                <strong>Partnership</strong> – 2,000 XP per week from activities with your Partner;
-                unlocks perks and Partnership shop items.
-              </li>
-              <li>
-                <strong>Discipleship</strong> – 2,000 XP per week from activities with your
-                Disciple(s) and Master; unlocks levels and shop options.
-              </li>
-              <li>
-                <strong>Sworn Cohort</strong> – 2,000 XP per week from activities with Cohort
-                members; tied to Cohort shop unlocks.
-              </li>
-              <li>
-                <strong>Intimacy</strong> – Weekly cap exists but the exact value is hidden.
-                Increased by travelling together, chatting, and gifting friends; affects long-term
-                friendship perks.
-              </li>
-            </ul>
-          </section>
-
-          <section class="timers-section">
-            <h3>Weekly shop stock</h3>
-            <ul>
-              <li>
-                <strong>Season / Jade Fish Shop</strong> – Many items refresh weekly, on top of the
-                Jade Fish weekly cap.
-              </li>
-              <li>
-                <strong>Battle Pass Token Shop</strong> – Some rewards also have weekly limits.
-              </li>
-              <li>
-                Other merchants carry items with <strong>weekly</strong> rather than daily stock.
-                Some high-end items also use <strong>monthly</strong> caps; check in-game tooltips.
-              </li>
-            </ul>
-          </section>
-        </div>
-      </article>
-
-      <!-- =======================
-           Fireworks events
-           ======================= -->
-      <article class="timers-card card-surface card-padding">
-        <header class="timers-card-header">
-          <div>
-            <h2>Fireworks events</h2>
-            <p class="timers-card-subtitle">
-              Seats, red envelopes and the nightly show at Velvet Shade / Pearlglow Lake.
-            </p>
-          </div>
-        </header>
-
-        <div class="timers-card-body timers-card-body--stacked">
-          <!-- Seats -->
-          <section class="timers-section timers-section--sub">
-            <header class="timers-subheader">
-              <div>
-                <h3>Fireworks Seats</h3>
-                <p class="timers-subheader-subtitle">Bidding window for sponsored seats.</p>
-              </div>
-
-              @if (getChip(timers, 'fireworks-seats'); as chip) {
-                <div class="chip chip--timer">
-                  <i class="bi" [ngClass]="chip.icon"></i>
-                  <span class="chip-label">{{ chip.label }}</span>
-                  <span class="chip-value">{{ chip.remaining }}</span>
-                </div>
-              }
-            </header>
-
-            <ul>
-              <li>
-                <strong>When</strong> – Every <strong>Monday 01:00</strong> to
-                <strong>Friday 13:00</strong> (local server time).
-              </li>
-              <li>
-                <strong>What</strong> – Bid on sponsored seats for the Fireworks Show and set custom
-                fireworks messages that will appear to other players.
-              </li>
-              <li>
-                The helper shows this timer as <strong>open</strong> while bidding is live and
-                counts down to the next close.
-              </li>
-            </ul>
-          </section>
-
-          <!-- Festival -->
-          <section class="timers-section timers-section--sub">
-            <header class="timers-subheader">
-              <div>
-                <h3>Fireworks Festival</h3>
-                <p class="timers-subheader-subtitle">
-                  Noon red-envelope festival at Pearlglow Lake.
-                </p>
-              </div>
-
-              @if (getChip(timers, 'fireworks-festival'); as chip) {
-                <div class="chip chip--timer">
-                  <i class="bi" [ngClass]="chip.icon"></i>
-                  <span class="chip-label">{{ chip.label }}</span>
-                  <span class="chip-value">{{ chip.remaining }}</span>
-                </div>
-              }
-            </header>
-
-            <ul>
-              <li>
-                <strong>When</strong> – Every <strong>Saturday &amp; Sunday at 12:30</strong>
-                (local server time).
-              </li>
-              <li>
-                <strong>Where</strong> – <strong>Velvet Shade → Pearlglow Lake</strong> in Kaifeng.
-              </li>
-              <li>
-                <strong>What</strong> – Live Fireworks Festival with <strong>red envelopes</strong>
-                dropped to all attendees.
-              </li>
-              <li>
-                You can also trigger related quests by talking to
-                <strong>Zhao Rui</strong> and <strong>Sun Jinyuan</strong> near Velvet Shade between
-                <strong>Chen</strong> and <strong>You</strong> hours.
-              </li>
-            </ul>
-          </section>
-
-          <!-- Show -->
-          <section class="timers-section timers-section--sub">
-            <header class="timers-subheader">
-              <div>
-                <h3>Fireworks Show</h3>
-                <p class="timers-subheader-subtitle">
-                  Prime-time multiplayer show &amp; always-available solo version.
-                </p>
-              </div>
-
-              @if (getChip(timers, 'fireworks-show'); as chip) {
-                <div class="chip chip--timer">
-                  <i class="bi" [ngClass]="chip.icon"></i>
-                  <span class="chip-label">{{ chip.label }}</span>
-                  <span class="chip-value">{{ chip.remaining }}</span>
-                </div>
-              }
-            </header>
-
-            <ul>
-              <li>
-                <strong>Multiplayer</strong> – Every
-                <strong>Friday &amp; Saturday at 20:30</strong>. Main Fireworks Show instance where
-                sponsored seats and custom messages appear; best time for
-                <strong>red envelopes</strong> with other players.
-              </li>
-              <li>
-                <strong>Solo</strong> – Every night at <strong>Zi hour</strong> a Fireworks Festival
-                runs at Pearlglow Lake in your own world. You can fast-forward time to Zi hour to
-                see it; rewards may differ from the full multiplayer event.
-              </li>
-            </ul>
-          </section>
-        </div>
-      </article>
-    </div>
+      }
+    </article>
   }
 </section>
