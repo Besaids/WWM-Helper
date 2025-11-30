@@ -30,7 +30,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   },
 
   // ========================
-  // Arena
+  // Arena / competitive
   // ========================
   {
     id: 'arena-1v1',
@@ -41,7 +41,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       type: 'daily-multi',
       times: [
         { hour: 10, minute: 0 }, // 10:00–16:00
-        { hour: 22, minute: 0 }, // 22:00–04:00 (cross-midnight)
+        { hour: 22, minute: 0 }, // 22:00–04:00
       ],
       windowHours: 6,
     },
@@ -51,40 +51,22 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   // Fireworks hub – Kaifeng
   // ========================
 
-  // 0) Fireworks – Solo (Zi hour) – every evening at Zi hour (~23:00 local)
-  {
-    id: 'fireworks-solo-zi',
-    label: 'Fireworks – Solo (Zi hour)',
-    shortLabel: 'Solo',
-    icon: 'bi-moon-stars',
-    schedule: {
-      type: 'daily',
-      hour: 23,
-      minute: 0,
-    },
-  },
-
-  // 1) Fireworks – Festival (Red Envelopes)
-  // Leisure card: Every Saturday at 12:30 and Every Sunday at 0:30 (local time)
-  // Modelled as a weekly window: open Sat 12:30, close Sun 0:30.
+  // Festival (Red Envelopes) – Every Saturday at 12:30 and Sunday at 00:30
   {
     id: 'fireworks-festival',
     label: 'Fireworks – Festival (Red Envelopes)',
     shortLabel: 'Fest',
     icon: 'bi-brightness-high',
     schedule: {
-      type: 'weekly-range',
-      openWeekday: 6, // Saturday
-      openHour: 12,
-      openMinute: 30,
-      closeWeekday: 7, // Sunday
-      closeHour: 0,
-      closeMinute: 30,
+      type: 'weekly-times',
+      times: [
+        { weekday: 6, hour: 12, minute: 30 }, // Saturday 12:30
+        { weekday: 7, hour: 0, minute: 30 },  // Sunday 00:30
+      ],
     },
   },
 
-  // 2) Fireworks – Seats (Bidding)
-  // Map: Every Monday 1:00 → Every Friday 13:00 (local time)
+  // Seats (Bidding) – Monday 1:00 → Friday 13:00
   {
     id: 'fireworks-seats',
     label: 'Fireworks – Seats (Bidding)',
@@ -101,8 +83,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     },
   },
 
-  // 3) Fireworks – Show (Big Night)
-  // Map: Event time Every Friday, Saturday at 20:30 (local time)
+  // Big show – Every Friday & Saturday at 20:30
   {
     id: 'fireworks-show',
     label: 'Fireworks – Show (Big Night)',
@@ -110,7 +91,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     icon: 'bi-stars',
     schedule: {
       type: 'weekly-multi',
-      weekdays: [5, 6], // Fri, Sat
+      weekdays: [5, 6], // Friday, Saturday
       hour: 20,
       minute: 30,
     },
@@ -120,31 +101,17 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   // Mirage Boat – Yellow River cruise
   // ========================
 
-  // Leisure card: Every Sunday at 11:00 (local time)
   {
-    id: 'mirage-boat-11',
-    label: 'Mirage Boat – 11:00',
-    shortLabel: 'Mirage 11:00',
-    icon: 'bi-tsunami',
+    id: 'mirage-boat',
+    label: 'Mirage Boat',
+    shortLabel: 'Mirage',
+    icon: 'bi-tsunami', // change if that icon doesn’t exist
     schedule: {
-      type: 'weekly',
-      weekday: 7, // Sunday
-      hour: 11,
-      minute: 0,
-    },
-  },
-
-  // Leisure card: Every Sunday at 23:00 (local time)
-  {
-    id: 'mirage-boat-23',
-    label: 'Mirage Boat – 23:00',
-    shortLabel: 'Mirage 23:00',
-    icon: 'bi-tsunami',
-    schedule: {
-      type: 'weekly',
-      weekday: 7, // Sunday
-      hour: 23,
-      minute: 0,
+      type: 'weekly-times',
+      times: [
+        { weekday: 7, hour: 11, minute: 0 }, // Sunday 11:00
+        { weekday: 7, hour: 23, minute: 0 }, // Sunday 23:00
+      ],
     },
   },
 ];
