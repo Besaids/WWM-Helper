@@ -7,7 +7,8 @@
   position: relative;
   margin: 0;
   width: 100%;
-  max-width: 420px;
+  // Desktop / larger viewports: let it breathe but don’t go crazy wide
+  max-width: min(100%, 32rem); // ~512–576px depending on root size
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -217,7 +218,7 @@
 /* Responsive tweaks */
 @media (max-width: 768px) {
   .music-player {
-    max-width: 100%;
+    max-width: 100%; // full width on mobile
     padding: 0.32rem 0.5rem;
   }
   .music-player-title {

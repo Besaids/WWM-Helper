@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TimerPreferencesService, TimerService } from '../../services';
+import {
+  GuildEventConfig,
+  GuildEventSlot,
+  GuildEventTimersService,
+  GuildTimerId,
+  TimerPreferencesService,
+  TimerService,
+} from '../../services';
 import { TimerChip } from '../../models';
 import { DiamondToggleComponent } from '../ui';
 
@@ -15,12 +22,19 @@ import { DiamondToggleComponent } from '../ui';
 export class TimersComponent {
   private readonly timerService = inject(TimerService);
   private readonly timerPrefs = inject(TimerPreferencesService);
+  private readonly guildTimers = inject(GuildEventTimersService);
 
   // All timer chips (unfiltered)
   readonly timers$ = this.timerService.timerChips$;
 
   // Enabled timer IDs (Set<string>)
   readonly enabledIds$ = this.timerPrefs.enabledTimerIds$;
+
+  readonly guildConfigs$ = this.guildTimers.configs$;
+  readonly guildUtcOffsets = Array.from({ length: 27 }, (_, i) => i - 12); // -12..14
+
+  readonly guildHourOptions = Array.from({ length: 24 }, (_, i) => i); // 0..23
+  readonly guildMinuteOptions = [0, 15, 30, 45];
 
   // Which timer's details drawer is open in the settings list
   openTimerId: string | null = null;
@@ -52,6 +66,64 @@ export class TimersComponent {
       // Wait for the DOM to update so the details block actually exists
       setTimeout(() => this.scrollTimerIntoView(id), 0);
     }
+  }
+
+  saveGuildTimer(id: GuildTimerId, timezoneOffsetMinutes: number, slots: GuildEventSlot[]): void {
+    this.guildTimers.upsertConfig(id, {
+      timezoneOffsetMinutes,
+      slots,
+    });
+  }
+
+  deleteGuildTimer(id: GuildTimerId): void {
+    this.guildTimers.deleteConfig(id);
+  }
+
+  buildGuildSlots(
+    day1: string,
+    hour1: string,
+    minute1: string,
+    day2: string,
+    hour2: string,
+    minute2: string,
+  ): GuildEventSlot[] {
+    const slots: GuildEventSlot[] = [];
+
+    const s1 = this.parseSlot(day1, hour1, minute1);
+    if (s1) slots.push(s1);
+
+    const s2 = this.parseSlot(day2, hour2, minute2);
+    if (s2) slots.push(s2);
+
+    return slots;
+  }
+
+  getGuildTimezoneHours(config: GuildEventConfig | undefined | null): number {
+    // Default to UTC+0 if we have no stored config yet
+    return (config?.timezoneOffsetMinutes ?? 0) / 60;
+  }
+
+  private parseSlot(day: string, hour: string, minute: string): GuildEventSlot | null {
+    const weekday = Number(day);
+    if (!weekday) return null;
+
+    const h = Number(hour);
+    const m = Number(minute);
+
+    if (
+      Number.isNaN(h) ||
+      Number.isNaN(m) ||
+      weekday < 1 ||
+      weekday > 7 ||
+      h < 0 ||
+      h > 23 ||
+      m < 0 ||
+      m > 59
+    ) {
+      return null;
+    }
+
+    return { weekday, hour: h, minute: m };
   }
 
   private scrollTimerIntoView(id: string): void {

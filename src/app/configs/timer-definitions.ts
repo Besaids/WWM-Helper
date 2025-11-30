@@ -114,4 +114,34 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       ],
     },
   },
+
+  // ========================
+  // Guild events – user-configured
+  // ========================
+
+  {
+    id: 'guild-breaking-army',
+    label: 'Breaking Army (Guild)',
+    shortLabel: 'BreakArmy',
+    icon: 'bi-lightning-charge', // or whatever fits
+    // Schedule is overridden at runtime by GuildEventTimersService; this is a dummy value.
+    schedule: {
+      type: 'weekly',
+      weekday: 1,
+      hour: 0,
+      minute: 0,
+    },
+  },
+  {
+    id: 'guild-test-your-skills',
+    label: 'Test Your Skills (Guild)',
+    shortLabel: 'TestSkills',
+    icon: 'bi-shield-shaded',
+    schedule: {
+      type: 'weekly',
+      weekday: 1,
+      hour: 0,
+      minute: 0,
+    },
+  },
 ];

@@ -580,6 +580,461 @@
                       }
                     }
 
+                    @case ('guild-breaking-army') {
+                      <section class="timers-section">
+                        <h3>Breaking Army – guild event</h3>
+                        <p>
+                          Breaking Army is your guild’s solo challenge event. Each session lasts
+                          <strong>1 hour</strong>. The exact schedule is set by your guild leader.
+                          Use the in-game card time (for example
+                          <strong>Wednesday 20:30 (UTC+8)</strong>) and enter it below.
+                        </p>
+
+                        @if (guildConfigs$ | async; as guildConfigs) {
+                          @let current = guildConfigs['guild-breaking-army'];
+
+                          <div class="guild-timer-config">
+                            <h4>Schedule</h4>
+
+                            <!-- Timezone offset (in hours) -->
+                            <div class="guild-timer-field">
+                              <span>Event timezone (card)</span>
+                              <div class="guild-timer-field__tz">
+                                <span>UTC + </span>
+                                <select #baTzHours>
+                                  @for (o of guildUtcOffsets; track o) {
+                                    <option
+                                      [value]="o"
+                                      [selected]="getGuildTimezoneHours(current) === o"
+                                    >
+                                      {{ o }}
+                                    </option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+
+                            <!-- Slot 1 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 1 weekday</span>
+                                <select #baDay1>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 hour</span>
+                                <select #baHour1>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[0]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 minute</span>
+                                <select #baMinute1>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[0]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <!-- Slot 2 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 2 weekday</span>
+                                <select #baDay2>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 hour</span>
+                                <select #baHour2>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[1]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 minute</span>
+                                <select #baMinute2>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[1]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <div class="guild-timer-actions">
+                              <button
+                                type="button"
+                                class="btn-primary"
+                                (click)="
+                                  saveGuildTimer(
+                                    'guild-breaking-army',
+                                    +baTzHours.value * 60,
+                                    buildGuildSlots(
+                                      baDay1.value,
+                                      baHour1.value,
+                                      baMinute1.value,
+                                      baDay2.value,
+                                      baHour2.value,
+                                      baMinute2.value
+                                    )
+                                  )
+                                "
+                              >
+                                Save
+                              </button>
+
+                              <button
+                                type="button"
+                                class="btn-secondary"
+                                (click)="deleteGuildTimer('guild-breaking-army')"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </section>
+                    }
+
+                    @case ('guild-test-your-skills') {
+                      <section class="timers-section">
+                        <h3>Test Your Skills – guild event</h3>
+                        <p>
+                          Test Your Skills is your guild’s internal arena event. Each session lasts
+                          <strong>1 hour</strong>. The exact schedule is set by your guild leader.
+                          Use the in-game card times (for example
+                          <strong>Thursday 20:30 (UTC+8)</strong> and
+                          <strong>Sunday 20:30 (UTC+8)</strong>) and enter them below.
+                        </p>
+
+                        @if (guildConfigs$ | async; as guildConfigs) {
+                          @let current = guildConfigs['guild-test-your-skills'];
+
+                          <div class="guild-timer-config">
+                            <h4>Schedule</h4>
+
+                            <!-- Timezone offset (in hours) -->
+                            <div class="guild-timer-field">
+                              <span>Event timezone (card)</span>
+                              <div class="guild-timer-field__tz">
+                                <span>UTC + </span>
+                                <select #tysTzHours>
+                                  @for (o of guildUtcOffsets; track o) {
+                                    <option
+                                      [value]="o"
+                                      [selected]="getGuildTimezoneHours(current) === o"
+                                    >
+                                      {{ o }}
+                                    </option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+
+                            <!-- Slot 1 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 1 weekday</span>
+                                <select #tysDay1>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 hour</span>
+                                <select #tysHour1>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[0]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 minute</span>
+                                <select #tysMinute1>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[0]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <!-- Slot 2 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 2 weekday</span>
+                                <select #tysDay2>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 hour</span>
+                                <select #tysHour2>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[1]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 minute</span>
+                                <select #tysMinute2>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[1]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <div class="guild-timer-actions">
+                              <button
+                                type="button"
+                                class="btn-primary"
+                                (click)="
+                                  saveGuildTimer(
+                                    'guild-test-your-skills',
+                                    +tysTzHours.value * 60,
+                                    buildGuildSlots(
+                                      tysDay1.value,
+                                      tysHour1.value,
+                                      tysMinute1.value,
+                                      tysDay2.value,
+                                      tysHour2.value,
+                                      tysMinute2.value
+                                    )
+                                  )
+                                "
+                              >
+                                Save
+                              </button>
+
+                              <button
+                                type="button"
+                                class="btn-secondary"
+                                (click)="deleteGuildTimer('guild-test-your-skills')"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </section>
+                    }
+
                     <!-- =======================
                          Default
                          ======================= -->
