@@ -1,0 +1,10 @@
+@use '../tokens/shadows' as *;
+@mixin glow($type: teal, $intensity: soft) {
+  @if $type == teal and $intensity == soft {
+    box-shadow: $glow-teal-soft;
+  } @else if $type == teal and $intensity == strong {
+    box-shadow: $glow-teal-strong;
+  } @else if $type == gold and $intensity == soft {
+    box-shadow: $glow-gold-soft;
+  }
+}

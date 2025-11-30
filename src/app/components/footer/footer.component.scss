@@ -1,9 +1,13 @@
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/elevation' as *;
+
 .app-footer {
   margin-top: 1.5rem;
-  padding: 0.75rem var(--spacing-outer-x) 1.5rem;
-  border-top: 1px solid var(--color-border-subtle);
+  padding: 0.75rem $spacing-outer-x 1.5rem;
+  border-top: 1px solid $border-subtle;
   font-size: 0.78rem;
-  color: var(--color-text-secondary);
+  color: $text-secondary;
   background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.06), transparent 60%)
     rgba(5, 7, 11, 0.98);
 }
@@ -19,7 +23,7 @@
 
 .app-footer-game {
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: $text-primary;
 }
 
 .app-footer-links {
@@ -34,12 +38,12 @@
   content: '|';
   margin: 0 0.35rem 0 0.15rem;
   opacity: 0.5;
-  color: var(--color-text-secondary);
+  color: $text-secondary;
 }
 
 .app-footer-links a:hover,
 .app-footer-links a:focus-visible {
-  color: var(--color-text-primary);
+  color: $text-primary;
   text-decoration: none;
 }
 

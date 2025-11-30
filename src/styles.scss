@@ -7,6 +7,19 @@
 @use 'tokens/spacing';
 @use 'tokens/radius';
 @use 'tokens/elevation';
+@use 'tokens/surfaces';
+@use 'tokens/gradients';
+@use 'tokens/motion';
+@use 'tokens/shadows';
+
+// ==========================
+// Mixins
+// ==========================
+
+@use 'mixins/capsule';
+@use 'mixins/pill';
+@use 'mixins/toggle';
+@use 'mixins/glow';
 
 // ==========================
 // Base styles

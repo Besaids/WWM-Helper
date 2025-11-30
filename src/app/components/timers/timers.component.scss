@@ -1,4 +1,13 @@
-@use 'sass:map';
+@use 'mixins/capsule' as capsule;
+@use 'mixins/pill' as pill;
+@use 'tokens/colors' as *;
+@use 'tokens/surfaces' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
+/* =======================
+   Page layout
+   ======================= */
 
 .timers-page {
   display: flex;
@@ -6,9 +15,7 @@
   gap: 1.5rem;
 }
 
-/* =======================
-   Header
-   ======================= */
+/* Header */
 
 .timers-page-header {
   display: flex;
@@ -21,9 +28,7 @@
   font-size: 1.6rem;
 }
 
-/* =======================
-   Settings block at top
-   ======================= */
+/* Settings block */
 
 .timers-settings {
   display: flex;
@@ -53,17 +58,17 @@
   gap: 0.75rem;
 }
 
+/* Row capsule */
 .timer-settings-row {
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-lg);
-  background: rgba(10, 17, 35, 0.95);
+  @include capsule.capsule(4, var(--radius-lg), 0.75rem, 1rem);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
 .timer-settings-row:hover {
-  background: rgba(20, 32, 58, 0.95);
+  background: var(--surface-layer-5);
+  box-shadow: var(--shadow-depth-3);
 }
 
 .timer-settings-row__header {
@@ -94,50 +99,18 @@
   opacity: 0.85;
 }
 
-/* =======================
-   Details / Hide button (final unified)
-   ======================= */
+/* Details / Hide button */
 
 .timer-settings-row__details-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-
-  padding: 0.3rem 0.85rem;
+  @include pill.pill-outline(var(--color-accent-gold-soft), 3);
   min-height: 2rem;
   min-width: 6rem;
-
-  font-size: 0.8rem;
-  font-weight: 500;
-  line-height: 1.15;
-  white-space: nowrap;
-
-  border-radius: 999px;
-  border: 1px solid rgba(245, 210, 139, 0.55);
-  background-color: rgba(20, 30, 48, 0.85);
-  color: #f5d28b;
-
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.timer-settings-row__details-btn:hover {
-  background-color: rgba(27, 42, 66, 0.9);
-  border-color: rgba(245, 210, 139, 0.8);
-  box-shadow: 0 0 6px rgba(245, 210, 139, 0.35);
 }
 
 .timer-settings-row__details-btn--open {
-  background-color: rgba(30, 46, 72, 0.92);
-  border-color: rgba(245, 210, 139, 0.95);
-  color: #f1c77a;
-  box-shadow:
-    0 0 0 1px rgba(15, 23, 42, 0.85),
-    0 0 8px rgba(245, 210, 139, 0.35);
+  background: var(--surface-layer-4);
+  color: var(--color-accent-gold-highlight);
+  box-shadow: var(--glow-gold-soft), var(--shadow-depth-2);
 }
 
 .timer-settings-row__details-btn-label {
@@ -145,27 +118,24 @@
   text-align: left;
 }
 
-/* Conventional triangle caret */
 .timer-settings-row__details-btn-caret {
   width: 0;
   height: 0;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 6px solid currentColor; /* down arrow */
-  transition: transform 0.18s ease;
+  border-top: 6px solid currentColor;
+  transition: transform $motion-base $motion-ease;
 }
 
 .timer-settings-row__details-btn--open .timer-settings-row__details-btn-caret {
-  transform: rotate(180deg); /* points up */
+  transform: rotate(180deg);
 }
 
-/* =======================
-   Expanded details
-   ======================= */
+/* Expanded details */
 
 .timer-settings-row__details {
   margin-top: 0.4rem;
-  animation: fadeSlide 180ms ease-out;
+  animation: fadeSlide $motion-base ease-out;
 }
 
 .timer-settings-row__details-summary {
@@ -173,34 +143,16 @@
   color: var(--color-text-secondary);
 }
 
-/* “Show more / Show less” toggle */
-
 .timer-settings-row__details-toggle {
-  padding: 0.25rem 0.85rem;
-  border-radius: 999px;
+  @include pill.pill-outline(var(--color-accent-gold-soft), 2);
   font-size: 0.75rem;
-  font-weight: 500;
-  background-color: rgba(25, 38, 60, 0.6);
-  border: 1px solid rgba(245, 210, 139, 0.4);
-  color: #f5d28b;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
-  cursor: pointer;
-}
-
-.timer-settings-row__details-toggle:hover {
-  background-color: rgba(30, 46, 72, 0.75);
-  border-color: rgba(245, 210, 139, 0.7);
-  text-decoration: none;
-}
-
-.timer-settings-row__details-toggle--less {
-  color: #c9a45a;
-}
-
-.timer-settings-row__details-toggle--less:hover {
-  color: #f5d47b;
+  padding: 0.25rem 0.85rem;
+  &--less {
+    color: var(--color-accent-gold-dim);
+    &:hover {
+      color: var(--color-accent-gold-active);
+    }
+  }
 }
 
 .timer-settings-row__details-body {
@@ -208,12 +160,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  animation: fadeSlide 180ms ease-out;
+  animation: fadeSlide $motion-base ease-out;
 }
 
-/* =======================
-   Original timers grid (bottom)
-   ======================= */
+/* Original timers grid */
 
 .timers-grid {
   display: grid;
@@ -315,7 +265,7 @@
   color: var(--color-text-muted);
 }
 
-/* Chip tweaks reused from global .chip */
+/* Chip tweaks */
 
 .chip--timer {
   white-space: nowrap;
@@ -329,9 +279,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* =======================
-   Mobile
-   ======================= */
+/* Mobile */
 
 @media (max-width: 768px) {
   .timers-page-header h1 {
@@ -360,7 +308,7 @@
   .timer-settings-row__meta {
     margin-left: 0;
     width: 100%;
-    justify-content: space-between; // countdown left, button right
+    justify-content: space-between;
   }
 }
 

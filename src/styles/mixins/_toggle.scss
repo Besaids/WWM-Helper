@@ -1,0 +1,50 @@
+@use '../tokens/gradients' as *;
+@use '../tokens/colors' as *;
+@use '../tokens/shadows' as *;
+@use '../tokens/motion' as *;
+@mixin diamond-toggle($size: 1.15rem) {
+  width: $size;
+  height: $size;
+  position: relative;
+  transform: rotate(45deg);
+  border-radius: 0.22rem;
+  border: 2px solid $accent-gold-soft;
+  background: $gradient-radial-gold-core;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    $shadow-depth-1;
+  transition:
+    border-color $motion-base $motion-ease,
+    box-shadow $motion-base $motion-ease,
+    background $motion-base $motion-ease;
+  .inner {
+    position: absolute;
+    inset: 0.18rem;
+    border-radius: 0.2rem;
+    background: $gradient-radial-gold-core;
+    box-shadow:
+      inset 0 0 0 1px rgba(15, 23, 42, 0.8),
+      inset 0 0 6px rgba(0, 0, 0, 0.6);
+    transition:
+      background $motion-base $motion-ease,
+      box-shadow $motion-base $motion-ease;
+  }
+  &.is-checked {
+    border-color: $accent-gold-highlight;
+    box-shadow:
+      0 0 0 1px rgba(255, 215, 150, 0.25),
+      $glow-teal-strong;
+    .inner {
+      background: $gradient-radial-teal-core;
+      box-shadow:
+        inset 0 0 3px rgba(255, 255, 255, 0.25),
+        $glow-teal-soft;
+    }
+  }
+  &:not(.is-checked):hover .inner {
+    background: $gradient-radial-teal-hover;
+  }
+  &.is-checked:hover .inner {
+    background: $gradient-radial-teal-soft;
+  }
+}

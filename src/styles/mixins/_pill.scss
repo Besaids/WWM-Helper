@@ -1,0 +1,36 @@
+@use '../tokens/colors' as *;
+@use '../tokens/shadows' as *;
+@use '../tokens/motion' as *;
+@mixin pill-base($pad-y: 0.3rem, $pad-x: 0.85rem, $fs: 0.8rem) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: $pad-y $pad-x;
+  font-size: $fs;
+  font-weight: 500;
+  line-height: 1.15;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color $motion-fast $motion-ease,
+    border-color $motion-fast $motion-ease,
+    color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease;
+  text-decoration: none;
+}
+@mixin pill-outline($border-color: var(--color-accent-gold-soft), $bg-layer: 2) {
+  @include pill-base();
+  border: 1px solid $border-color;
+  background: var(--surface-layer-#{$bg-layer});
+  color: $accent-gold-soft;
+  &:hover {
+    background: var(--surface-layer-#{$bg-layer + 1});
+    box-shadow: $glow-gold-soft;
+  }
+  &.is-active {
+    background: var(--surface-layer-#{$bg-layer + 2});
+    color: $accent-gold-highlight;
+    box-shadow: $glow-gold-soft, $shadow-depth-2;
+  }
+}

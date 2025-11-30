@@ -1,0 +1,12 @@
+:root {
+  --surface-layer-1: rgba(15, 23, 42, 0.6);
+  --surface-layer-2: rgba(15, 23, 42, 0.72);
+  --surface-layer-3: rgba(15, 23, 42, 0.84);
+  --surface-layer-4: rgba(15, 23, 42, 0.92);
+  --surface-layer-5: rgba(15, 23, 42, 0.96);
+}
+$surface-layer-1: var(--surface-layer-1);
+$surface-layer-2: var(--surface-layer-2);
+$surface-layer-3: var(--surface-layer-3);
+$surface-layer-4: var(--surface-layer-4);
+$surface-layer-5: var(--surface-layer-5);

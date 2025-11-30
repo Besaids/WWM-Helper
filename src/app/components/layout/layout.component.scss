@@ -1,20 +1,16 @@
+@use 'tokens/colors' as *;
+@use 'tokens/gradients' as *;
+
 .app-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 
-  background:
-    radial-gradient(
-      circle at 50% -20%,
-      #1b2436 0,
-      /* brighter than #121826 */ var(--color-bg-root) 55%,
-      #02030a 100%
-    ),
-    url('/assets/portal/noise.png'); /* put noise on top */
+  background: var(--gradient-radial-base), url('/assets/portal/noise.png');
 
   background-size:
     auto,
-    512px 512px; /* bigger tiles = softer pattern */
+    512px 512px;
   background-blend-mode: normal, soft-light;
   background-attachment: fixed;
   color: var(--color-text-primary);

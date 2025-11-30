@@ -1,3 +1,6 @@
+@use 'tokens/colors' as *;
+@use 'tokens/shadows' as *;
+
 .app-header {
   position: sticky;
   top: 0;
@@ -13,7 +16,6 @@
 }
 
 /* Top row */
-
 .app-header-inner {
   display: flex;
   align-items: center;
@@ -32,7 +34,6 @@
 }
 
 /* Desktop nav */
-
 .main-nav {
   display: flex;
   gap: 1.5rem;
@@ -43,6 +44,7 @@
     text-decoration: none;
     color: var(--color-text-secondary);
     padding-bottom: 0.15rem;
+    transition: color 120ms ease;
 
     &.active,
     &:hover {
@@ -59,14 +61,12 @@
       height: 2px;
       background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-teal));
       border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-depth-1);
     }
   }
 }
 
 /* Burger */
-
-/* Burger */
-
 .nav-toggle {
   border: none;
   background: transparent;
@@ -74,14 +74,12 @@
   font-size: 1.5rem;
   padding: 0;
 
-  /* mobile-first: visible on small screens */
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 /* Mobile menu */
-
 .mobile-menu {
   display: none;
   flex-direction: column;
@@ -100,20 +98,17 @@
     }
   }
 }
-
 .mobile-menu--open {
   display: flex;
 }
 
 /* Player row */
-
 .nav-music-player-container {
   display: flex;
   justify-content: flex-end;
 }
 
 /* Desktop ≥ 992px */
-
 @media (min-width: 992px) {
   .app-header {
     flex-direction: row;
@@ -124,17 +119,13 @@
   .app-header-inner {
     flex: 0 0 auto;
   }
-
   .main-nav--desktop {
     display: flex;
   }
-
   .main-nav--mobile,
   .mobile-menu {
     display: none;
   }
-
-  /* hide burger on desktop */
   .nav-toggle {
     display: none;
   }
@@ -147,12 +138,10 @@
 }
 
 /* Mobile < 992px */
-
 @media (max-width: 991.98px) {
   .main-nav--desktop {
     display: none;
   }
-
   .main-nav--mobile {
     display: block;
     margin-left: auto;
@@ -161,10 +150,9 @@
   .app-header {
     padding-inline: 1rem;
   }
-
   .app-header-inner {
     gap: 0.75rem;
-    justify-content: space-between; // logo left, burger right
+    justify-content: space-between;
   }
 
   .mobile-menu {
@@ -175,7 +163,6 @@
     margin-top: 0.4rem;
     justify-content: stretch;
   }
-
   .nav-music-player-container app-music-player {
     width: 100%;
     max-width: 100%;

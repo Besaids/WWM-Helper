@@ -1,6 +1,12 @@
+@use 'tokens/colors' as *;
+@use 'tokens/surfaces' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
 /* Full-width bar between navbar and page content */
 .timer-strip {
   border-bottom: 1px solid var(--color-border-subtle);
+  /* keep original strip gradient */
   background: radial-gradient(circle at top, rgba(17, 24, 39, 0.96), rgba(5, 7, 11, 0.94));
 }
 
@@ -18,19 +24,46 @@
 /* Pill content tweaks – visuals come from the global .chip class */
 .timer-pill {
   white-space: nowrap;
+  /* subtle capsule surface using token; preserves overall look */
+  background: var(--color-surface-chip);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 0.22rem 0.6rem;
+
+  transition:
+    background-color $motion-fast $motion-ease,
+    border-color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease;
+}
+
+/* Hover: slight lift and brighter edge without changing text colors */
+.timer-pill:hover {
+  background: var(--surface-layer-2);
+  border-color: rgba(148, 163, 184, 0.35);
+  box-shadow: var(--shadow-depth-1);
 }
 
 .timer-pill i {
   font-size: 0.95rem;
+  color: var(--color-text-secondary); /* muted icon to match original feel */
 }
 
 .timer-pill .label {
   margin-right: 0.1rem;
+  color: var(--color-text-secondary); /* muted label text (keep essence) */
+  font-weight: 500;
 }
 
 .timer-pill .value {
-  font-weight: 500;
-  color: var(--color-accent-gold-soft);
+  font-weight: 600; /* slight emphasis for readability */
+  color: var(--color-accent-gold-soft); /* gold countdown, as original */
+  font-variant-numeric: tabular-nums;
+}
+
+/* Optional accent class (soonest/important): soft gold edge */
+.timer-pill.timer-pill--accent {
+  border-color: var(--color-accent-gold-soft);
+  box-shadow: var(--glow-gold-soft), var(--shadow-depth-1);
 }
 
 /* On narrower screens, keep wrapping but left-align and tighten padding */
@@ -41,4 +74,14 @@
     padding-inline: 1rem;
     row-gap: 0.4rem;
   }
+}
+
+/* Urgent: under 10 minutes left (tokenized) */
+.timer-pill.timer-pill--urgent .value {
+  color: var(--color-accent-red);
+}
+
+.timer-pill.timer-pill--urgent {
+  border-color: var(--color-accent-red);
+  box-shadow: var(--shadow-depth-2);
 }

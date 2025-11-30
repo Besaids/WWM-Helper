@@ -1,0 +1,17 @@
+:root {
+  --gradient-radial-base: radial-gradient(
+    circle at 50% -20%,
+    #1b2436 0,
+    var(--color-bg-root) 55%,
+    #02030a 100%
+  );
+  --gradient-radial-teal-core: radial-gradient(circle at 30% 30%, #2dd4bf, #0f172a);
+  --gradient-radial-teal-soft: radial-gradient(circle at 25% 25%, #1ba39a, #0a1a2a);
+  --gradient-radial-teal-hover: radial-gradient(circle at 25% 25%, #0a4a4a, #020617);
+  --gradient-radial-gold-core: radial-gradient(circle at 20% 20%, #0d141f, #020617);
+}
+$gradient-radial-base: var(--gradient-radial-base);
+$gradient-radial-teal-core: var(--gradient-radial-teal-core);
+$gradient-radial-teal-soft: var(--gradient-radial-teal-soft);
+$gradient-radial-teal-hover: var(--gradient-radial-teal-hover);
+$gradient-radial-gold-core: var(--gradient-radial-gold-core);

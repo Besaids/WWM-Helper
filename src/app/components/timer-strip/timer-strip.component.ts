@@ -94,4 +94,9 @@ export class TimerStripComponent {
 
     return totalSeconds;
   }
+
+  /** Urgent if remaining time is ≤ 10 minutes (600 seconds). */
+  isUrgent(remaining: string | null | undefined): boolean {
+    return this.getRemainingSortKey(remaining) <= 600;
+  }
 }
