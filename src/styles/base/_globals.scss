@@ -15,7 +15,22 @@ body {
 }
 
 html {
-  font-size: 18px;
+  /* Default for small screens (phones) */
+  font-size: 16px;
+}
+
+@media (min-width: 480px) {
+  /* Small tablets / big phones in landscape */
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Tablets + desktop */
+  html {
+    font-size: 18px;
+  }
 }
 
 body {

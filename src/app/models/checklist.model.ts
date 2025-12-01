@@ -13,7 +13,24 @@ export type ChecklistTag =
   | 'adventure'
   | 'progression'
   | 'stats'
+  | 'mounts'
   | 'premium';
+
+export interface ChecklistPreferences {
+  pinned: boolean;
+  hidden: boolean;
+}
+
+export interface ChecklistPreferencesState {
+  daily: Record<string, ChecklistPreferences>;
+  weekly: Record<string, ChecklistPreferences>;
+}
+
+export interface ChecklistPrefs {
+  pinned: Record<string, boolean>;
+  hidden: Record<string, boolean>;
+}
+
 export interface ChecklistItem {
   id: string;
   frequency: ChecklistFrequency;

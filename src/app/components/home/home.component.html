@@ -7,14 +7,110 @@
         Lightweight companion for your WWM routine. Timers, checklists and guides in one place so
         you can plan sessions without juggling spreadsheets or screenshots.
       </p>
-
-      <div class="home-hero-actions">
-        <a routerLink="/checklist" [queryParams]="{ tab: 'daily' }" class="btn-primary">
-          Open today’s checklist
-        </a>
-      </div>
     </div>
   </section>
+
+  <!-- NEW: Upcoming Timers + Pinned Tasks Grid -->
+  @if (upcomingTimers$ | async; as upcomingTimers) {
+    @if (upcomingTimers.length > 0) {
+      <section class="home-highlights-grid">
+        <!-- Upcoming Timers -->
+        <article class="home-card card-surface card-padding">
+          <header class="home-card-header">
+            <div>
+              <h2>Upcoming events</h2>
+              <p class="home-card-subtitle text-muted-strong">
+                Next timers and currently active windows.
+              </p>
+            </div>
+            <a class="home-card-link" [routerLink]="['/timers']">View all</a>
+          </header>
+
+          <div class="home-card-body">
+            <ul class="home-timer-list">
+              @for (timer of upcomingTimers; track timer.id) {
+                <li class="home-timer-item">
+                  <div class="home-timer-main">
+                    <i class="home-timer-icon {{ timer.icon }}"></i>
+                    <span class="home-timer-label">{{ timer.label }}</span>
+                    @if (timer.isActive) {
+                      <span class="home-timer-badge home-timer-badge--active">Active</span>
+                    }
+                  </div>
+                  <span class="home-timer-countdown">{{ timer.remaining }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        </article>
+
+        <!-- Pinned Tasks - Always rendered -->
+        <article class="home-card card-surface card-padding">
+          <header class="home-card-header">
+            <div>
+              <h2>Pinned tasks</h2>
+              <p class="home-card-subtitle text-muted-strong">
+                Your priority checklist items for this cycle.
+              </p>
+            </div>
+            <a
+              class="home-card-link"
+              [routerLink]="['/checklist']"
+              [queryParams]="{ tab: 'daily' }"
+            >
+              Open checklist
+            </a>
+          </header>
+
+          <div class="home-card-body home-card-body--pinned">
+            @if (hasPinnedItems) {
+              <!-- Daily pinned -->
+              @if (pinnedDaily.length > 0) {
+                <div class="home-pinned-section">
+                  <h3 class="home-pinned-heading">Daily</h3>
+                  <ul class="home-pinned-list">
+                    @for (item of pinnedDaily; track item.id) {
+                      <li class="home-pinned-item">
+                        <app-checklist-toggle
+                          [checked]="isChecked(item)"
+                          (checkedChange)="onToggleItem($event, item)"
+                        >
+                          <span class="checklist-item-label">{{ item.label }}</span>
+                        </app-checklist-toggle>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+
+              <!-- Weekly pinned -->
+              @if (pinnedWeekly.length > 0) {
+                <div class="home-pinned-section">
+                  <h3 class="home-pinned-heading">Weekly</h3>
+                  <ul class="home-pinned-list">
+                    @for (item of pinnedWeekly; track item.id) {
+                      <li class="home-pinned-item">
+                        <app-checklist-toggle
+                          [checked]="isChecked(item)"
+                          (checkedChange)="onToggleItem($event, item)"
+                        >
+                          <span class="checklist-item-label">{{ item.label }}</span>
+                        </app-checklist-toggle>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            } @else {
+              <div class="home-pinned-empty text-muted-strong">
+                No pinned tasks yet. Pin items in the checklist to see them here.
+              </div>
+            }
+          </div>
+        </article>
+      </section>
+    }
+  }
 
   <!-- Section cards -->
   <section class="home-grid">
@@ -37,8 +133,6 @@
         </header>
 
         <div class="home-card-body">
-          <h3 class="home-card-section-title">What you’ll find here</h3>
-
           <ul class="home-list">
             @for (item of section.items; track item.label) {
               <li class="home-list-item">

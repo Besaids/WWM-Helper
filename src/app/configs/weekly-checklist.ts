@@ -108,4 +108,24 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
       'Play with Partner, Disciples, Sworn Cohort and friends in any content. Each has a weekly XP cap; Intimacy has a hidden weekly limit.',
     tags: ['social', 'multiplayer'],
   },
+  {
+    id: 'weekly-sell-horses',
+    frequency: 'weekly',
+    importance: 'optional',
+    category: 'Economy',
+    label: 'Sell up to 5 horses for Commerce Coins.',
+    description:
+      'Catch or steal horses during the week (for example at Wildmane Ranch in Qinghe), then sell your best 5 at any Horse Merchant. Prioritise higher-value horses so you hit the weekly 5-sale limit with the most Commerce Coins possible.',
+    tags: ['economy', 'mounts', 'solo'],
+  },
+  {
+    id: 'weekly-intimacy-items',
+    frequency: 'weekly',
+    importance: 'optional',
+    category: 'Social & intimacy',
+    label: 'Buy weekly Intimacy items from the Social Shops.',
+    description:
+      'Use Adventure Slips and Harmony Charms to buy the limited-stock Intimacy gifts each week: Green Ant Wine in the Wandering Paths shop (5 Slips, 40/week) plus Love Comb, Dried Meat Gift and Green Ant Wine in the Partnership, Discipleship and Sworn Cohort shops (25 Harmony each, 20/week). Send them as gifts to raise Intimacy with friends and partners.',
+    tags: ['social', 'economy', 'multiplayer'],
+  },
 ];

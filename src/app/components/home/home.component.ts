@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { BehaviorSubject, combineLatest, map, Subscription } from 'rxjs';
+import { TimerService } from '../../services/timer/timer.service';
+import { ChecklistStateService } from '../../services/checklist/checklist-state.service';
+import { DAILY_CHECKLIST, WEEKLY_CHECKLIST } from '../../configs';
+import { ChecklistItem, TimerChip } from '../../models';
+import { ChecklistToggleComponent } from '../ui';
 
 interface HomeSectionItem {
   label: string;
@@ -16,14 +22,68 @@ interface HomeSection {
   ctaLabel: string;
 }
 
+interface TimerWithPriority extends TimerChip {
+  priority: number; // Lower is higher priority
+  isActive: boolean; // Currently in a window
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ChecklistToggleComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
+  private readonly timerService = inject(TimerService);
+  private readonly checklistState = inject(ChecklistStateService);
+  private readonly dynamicCountScale = 1;
+
+  private subs = new Subscription();
+
+  // Track pinned count reactively
+  private pinnedCount$ = new BehaviorSubject<number>(0);
+
+  // Dynamic timer count based on pinned tasks
+  upcomingTimers$ = combineLatest([this.timerService.timerChips$, this.pinnedCount$]).pipe(
+    map(([chips, pinnedCount]) => {
+      // Calculate dynamic timer count
+      // Ratio: ~0.75 timers per pinned task (timers are more compact)
+      // Minimum 5 timers, scale up based on pinned tasks
+      const dynamicCount = Math.max(5, Math.ceil(pinnedCount * this.dynamicCountScale));
+
+      // Add isActive flag
+      const withActiveFlag: TimerWithPriority[] = chips.map((chip) => ({
+        ...chip,
+        priority: 0, // Not used anymore but keeping interface for now
+        isActive: this.isTimerActive(chip),
+      }));
+
+      // Sort by: not-configured last, then active first, then by remaining time (soonest first)
+      return withActiveFlag
+        .sort((a, b) => {
+          // Push "Not configured" timers to the end
+          const aNotConfigured = a.remaining === 'Not configured';
+          const bNotConfigured = b.remaining === 'Not configured';
+
+          if (aNotConfigured !== bNotConfigured) {
+            return aNotConfigured ? 1 : -1;
+          }
+
+          // Then sort by active status (active timers first)
+          if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+
+          // Finally by remaining time (soonest first)
+          return this.compareRemainingTime(a.remaining, b.remaining);
+        })
+        .slice(0, dynamicCount);
+    }),
+  );
+
+  // Pinned checklist items
+  pinnedDaily: ChecklistItem[] = [];
+  pinnedWeekly: ChecklistItem[] = [];
+
   readonly sections: HomeSection[] = [
     {
       id: 'timers',
@@ -52,7 +112,7 @@ export class HomeComponent {
     {
       id: 'checklist',
       title: 'Checklists',
-      subtitle: 'Track what you’ve actually done this cycle with daily and weekly task lists.',
+      subtitle: "Track what you've actually done this cycle with daily and weekly task lists.",
       items: [
         {
           label: 'Daily & weekly lists',
@@ -116,12 +176,74 @@ export class HomeComponent {
       href: 'https://where-winds-meet.fandom.com/wiki/Where_Winds_Meet',
     },
     {
-      label: 'Reddit Community wherewindsmeet_',
+      label: 'Reddit Community r/wherewindsmeet_',
       href: 'https://www.reddit.com/r/wherewindsmeet_/',
     },
     {
-      label: 'Reddit Community WhereWindsMeet',
+      label: 'Reddit Community r/WhereWindsMeet',
       href: 'https://www.reddit.com/r/WhereWindsMeet/',
     },
   ];
+
+  ngOnInit(): void {
+    this.updatePinnedItems();
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
+  private updatePinnedItems(): void {
+    this.pinnedDaily = DAILY_CHECKLIST.filter(
+      (item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item),
+    );
+
+    this.pinnedWeekly = WEEKLY_CHECKLIST.filter(
+      (item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item),
+    );
+
+    // Update the reactive pinned count
+    const totalPinned = this.pinnedDaily.length + this.pinnedWeekly.length;
+    this.pinnedCount$.next(totalPinned);
+  }
+
+  private isTimerActive(chip: TimerChip): boolean {
+    // Check if the timer label contains "(open)" which indicates an active window
+    return chip.label.includes('(open)');
+  }
+
+  private compareRemainingTime(a: string, b: string): number {
+    // Parse remaining time strings and compare
+    const parseTime = (str: string): number => {
+      const match = str.match(/(\d+)d|(\d+)h|(\d+)m|(\d+)s/g);
+      if (!match) return Infinity;
+
+      let seconds = 0;
+      for (const part of match) {
+        const value = parseInt(part);
+        if (part.includes('d')) seconds += value * 86400;
+        if (part.includes('h')) seconds += value * 3600;
+        if (part.includes('m')) seconds += value * 60;
+        if (part.includes('s')) seconds += value;
+      }
+      return seconds;
+    };
+
+    return parseTime(a) - parseTime(b);
+  }
+
+  // Checklist toggle handlers
+  isChecked(item: ChecklistItem): boolean {
+    return this.checklistState.isChecked(item);
+  }
+
+  onToggleItem(checked: boolean, item: ChecklistItem): void {
+    this.checklistState.toggle(item, checked);
+    // Update the pinned lists when an item is toggled
+    this.updatePinnedItems();
+  }
+
+  get hasPinnedItems(): boolean {
+    return this.pinnedDaily.length > 0 || this.pinnedWeekly.length > 0;
+  }
 }

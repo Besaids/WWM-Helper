@@ -115,6 +115,26 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     this.state.toggle(item, checked);
   }
 
+  isPinned(item: ChecklistItem): boolean {
+    return this.state.isPinned(item);
+  }
+
+  isHidden(item: ChecklistItem): boolean {
+    return this.state.isHidden(item);
+  }
+
+  onTogglePinned(item: ChecklistItem): void {
+    this.state.togglePinned(item);
+  }
+
+  onToggleHidden(item: ChecklistItem): void {
+    this.state.toggleHidden(item);
+    // If we're hiding the item and it's checked, uncheck it
+    if (this.state.isHidden(item) && this.state.isChecked(item)) {
+      this.state.toggle(item, false);
+    }
+  }
+
   resetTab(tab: ChecklistTab): void {
     this.state.resetTab(tab);
   }
@@ -125,14 +145,66 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   // --- View helpers ---
 
-  getItemsForTab(importance: ChecklistImportance): ChecklistItem[] {
+  // Add these new methods to the component:
+
+  getItemsForTab(importance: ChecklistImportance, excludeHidden = false): ChecklistItem[] {
     const tab = this.activeTab();
     const source = tab === 'daily' ? this.DAILY_ITEMS : this.WEEKLY_ITEMS;
-    return source.filter((item) => item.importance === importance);
+
+    let items = source.filter((item) => item.importance === importance);
+
+    // Optionally exclude hidden items
+    if (excludeHidden) {
+      items = items.filter((item) => !this.state.isHidden(item));
+    }
+
+    // Only sort by hidden status - keep original order otherwise
+    return items.sort((a, b) => {
+      const hiddenA = this.state.isHidden(a);
+      const hiddenB = this.state.isHidden(b);
+
+      // hidden always last (if not excluded)
+      if (!excludeHidden && hiddenA !== hiddenB) {
+        return hiddenA ? 1 : -1;
+      }
+
+      // otherwise, keep original order (don't sort by pinned)
+      return 0;
+    });
   }
 
-  getCategoryGroups(importance: ChecklistImportance): ChecklistCategoryGroup[] {
-    const items = this.getItemsForTab(importance);
+  getCategoryGroups(
+    importance: ChecklistImportance,
+    excludeHidden = false,
+  ): ChecklistCategoryGroup[] {
+    const items = this.getItemsForTab(importance, excludeHidden);
+
+    const grouped: Record<string, ChecklistItem[]> = {};
+    for (const item of items) {
+      const category = item.category ?? 'Other';
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+      grouped[category].push(item);
+    }
+
+    return Object.entries(grouped).map(([category, categoryItems]) => ({
+      category,
+      items: categoryItems,
+    }));
+  }
+
+  // New method to get all hidden items for the current tab
+  getHiddenItems(): ChecklistItem[] {
+    const tab = this.activeTab();
+    const source = tab === 'daily' ? this.DAILY_ITEMS : this.WEEKLY_ITEMS;
+
+    return source.filter((item) => this.state.isHidden(item));
+  }
+
+  // New method to get hidden items grouped by category
+  getHiddenCategoryGroups(): ChecklistCategoryGroup[] {
+    const items = this.getHiddenItems();
 
     const grouped: Record<string, ChecklistItem[]> = {};
     for (const item of items) {

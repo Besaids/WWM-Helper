@@ -33,7 +33,8 @@
   transition:
     background-color $motion-fast $motion-ease,
     border-color $motion-fast $motion-ease,
-    box-shadow $motion-fast $motion-ease;
+    box-shadow $motion-fast $motion-ease,
+    color $motion-fast $motion-ease;
 }
 
 /* Hover: slight lift and brighter edge without changing text colors */
@@ -76,12 +77,38 @@
   }
 }
 
-/* Urgent: under 10 minutes left (tokenized) */
-.timer-pill.timer-pill--urgent .value {
-  color: var(--color-accent-red);
+/* Active/Open: event is currently happening (green) */
+.timer-pill.timer-pill--active {
+  border-color: rgba(34, 197, 94, 0.6); /* green-500 */
+  background: rgba(34, 197, 94, 0.1);
+  box-shadow:
+    0 0 8px rgba(34, 197, 94, 0.3),
+    var(--shadow-depth-2);
 }
 
-.timer-pill.timer-pill--urgent {
-  border-color: var(--color-accent-red);
-  box-shadow: var(--shadow-depth-2);
+.timer-pill.timer-pill--active .value {
+  color: rgb(134, 239, 172); /* green-300 */
+  font-weight: 700;
+}
+
+.timer-pill.timer-pill--active .label {
+  color: rgb(187, 247, 208); /* green-200 */
+}
+
+/* Warning: 30m to 0m gradient (yellow to red) */
+.timer-pill.timer-pill--warning {
+  border-color: var(--timer-warning-color, rgb(234, 179, 8)); /* yellow-500 default */
+  background: color-mix(in srgb, var(--timer-warning-color, rgb(234, 179, 8)) 10%, transparent);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--timer-warning-color, rgb(234, 179, 8)) 30%, transparent),
+    var(--shadow-depth-2);
+}
+
+.timer-pill.timer-pill--warning .value {
+  color: var(--timer-warning-color, rgb(234, 179, 8));
+  font-weight: 700;
+}
+
+.timer-pill.timer-pill--warning .label {
+  color: color-mix(in srgb, var(--timer-warning-color, rgb(234, 179, 8)) 80%, white);
 }

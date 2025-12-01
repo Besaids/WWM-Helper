@@ -2,9 +2,12 @@
   <div class="timer-strip-inner">
     @if (timers$ | async; as timers) {
       @for (t of timers; track t.id) {
+        @let state = getTimerState(t.label, t.remaining);
         <div
           class="timer-pill chip"
-          [class.timer-pill--urgent]="isUrgent(t.remaining)"
+          [class.timer-pill--active]="state.type === 'active'"
+          [class.timer-pill--warning]="state.type === 'warning' || state.type === 'urgent'"
+          [ngStyle]="getWarningStyle(state)"
           [attr.aria-label]="t.label + ' — ' + t.remaining"
           role="group"
         >

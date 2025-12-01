@@ -5,6 +5,11 @@ import { combineLatest, map } from 'rxjs';
 import { TimerService } from '../../services/timer/timer.service';
 import { TimerPreferencesService } from '../../services/timer/timer-preferences.service';
 
+interface TimerState {
+  type: 'normal' | 'warning' | 'urgent' | 'active';
+  warningProgress?: number; // 0-1 for gradient (0 = yellow at 30m, 1 = red at 0m)
+}
+
 @Component({
   selector: 'app-timer-strip',
   standalone: true,
@@ -82,7 +87,7 @@ export class TimerStripComponent {
       totalSeconds += Number(secondMatch[1]);
     }
 
-    // If we didn’t manage to parse anything but there is a number in there,
+    // If we didn't manage to parse anything but there is a number in there,
     // use that as a very rough fallback (still better than no ordering).
     if (totalSeconds === 0) {
       const firstNumber = /(\d+)/.exec(lower);
@@ -95,7 +100,63 @@ export class TimerStripComponent {
     return totalSeconds;
   }
 
-  /** Urgent if remaining time is ≤ 10 minutes (600 seconds). */
+  /**
+   * Check if the timer is currently active/open (event is happening now)
+   */
+  isActive(label: string): boolean {
+    return label.toLowerCase().includes('(open)');
+  }
+
+  /**
+   * Get the timer state for styling
+   * - active: Event is currently open (green)
+   * - warning/urgent: Event starts in 0-30 minutes (yellow→red gradient)
+   * - normal: Everything else
+   */
+  getTimerState(label: string, remaining: string | null | undefined): TimerState {
+    // Check if active/open first
+    if (this.isActive(label)) {
+      return { type: 'active' };
+    }
+
+    const seconds = this.getRemainingSortKey(remaining);
+
+    // 30 minutes = 1800 seconds
+    if (seconds <= 1800) {
+      // Calculate gradient progress: 0 at 30m (yellow), 1 at 0m (red)
+      const progress = 1 - seconds / 1800;
+      return {
+        type: seconds <= 600 ? 'urgent' : 'warning',
+        warningProgress: Math.max(0, Math.min(1, progress)),
+      };
+    }
+
+    return { type: 'normal' };
+  }
+
+  /**
+   * Get CSS custom properties for warning gradient
+   */
+  getWarningStyle(state: TimerState): Record<string, string> {
+    if (
+      (state.type === 'warning' || state.type === 'urgent') &&
+      state.warningProgress !== undefined
+    ) {
+      // Interpolate from yellow (rgb(234, 179, 8)) to red (rgb(239, 68, 68))
+      const progress = state.warningProgress;
+
+      const r = Math.round(234 + (239 - 234) * progress);
+      const g = Math.round(179 + (68 - 179) * progress);
+      const b = Math.round(8 + (68 - 8) * progress);
+
+      return {
+        '--timer-warning-color': `rgb(${r}, ${g}, ${b})`,
+      };
+    }
+    return {};
+  }
+
+  /** Legacy method for backward compatibility */
   isUrgent(remaining: string | null | undefined): boolean {
     return this.getRemainingSortKey(remaining) <= 600;
   }

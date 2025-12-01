@@ -1,4 +1,4 @@
-<label
+<div
   class="checklist-toggle"
   [class.checklist-toggle--checked]="checked"
   [class.checklist-toggle--disabled]="disabled"
@@ -7,21 +7,22 @@
   <input
     type="checkbox"
     class="checklist-toggle__input"
+    [id]="checkboxId"
     [checked]="checked"
     [disabled]="disabled"
     (change)="onInputChange($event)"
     [attr.aria-describedby]="ariaDescribedBy"
   />
 
-  <!-- Mini diamond icon -->
-  <span class="checklist-toggle__icon" aria-hidden="true">
+  <!-- Mini diamond icon - make it clickable -->
+  <label class="checklist-toggle__icon" [attr.for]="checkboxId" [attr.aria-hidden]="true">
     <span class="checklist-toggle__diamond">
       <span class="checklist-toggle__diamond-core"></span>
     </span>
-  </span>
+  </label>
 
-  <!-- Projected text (label + description + tags) -->
-  <div class="checklist-toggle__content">
+  <!-- Projected text - also clickable -->
+  <label class="checklist-toggle__content" [attr.for]="checkboxId">
     <ng-content></ng-content>
-  </div>
-</label>
+  </label>
+</div>

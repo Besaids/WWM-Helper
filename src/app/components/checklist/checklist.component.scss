@@ -136,8 +136,8 @@
 .reset-link {
   margin-left: auto;
   align-self: flex-start;
-  display: inline-flex; /* NEW: so we can center text inside fixed width */
-  justify-content: center; /* NEW: center label */
+  display: inline-flex;
+  justify-content: center;
 
   @include pill.pill-outline(var(--color-btn-secondary-border), 2);
   font-size: 0.8rem;
@@ -147,8 +147,8 @@
     color: var(--color-text-primary);
     border-color: var(--color-accent-gold-soft);
     box-shadow:
-      0 0 0 1px rgba(250, 204, 21, 0.18),
-      var(--shadow-depth-3);
+      0 0 8px rgba(56, 189, 248, 0.15),
+      0 0 0 1px rgba(250, 204, 21, 0.15);
     background: var(--surface-layer-3);
   }
 
@@ -202,7 +202,7 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.75rem;
   }
 
   li {
@@ -210,34 +210,36 @@
   }
 }
 
-/* Checklist rows – unified capsule surface */
-.checklist-category li app-checklist-toggle {
-  display: block;
+/* Checklist rows – similar to timers component */
+.checklist-category li {
+  @include capsule.capsule(4, var(--radius-lg), 0.75rem, 1rem);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition:
+    background-color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease;
+
+  &:hover {
+    background: var(--surface-layer-5);
+    box-shadow: var(--shadow-depth-3);
+  }
 }
 
+/* Toggle takes up flex space */
+.checklist-category li app-checklist-toggle {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Remove extra styling from .checklist-toggle since it's on <li> now */
 .checklist-category li app-checklist-toggle .checklist-toggle {
-  @include capsule.capsule(3, var(--radius-lg), 0.45rem, 0.6rem);
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
-  transition:
-    background-color $motion-fast $motion-ease,
-    box-shadow $motion-fast $motion-ease,
-    transform 80ms $motion-ease;
-}
-
-/* Hover – slight lift and brighter edge */
-.checklist-category li app-checklist-toggle .checklist-toggle:hover {
-  background: var(--surface-layer-4);
-  box-shadow: var(--shadow-depth-1);
-}
-
-/* Checked row – a touch of teal/gold, like an enabled timer row */
-.checklist-category li app-checklist-toggle .checklist-toggle.checklist-toggle--checked {
-  background: var(--surface-layer-4);
-  box-shadow:
-    0 0 0 1px rgba(56, 189, 248, 0.18),
-    var(--shadow-depth-2);
+  padding: 0;
+  background: transparent;
 }
 
 /* Shared text + tags */
@@ -256,6 +258,114 @@
   flex-wrap: wrap;
   gap: 0.25rem;
   margin-top: 0.1rem;
+}
+
+/* Icon actions (pin / hide) - now outside the label, inside <li> */
+.checklist-category li .checklist-item-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.checklist-item-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted-strong);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color $motion-fast $motion-ease,
+    border-color $motion-fast $motion-ease,
+    color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease;
+}
+
+.checklist-item-action i {
+  font-size: 0.95em;
+}
+
+/* Subtle theming per action type */
+.checklist-item-action--pin {
+  color: var(--color-accent-gold-soft);
+}
+
+.checklist-item-action--hide {
+  color: var(--color-accent-red-soft);
+}
+
+/* Active state: pinned item gets gold border */
+.checklist-item-action--pin[aria-pressed='true'] {
+  border-color: var(--color-accent-gold-soft);
+  background: rgba(250, 204, 21, 0.1);
+}
+
+/* Active state: hidden item gets red border */
+.checklist-item-action--hide[aria-pressed='true'] {
+  border-color: var(--color-accent-red-soft);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Hover / focus states */
+.checklist-item-action:hover,
+.checklist-item-action:focus-visible {
+  background: var(--surface-layer-2);
+  border-color: var(--color-btn-secondary-border);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-depth-1);
+}
+
+/* Keep the colored border on hover for active states */
+.checklist-item-action--pin[aria-pressed='true']:hover {
+  border-color: var(--color-accent-gold-soft);
+  background: rgba(250, 204, 21, 0.15);
+}
+
+.checklist-item-action--hide[aria-pressed='true']:hover {
+  border-color: var(--color-accent-red-soft);
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Mobile: keep icons tight and prevent weird wrapping */
+@media (max-width: 768px) {
+  .checklist-category li .checklist-item-actions {
+    gap: 0.35rem;
+  }
+
+  .checklist-item-action {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+  }
+}
+
+.checklist-group--hidden {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 1.5rem;
+  opacity: 0.75;
+  transition: opacity $motion-fast $motion-ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .checklist-group-header {
+    margin-bottom: 0.75rem;
+
+    h3 {
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
 }
 
 .checklist-tag {
@@ -300,8 +410,7 @@
 
   .idea-category {
     font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-weight: 600;
     color: var(--color-text-muted-strong);
   }
 }
@@ -367,11 +476,10 @@
   .idea h3 {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.15rem;
   }
 
   .idea-category {
-    font-size: 0.7rem; // slight shrink so it feels like a subtitle
-    align-self: flex-start; // make sure it stays left-aligned under the title
+    margin-top: 0.15rem;
+    align-self: flex-start;
   }
 }

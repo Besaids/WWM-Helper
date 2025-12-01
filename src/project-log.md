@@ -1,5 +1,89 @@
 ## 2025-12-01
 
+### Home Page Enhancements & Timer Improvements
+
+### New Features
+
+- **Home Page Dynamic Sections**
+  - Added "Upcoming events" card showing top timers based on priority and time
+  - Added "Pinned tasks" card displaying user's pinned checklist items
+  - Dynamic timer count: scales from 5 (minimum) to match pinned task count (~0.75 ratio)
+  - Timers now sorted by: active status first, then remaining time (removed priority-based sorting)
+  - "Not configured" guild timers automatically pushed to end of list
+- **Pinned Tasks Integration**
+  - Split display between Daily and Weekly sections
+  - Interactive checklist toggles work directly from home page
+  - Empty state message when no tasks are pinned
+  - Always-visible card provides consistent layout
+  - Auto-updates when tasks are checked/unchecked
+
+### UI/UX Improvements
+
+- **Timer Strip Enhancements**
+  - **Warning Gradient System**: 30m→0m countdown with color transition
+    - 30 minutes: Yellow (`rgb(234, 179, 8)`)
+    - 15 minutes: Orange (interpolated)
+    - 0 minutes: Red (`rgb(239, 68, 68)`)
+  - **Active Event Indicator**: Green styling for events currently in progress
+    - Green border and glow effect
+    - Detects "(open)" in timer labels
+  - Dynamic CSS custom properties for smooth color transitions
+
+- **Home Page Layout**
+  - Two-column grid layout (1.6fr / 1.4fr) matching main content cards
+  - Pill-shaped corners on timer and task items for consistency
+  - Responsive: single column on mobile (<960px)
+  - Proper alignment with cards below
+
+- **Checklist Component Refinements**
+  - Fixed whole-row clickability issue (only diamond/text trigger toggle now)
+  - Removed teal border glow from completed items
+  - Action buttons (pin/hide) moved outside toggle component
+  - Larger, centered action buttons with active state colors (gold/red)
+  - Reset checked state when hiding items
+  - Removed pin-based sorting (items stay in original order)
+
+### Technical Changes
+
+- **Home Component (`home.component.ts`)**
+  - Added `BehaviorSubject` for reactive pinned count tracking
+  - Implemented `upcomingTimers$` with dynamic slicing based on pinned tasks
+  - Removed priority-based sorting in favor of time-based
+  - Added `getTimerState()` and `getWarningStyle()` methods for timer strip
+
+- **Timer Strip Component (`timer-strip.component.ts`)**
+  - New `TimerState` interface with warning progress tracking
+  - RGB color interpolation for gradient warnings
+  - `getTimerState()` method for active/warning/urgent/normal classification
+  - `getWarningStyle()` returns CSS custom properties for dynamic coloring
+
+- **Checklist Toggle Component**
+  - Restructured from `<label>` wrapper to `<div>` with proper label associations
+  - Unique `checkboxId` generation for accessibility
+  - Fixed TypeScript errors and ESLint warnings
+  - Proper `[attr.for]` binding for native HTML behavior
+
+### Bug Fixes
+
+- Resolved accessibility warnings about label association
+- Fixed keyboard event warnings in checklist toggle
+- Corrected cursor behavior (pointer only on interactive elements)
+- Fixed strikethrough extending through action buttons
+
+### Code Quality
+
+- Changed index signature to `Record<string, string>` type
+- Improved type safety throughout components
+- Better separation of concerns (styling on correct elements)
+- Consistent use of SCSS tokens for motion and colors
+
+### Configuration
+
+- Daily checklist: 12 items (6 core, 6 optional)
+- Weekly checklist: 13 items (10 core, 3 optional)
+- Timer definitions: 11 timers with various schedule types
+- Music player: 20 tracks in rotation
+
 ### Trading / Commerce – timers, checklist & guide
 
 **New Trading timers**

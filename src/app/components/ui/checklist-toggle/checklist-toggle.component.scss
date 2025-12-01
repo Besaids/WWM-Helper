@@ -8,12 +8,11 @@
   display: block;
 }
 
-/* Whole row clickable */
+/* Whole row - remove cursor: pointer since labels will handle it */
 .checklist-toggle {
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
-  cursor: pointer;
   padding: 0.35rem 0;
   color: inherit;
 }
@@ -25,13 +24,14 @@
   pointer-events: none;
 }
 
-/* Icon column */
+/* Icon column - cursor pointer on label */
 .checklist-toggle__icon {
   position: relative;
   width: 1.1rem;
   height: 1.1rem;
   margin-top: 0.12rem;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 /* Diamond indicator — mixin + essential layout */
@@ -90,11 +90,12 @@
   background: var(--gradient-radial-teal-soft);
 }
 
-/* Content block (text + description + tags) */
+/* Content block (text + description + tags) - cursor pointer on label */
 .checklist-toggle__content {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  cursor: pointer;
 }
 
 /* Typography hooks from checklist.component.html */
@@ -146,5 +147,9 @@
 /* Disabled */
 .checklist-toggle--disabled {
   opacity: 0.55;
+  cursor: default;
+}
+.checklist-toggle--disabled .checklist-toggle__icon,
+.checklist-toggle--disabled .checklist-toggle__content {
   cursor: default;
 }

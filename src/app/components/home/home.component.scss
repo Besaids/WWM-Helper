@@ -9,22 +9,33 @@
   gap: 1.5rem;
 }
 
-/* Page header */
-.home-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
+/* Page header / Hero */
+.home-hero {
   h1 {
     font-size: 1.6rem;
     font-weight: 600;
-    margin: 0;
+    margin: 0 0 0.5rem;
   }
 
-  p {
+  .home-hero-subtitle {
     max-width: 48rem;
-    color: var(--color-text-secondary);
   }
+}
+
+/* NEW: Highlights grid for upcoming timers + pinned tasks */
+.home-highlights-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
+  gap: 1.25rem;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Full-width card when no pinned tasks */
+.home-card--full {
+  grid-column: 1 / -1;
 }
 
 /* Cards grid */
@@ -45,6 +56,9 @@
   border: 1px solid var(--color-border-subtle);
   box-shadow: var(--shadow-depth-2);
   padding: 1rem 1.25rem;
+  transition:
+    background-color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease;
 }
 
 .home-card:hover {
@@ -55,19 +69,33 @@
 .home-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 1rem;
   margin-bottom: 0.75rem;
 
   h2 {
     font-size: 1.1rem;
     font-weight: 600;
-    margin: 0;
+    margin: 0 0 0.25rem;
   }
 
-  .subtitle {
+  .home-card-subtitle {
     font-size: 0.85rem;
-    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+}
+
+.home-card-link {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  color: var(--color-accent-gold-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color $motion-fast $motion-ease;
+
+  &:hover {
+    color: var(--color-accent-gold-highlight);
+    text-decoration: underline;
   }
 }
 
@@ -77,39 +105,236 @@
   gap: 0.75rem;
 }
 
-/* Quick actions (buttons or links) */
-.home-actions {
+/* =========================
+ * Upcoming Timers List
+ * ========================= */
+
+.home-timer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  flex-wrap: wrap;
 }
 
-.home-action {
-  display: inline-flex;
+.home-timer-item {
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.3rem 0.85rem;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.75rem;
   border-radius: var(--radius-pill);
-  border: 1px solid var(--color-btn-secondary-border);
-  background: var(--surface-layer-2);
-  color: var(--color-text-muted-strong);
-  text-decoration: none;
-  cursor: pointer;
+  background: var(--surface-layer-3);
+  border: 1px solid var(--color-border-subtle);
   transition:
     background-color $motion-fast $motion-ease,
-    border-color $motion-fast $motion-ease,
-    color $motion-fast $motion-ease;
+    border-color $motion-fast $motion-ease;
 
   &:hover {
-    color: var(--color-text-primary);
-    border-color: var(--color-accent-gold-soft);
-    background: var(--surface-layer-3);
-    box-shadow: var(--shadow-depth-1);
+    background: var(--surface-layer-4);
+    border-color: var(--color-btn-secondary-border);
   }
 }
 
+.home-timer-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.home-timer-icon {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  color: var(--color-accent-gold-soft);
+}
+
+.home-timer-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-timer-badge {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.home-timer-badge--active {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid var(--color-accent-gold-soft);
+  color: var(--color-accent-gold-highlight);
+}
+
+.home-timer-countdown {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted-strong);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* =========================
+ * Pinned Tasks
+ * ========================= */
+
+.home-card-body--pinned {
+  gap: 1rem;
+}
+
+.home-pinned-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.home-pinned-heading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.home-pinned-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.home-pinned-item {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-layer-3);
+  border: 1px solid var(--color-border-subtle);
+  transition:
+    background-color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease;
+
+  &:hover {
+    background: var(--surface-layer-4);
+    box-shadow: var(--shadow-depth-1);
+  }
+
+  app-checklist-toggle {
+    display: block;
+  }
+}
+
+/* Empty state for pinned tasks */
+.home-pinned-empty {
+  padding: 1rem 0.75rem;
+  border: 1px dashed var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--surface-layer-2);
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* =========================
+ * Feature Lists (existing)
+ * ========================= */
+
+.home-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.home-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.home-list-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.home-list-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.home-list-description {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* =========================
+ * Resources
+ * ========================= */
+
+.home-resources {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.home-resource-link {
+  display: inline-block;
+  font-size: 0.875rem;
+  color: var(--color-accent-gold-soft);
+  text-decoration: none;
+  transition: color $motion-fast $motion-ease;
+
+  &:hover {
+    color: var(--color-accent-gold-highlight);
+    text-decoration: underline;
+  }
+
+  &::before {
+    content: '→ ';
+    opacity: 0.6;
+  }
+}
+
+/* Mobile */
 @media (max-width: 768px) {
   .home-card {
     padding: 0.9rem 1rem;
+  }
+
+  .home-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .home-card-link {
+    align-self: flex-start;
+  }
+
+  .home-timer-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .home-timer-countdown {
+    align-self: flex-end;
   }
 }

@@ -8,6 +8,8 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 
+let nextId = 0;
+
 @Component({
   selector: 'app-checklist-toggle',
   standalone: true,
@@ -24,6 +26,8 @@ export class ChecklistToggleComponent {
   @Input() ariaDescribedBy: string | null = null;
 
   @Output() checkedChange = new EventEmitter<boolean>();
+
+  readonly checkboxId = `checklist-toggle-${nextId++}`;
 
   onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
