@@ -1,3 +1,141 @@
+## 2025-12-01
+
+### Trading / Commerce – timers, checklist & guide
+
+**New Trading timers**
+
+- Added two Trading-related global timers to `TIMER_DEFINITIONS`:
+  - **Trade Price Check** – daily reminder aligned with the “likely peak” sell window; helps you log in and check Local % and Remote buyers.
+  - **Trade Week Reset** – weekly timer for the Friday 21:00 UTC Trade Week rotation (three new Trading Goods + reset of the Price Bulletin story).
+- Timers use UTC and standard timer chip styling; both are toggleable in the Timers settings card and appear in the top strip when enabled.
+- Timer detail drawers document:
+  - How Local vs Remote fluctuation works.
+  - Why Trade Week reset and mid-week checks matter.
+  - Links back to the Trading / Commerce guide for the full explanation.
+
+**New Trading checklist entries**
+
+- **Daily (optional, Economy)**
+  - `daily-trading-buy-goods` – “Trade – buy weekly goods at Feng’s Tradehall (Fri→Sun).”
+    - Explains buying up to slot cap from the three weekly goods after the Friday trade reset; recommends the “30 + 30 + 20” pattern (two most expensive items first).
+  - `daily-trading-check-prices` – “Trade – check prices and offload goods.”
+    - Suggests using the Trading timers to remember mid-week checks, watching Local % and Remote Price lists (guild members / friends), and clearing stock before the next Friday 21:00 UTC reset.
+- **Weekly (optional, Economy)**
+  - `weekly-trading-loop` – “Run your weekly Trading / Commerce loop.”
+    - Summarises the whole loop: buy after Trade Week reset, hold/sell over the week, ensure no Trading Goods remain in your bag when the next Trade Week starts.
+
+**New daily activity – Well of Heaven Special Training**
+
+- Added an optional daily checklist item for **Well of Heaven Special Training**:
+  - Category: Adventure / Attributes.
+  - Notes that the activity is found via Wandering Paths → Casual Co-op → Adventure, with “Sprint & Sweat” at Qinghe – West Heaven’s Pier.
+  - Emphasises it awards **Constitution** (up to +10 over 10 days) which is required to equip certain gear pieces.
+
+---
+
+### Trading / Commerce Guide & Guides hub
+
+**Guides routing & structure**
+
+- Introduced a new Guides hub and first in-app guide:
+  - Route: `/guides` – hub page (currently forwards straight into Trading but is ready to list more guides in future).
+  - Route: `/guides/trading` – **Trading / Commerce Guide**.
+- Guide page layout:
+  - Hero title + short description of what the guide covers.
+  - Horizontal pill navigation (`Overview`, `Resets`, `Price Bulletin`, `Local vs Remote`, `Slots & weekly loop`, `Guild techniques`, `Timers & checklists`) bound to in-page anchors.
+  - Content is pure explanatory copy; no per-patch balance numbers to keep the guide durable.
+
+**Trading / Commerce content**
+
+- Documented how Trading Goods work:
+  - Each Trade Week the game selects **three Trading Goods**: 1 × Local Fluctuation, 2 × Remote Fluctuation.
+  - Old-week goods in your bag still exist but are outside the structured loop; the guide explicitly recommends having **no Trading Goods** in your bag at the next Friday 21:00 UTC reset.
+- Clarified resets in global UTC (converted from CN/UTC+8 references):
+  - **Trade Week reset** – Friday 21:00 UTC.
+  - **Weekly reset** – Sunday 21:00 UTC (used as the “stock has definitely refreshed at least once” milestone).
+- Price Bulletin section:
+  - Where to open it (Zang Qiyue in Kaifeng, or “Check Announcements” in the Trade Commission UI).
+  - What it shows: current three Trading Goods, which is Local vs Remote, “Go to purchase” locations, and the week-long `Time remaining` countdown.
+- Local vs Remote behaviour:
+  - **Local** – your buy and sell price both move up/down together during the week; you buy low and sell high on your own world.
+  - **Remote** – your local price is fixed; you instead look for other players’ worlds (Remote Price / Co-op Sale) where the sell price is higher.
+- Inventory & mansion loop:
+  - Recommends renting the big mansion (Feng’s Tradehall) for +60 Trading slots (80 total baseline) as the practical threshold for taking Trading seriously.
+  - Describes the 80-slot buying pattern: max both expensive goods to 30 each, then fill remaining 20 with the last item.
+  - Explains the week-long loop: buy shortly after Trade Week reset, hold and hunt good Remote buyers around mid-week peaks, dump everything before the next Trade Week.
+
+**Guild techniques & timers/checklists integration**
+
+- Added a section explaining relevant guild techniques under **Wealth Through Trade**:
+  - **Selling bonus** – increases Commerce Coins gained when exchanging Trading Goods with guild members.
+  - **Market Tax** – reduces tax when exchanging Trading Goods with guild members.
+  - Clarifies that these bonuses apply to trading with guild members (and guild NPC), not random players.
+- Final section describes how WWM Helper surfaces Trading support:
+  - Trade Week Reset + Trade Price Check timers.
+  - The three Trading checklist items (buy goods, check prices, run weekly loop).
+  - Encourages using timers for the “when” and the checklist for “did I actually do it”.
+
+**Images & figures**
+
+- Added `guide-figure` blocks with responsive sizing clamps for:
+  - **Price Bulletin overview** – shows the three goods, fluctuation type and “Time remaining”.
+  - **Local price fluctuation** – example of Local % changing on your own world.
+  - **Guild Wealth Through Trade** techniques – Selling bonus and Market Tax panels.
+  - **Trade house renting** – Feng’s Tradehall housing choices, highlighting the big mansion for +60 slots.
+  - **Trade Commission map location** – Kaifeng city map screenshot showing where the Trade Commission/Price Bulletin NPC is.
+- Each figure has descriptive alt text and captions tied to the relevant sections.
+
+**Scroll-to-top button**
+
+- Added a floating, circular **“back to top”** button on the Trading guide only:
+  - Uses existing `btn-primary` styling plus a fixed bottom-right position.
+  - Appears once the user has scrolled past a threshold; smooth-scrolls back to the top of the guide.
+  - Fully keyboard accessible and uses `aria-label="Back to top"`.
+
+**Sources & disclaimer**
+
+- Appended a **Sources & disclaimer** block to the guide:
+  - Credits the Reddit guide “Where Winds Meet – The Ultimate Guide (Part 4)” by u/Silent-Musician-7918 as inspiration.
+  - States that all timings/behaviour have been verified and adjusted for the global (UTC) schedule through direct play.
+  - Notes that all values are subject to change with patches; the guide reflects currently observed behaviour.
+
+---
+
+### Home page – evergreen landing redesign
+
+- Reworked the Home page away from “live” checklist content into an evergreen hub:
+
+**Hero**
+
+- New static hero copy:
+  - Explains that WWM Helper is a lightweight companion with timers, checklists and guides.
+- Single primary CTA:
+  - **“Open today’s checklist”** button linking to `/checklist?tab=daily`.
+  - Removed redundant hero buttons for timers/guides since each section now has its own card CTA.
+
+**Section cards**
+
+- Replaced the old “core daily priorities / weekly goals” content with three persistent section cards:
+  1. **Timers**
+     - Describes reset tracking, world/event timers (including Trading), and the configurable top strip.
+     - “Open timers” link to `/timers`.
+
+  2. **Checklists**
+     - Explains daily/weekly lists, detailed vs compact view modes, and local-storage persistence.
+     - “Open checklist” link to `/checklist?tab=daily`.
+
+  3. **Guides**
+     - Describes long-form system guides, currently starting with Trading / Commerce, plus future expansion.
+     - “Browse guides” link to `/guides`.
+
+- Each card summarises “What you’ll find here” using bullet points; content is high-level and resilient to future checklist/timer changes.
+
+**External resources card**
+
+- Renamed bottom card from **“Guides & resources”** to **“External resources”** to avoid confusion with in-app Guides.
+- Subtitle now clarifies it is a bundle of official/community links only.
+- Link list unchanged: official site, official Discord, Steam page, wiki and both Reddit communities.
+
 ## 2025-11-30
 
 ### Guild Event Timers – Breaking Army & Test Your Skills
@@ -95,7 +233,6 @@
   - Desktop behavior is unchanged (title left, category right in a single row).
 - Result:
   - Consistent, readable alignment of checklist categories on mobile without sacrificing the denser desktop layout.
-
 
 ### Design System Consolidation & SCSS Refactoring
 

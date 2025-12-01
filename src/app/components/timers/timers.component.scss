@@ -445,6 +445,12 @@
   margin-top: 0.75rem;
 }
 
+.timer-details-link {
+  font-size: 0.875rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* On narrow screens, stack controls more tightly */
 
 @media (max-width: 768px) {

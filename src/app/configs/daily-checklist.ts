@@ -51,14 +51,14 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'Located in Qinghe – Dreamscape: Blissful Retreat. On Expert: up to 900 Commerce Coin per day; each loss costs 150 Coin.',
     tags: ['economy', 'solo'],
   },
-    {
+  {
     id: 'daily-trading-buy-goods',
     frequency: 'daily',
     importance: 'optional',
     category: 'Economy',
-    label: 'Trade – buy weekly goods at Feng’s Tradehall (Fri→Sun).',
+    label: 'Trade – buy weekly goods (Fri→Sun).',
     description:
-      'After the Friday 21:00 (UTC) trade reset, buy up to your slots from the Price Bulletin goods: usually 30 of the two priciest items and 20 of the last one.',
+      'After the Friday 21:00 UTC trade reset, buy this week’s Trading Goods: usually 30 of the two most expensive items and 20 of the cheapest (if you have 80 slots). Refill again after Sunday reset if you already sold.',
     tags: ['economy', 'solo'],
   },
   {
@@ -68,7 +68,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     category: 'Economy',
     label: 'Trade – check prices and offload goods.',
     description:
-      'Use the Trading timers to remember mid-week checks: look for high Local %, refresh Remote Price for guild buyers, and sell everything before the next Friday 21:00 (UTC) trade reset.',
+      'Use the Trading timers for mid-week checks: watch the Local item’s % and refresh Remote Price for high-value buyers (guild members give bonuses). Offload all goods before Friday 21:00 UTC.',
     tags: ['economy', 'solo', 'guild'],
   },
   {
@@ -91,7 +91,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'Give/receive massages for Coins, character XP and Adventure Slips. A 10-day streak grants the “Bathrobe: Golden Threads” outfit.',
     tags: ['leisure', 'social', 'economy', 'multiplayer'],
   },
-    {
+  {
     id: 'daily-well-of-heaven-training',
     frequency: 'daily',
     importance: 'optional',

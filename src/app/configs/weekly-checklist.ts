@@ -41,14 +41,14 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
       'Earn currencies used to upgrade yourself in the Technique tab and support guild progression.',
     tags: ['guild', 'multiplayer'],
   },
-    {
+  {
     id: 'weekly-trading-loop',
     frequency: 'weekly',
     importance: 'optional',
     category: 'Economy',
     label: 'Run your weekly Trading / Commerce loop.',
     description:
-      'Use the Trade Week Reset and Trade Price Check timers: buy after Friday 21:00 (UTC), hold and sell across the week, and make sure all Trading Goods are dumped before the next trade reset.',
+      'Use the Trading timers: buy this week’s goods after Friday 21:00 UTC, hold and sell across the week (Local peaks or good Remote buyers), then clear all stock before the next Trade Week reset.',
     tags: ['economy', 'solo', 'guild'],
   },
   {

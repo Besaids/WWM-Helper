@@ -144,7 +144,8 @@
   right: 0;
   margin-top: 0;
   width: 100%;
-  max-width: 420px;
+  /* Let the overlay match the player width instead of being capped */
+  max-width: 100%;
   z-index: 40;
 }
 

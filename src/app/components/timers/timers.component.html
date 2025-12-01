@@ -1035,14 +1035,15 @@
                       </section>
                     }
 
-                                        <!-- =======================
+                    <!-- =======================
                          Trade Week Reset
                          ======================= -->
                     @case ('trading-week-reset') {
                       <p class="timer-settings-row__details-summary">
-                        Trade Week reset for <strong>Trading Goods</strong>. Every Friday at 21:00 UTC
-                        the three featured trade items change in the <strong>Price Bulletin</strong>.
-                        Use this to remember when to clear out old stock and check the new week.
+                        Trade Week reset for <strong>Trading Goods</strong>. Every Friday at 21:00
+                        UTC the three featured trade items change in the
+                        <strong>Price Bulletin</strong>. Use this to remember when to clear out old
+                        stock and check the new week.
                       </p>
 
                       <button
@@ -1063,40 +1064,78 @@
                           <section class="timers-section">
                             <h3>What this timer tracks</h3>
                             <ul>
-                              <li>When a new Trade Week starts and the three Trading Goods rotate.</li>
-                              <li>When last week’s trade items stop being part of the structured Trading loop.</li>
-                              <li>The hard deadline to sell any leftover Trading Goods before they go “off-rotation”.</li>
+                              <li>
+                                When a new Trade Week starts and the three Trading Goods rotate.
+                              </li>
+                              <li>
+                                When last week’s trade items stop being part of the structured
+                                Trading loop.
+                              </li>
+                              <li>
+                                The hard deadline to sell any leftover Trading Goods before they go
+                                “off-rotation”.
+                              </li>
                             </ul>
                           </section>
 
                           <section class="timers-section">
                             <h3>Basic trading loop</h3>
                             <ul>
-                              <li>After Friday 21:00 UTC, open the <strong>Price Bulletin</strong> at Zang Qiyue to see the week’s 1 Local + 2 Remote items.</li>
-                              <li>With 80 slots, buy <strong>30 of the two most expensive items</strong> and <strong>20 of the remaining one</strong> to maximise profit.</li>
-                              <li>Hold them and watch prices over the week; aim to sell all stock before the next Friday 21:00 UTC reset.</li>
+                              <li>
+                                After Friday 21:00 UTC, open the <strong>Price Bulletin</strong> at
+                                Zang Qiyue to see the week’s 1 Local + 2 Remote items.
+                              </li>
+                              <li>
+                                With 80 slots, buy
+                                <strong>30 of the two most expensive items</strong> and
+                                <strong>20 of the remaining one</strong> to maximise profit.
+                              </li>
+                              <li>
+                                Hold them and watch prices over the week; aim to sell all stock
+                                before the next Friday 21:00 UTC reset.
+                              </li>
                             </ul>
                           </section>
 
                           <section class="timers-section">
                             <h3>Guild bonus tips</h3>
                             <ul>
-                              <li>The <strong>Selling Bonus</strong> and <strong>Market Tax</strong> techniques only apply when exchanging Trading Goods with <strong>guild members</strong>, including your guild’s trade NPC.</li>
-                              <li>Prefer selling Remote items in guildmates’ worlds or to your guild NPC; only use random buyers if their price is much higher than your guild options.</li>
+                              <li>
+                                The <strong>Selling Bonus</strong> and
+                                <strong>Market Tax</strong> techniques only apply when exchanging
+                                Trading Goods with <strong>guild members</strong>, including your
+                                guild’s trade NPC.
+                              </li>
+                              <li>
+                                Prefer selling Remote items in guildmates’ worlds or to your guild
+                                NPC; only use random buyers if their price is much higher than your
+                                guild options.
+                              </li>
                             </ul>
                           </section>
+
+                          <div class="timer-details-footer">
+                            <a
+                              class="timer-details-link"
+                              routerLink="/guides/trading"
+                              fragment="resets"
+                            >
+                              Open Trading / Commerce Guide (resets)
+                            </a>
+                          </div>
                         </div>
                       }
                     }
 
-                                        <!-- =======================
+                    <!-- =======================
                          Trade Price Peak Check
                          ======================= -->
                     @case ('trading-price-peak-check') {
                       <p class="timer-settings-row__details-summary">
-                        Weekly reminder to check potential <strong>Trading Goods</strong> price peaks.
-                        Fires on <strong>Tuesday at 21:00 UTC</strong>, about halfway through the Trade
-                        Week, so you can log in, review Local % values and look for good Remote buyers.
+                        Weekly reminder to check potential <strong>Trading Goods</strong> price
+                        peaks. Fires on <strong>Tuesday at 21:00 UTC</strong>, about halfway through
+                        the Trade Week, so you can log in, review Local % values and look for good
+                        Remote buyers.
                       </p>
 
                       <button
@@ -1117,17 +1156,36 @@
                           <section class="timers-section">
                             <h3>What to do when it pings</h3>
                             <ul>
-                              <li>Open the <strong>Price Bulletin</strong> and check the current Local item %.</li>
-                              <li>If the Local item looks high for this week, decide whether to sell now or keep holding.</li>
-                              <li>Refresh <strong>Remote Price</strong> to see if any guild members / buyers are offering strong prices for Remote items.</li>
-                              <li>Remember you still have time until <strong>Friday 21:00 UTC</strong> to fully dump your stock.</li>
+                              <li>
+                                Open the <strong>Price Bulletin</strong> and check the current Local
+                                item %.
+                              </li>
+                              <li>
+                                If the Local item looks high for this week, decide whether to sell
+                                now or keep holding.
+                              </li>
+                              <li>
+                                Refresh <strong>Remote Price</strong> to see if any guild members /
+                                buyers are offering strong prices for Remote items.
+                              </li>
+                              <li>
+                                Remember you still have time until
+                                <strong>Friday 21:00 UTC</strong> to fully dump your stock.
+                              </li>
                             </ul>
                           </section>
+                          <div class="timer-details-footer">
+                            <a
+                              class="timer-details-link"
+                              routerLink="/guides/trading"
+                              fragment="timers-checklists"
+                            >
+                              Open Trading / Commerce Guide (timers & checklist loop)
+                            </a>
+                          </div>
                         </div>
                       }
                     }
-
-
 
                     <!-- =======================
                          Default

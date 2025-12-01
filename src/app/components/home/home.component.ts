@@ -1,14 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { DAILY_CHECKLIST, WEEKLY_CHECKLIST } from '../../configs';
-import { interval } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ChecklistImportance, ChecklistItem } from '../../models';
 
-interface HighlightGroup {
+interface HomeSectionItem {
+  label: string;
+  description?: string;
+}
+
+interface HomeSection {
+  id: string;
   title: string;
-  items: ChecklistItem[];
+  subtitle: string;
+  items: HomeSectionItem[];
+  routerLink: string;
+  ctaLabel: string;
 }
 
 @Component({
@@ -18,21 +23,81 @@ interface HighlightGroup {
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
-  readonly today = signal(new Date());
+export class HomeComponent {
+  readonly sections: HomeSection[] = [
+    {
+      id: 'timers',
+      title: 'Timers',
+      subtitle: 'Live UTC-based countdowns for daily and weekly resets plus key world events.',
+      items: [
+        {
+          label: 'Reset tracking',
+          description:
+            'Daily and weekly resets with clear UTC times so you never guess when systems flip.',
+        },
+        {
+          label: 'World & event timers',
+          description:
+            'Arena 1v1, Fireworks events, Trading week reset, Mirage Boat and other time-based content.',
+        },
+        {
+          label: 'Custom strip',
+          description:
+            'Pick which timers appear in the top strip; preferences are saved per browser.',
+        },
+      ],
+      routerLink: '/timers',
+      ctaLabel: 'Open timers',
+    },
+    {
+      id: 'checklist',
+      title: 'Checklists',
+      subtitle: 'Track what you’ve actually done this cycle with daily and weekly task lists.',
+      items: [
+        {
+          label: 'Daily & weekly lists',
+          description:
+            'Core priorities first, then optional extras; state resets automatically with the game.',
+        },
+        {
+          label: 'Detailed or compact view',
+          description:
+            'Swap between full descriptions or a denser list depending on how much text you want.',
+        },
+        {
+          label: 'Local storage only',
+          description: 'Progress is stored in your browser; no login or external accounts needed.',
+        },
+      ],
+      routerLink: '/checklist',
+      ctaLabel: 'Open checklist',
+    },
+    {
+      id: 'guides',
+      title: 'Guides',
+      subtitle: 'Long-form explanations for systems that deserve more than a tooltip.',
+      items: [
+        {
+          label: 'Trading / Commerce',
+          description:
+            'How Trade Week works, Local vs Remote prices, mansion slots, and using guild tools.',
+        },
+        {
+          label: 'Integrated with tools',
+          description:
+            'Guides reference related timers and checklist items so everything stays in sync.',
+        },
+        {
+          label: 'Room to grow',
+          description: 'Space reserved for future guides as new systems or events are added.',
+        },
+      ],
+      routerLink: '/guides',
+      ctaLabel: 'Browse guides',
+    },
+  ];
 
-  readonly dailyHighlights: HighlightGroup = {
-    title: 'Core daily priorities',
-    items: this.pickCore(DAILY_CHECKLIST, 4),
-  };
-
-  readonly weeklyHighlights: HighlightGroup = {
-    title: 'Core weekly goals',
-    items: this.pickCore(WEEKLY_CHECKLIST, 4),
-  };
-
-  // External resources – for now just static links
+  // External resources – static links
   readonly resourceLinks = [
     {
       label: 'Official Website',
@@ -59,28 +124,4 @@ export class HomeComponent implements OnInit {
       href: 'https://www.reddit.com/r/WhereWindsMeet/',
     },
   ];
-
-  ngOnInit(): void {
-    // Poll once per minute; update signal when the calendar day changes.
-    interval(60_000)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        const now = new Date();
-        const prev = this.today();
-        if (
-          prev.getFullYear() !== now.getFullYear() ||
-          prev.getMonth() !== now.getMonth() ||
-          prev.getDate() !== now.getDate()
-        ) {
-          this.today.set(now);
-        }
-      });
-  }
-
-  private pickCore(source: ChecklistItem[], limit: number): ChecklistItem[] {
-    return source
-      .filter((i) => i.importance === ('core' as ChecklistImportance))
-      .sort((a, b) => a.category.localeCompare(b.category) || a.label.localeCompare(b.label))
-      .slice(0, limit);
-  }
 }

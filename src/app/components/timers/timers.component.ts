@@ -10,11 +10,12 @@ import {
 } from '../../services';
 import { TimerChip } from '../../models';
 import { DiamondToggleComponent } from '../ui';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-timers',
   standalone: true,
-  imports: [CommonModule, DiamondToggleComponent],
+  imports: [CommonModule, DiamondToggleComponent, RouterModule],
   templateUrl: './timers.component.html',
   styleUrls: ['./timers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

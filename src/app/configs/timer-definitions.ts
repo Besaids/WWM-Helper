@@ -145,7 +145,7 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     },
   },
 
-    // ========================
+  // ========================
   // Trading / Commerce
   // ========================
   {
@@ -172,5 +172,4 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       minute: 0,
     },
   },
-
 ];
