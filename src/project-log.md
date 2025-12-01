@@ -1,5 +1,102 @@
 ## 2025-11-30
 
+### Guild Event Timers – Breaking Army & Test Your Skills
+
+**Goal**
+
+- Support two special guild events whose schedules are configured by the guild leader in-game and can vary per player:
+  - **Breaking Army** (solo boss challenge)
+  - **Test Your Skills** (internal guild arena)
+- Keep the global timers in UTC, but let users transcribe the in-game card (weekday, time, UTC+offset) and have the app count down like any other repeating window.
+
+**Data & Services**
+
+- Introduced a dedicated **Guild Event Timers** service to hold per-user overrides in `localStorage` keyed by timer ID.
+  - Stores:
+    - `timezoneOffsetMinutes` (card’s UTC offset in minutes)
+    - `slots`: an array of `{ weekday, hour, minute }` for up to two weekly windows.
+  - Exposes `scheduleOverrides$` observable so other services can layer guild overrides on top of the base `TIMER_DEFINITIONS`.
+- Updated `TimerService`:
+  - Combines the regular `tick$` stream with `guildTimers.scheduleOverrides$`.
+  - For two special timer IDs:
+    - `guild-breaking-army`
+    - `guild-test-your-skills`
+  - If no override exists yet, their chips render as:
+    - `remaining: "Not configured"`
+    - No schedule helpers are called (prevents bogus UTC math).
+  - If an override exists, it clones the definition with the user’s schedule and passes that into `buildTimerChip`, so these timers behave like normal 1-hour windows (open → close → next slot).
+
+**Timers UI – per-guild configuration**
+
+- Extended `timers.component.html` to add **Details drawers** for:
+  - `@case ('guild-breaking-army')`
+  - `@case ('guild-test-your-skills')`
+- Each guild drawer includes:
+  - Explanatory text describing the event and reminding that the schedule is guild-leader-defined and 1-hour long.
+  - A “Schedule” configuration block with:
+    - **Event timezone (card)** – `UTC + N` selector, where `N` is taken from `guildUtcOffsets` (hours); persisted as minutes.
+    - **Slot 1** and **Slot 2** weekday selectors:
+      - Defaults to Monday if no stored value is present.
+      - Restore the correct weekday after reload using `[selected]` bindings per option.
+    - Separate **hour** and **minute** dropdowns for each slot:
+      - Hour options: 0–23, rendered as `00–23`.
+      - Minute options: 0, 15, 30, 45.
+      - Restore persisted values via `[selected]` on options (fixed earlier bug where `[value]` on `<select>` didn’t re-select after async load).
+  - **Save** button:
+    - Calls `saveGuildTimer(timerId, tzMinutes, slots)` to write into the guild timer service and `localStorage`.
+  - **Delete** button:
+    - Calls `deleteGuildTimer(timerId)` to clear overrides and return the timer to “Not configured”.
+
+**Timers styling – guild configuration**
+
+- Extended `timers.component.scss` with a small guild-config sub-layout:
+  - `.guild-timer-config` – Adds top border, spacing and vertical layout for the configuration block underneath the timer description.
+  - `.guild-timer-field` / `__tz` – Compact pill-style wrapper for the `UTC +` selector, using existing surface/shadow tokens so it matches timer controls.
+  - `.guild-timer-slot` – Flex row for each slot:
+    - Weekday select on the left.
+    - Narrow hour/minute selects grouped tightly on the right.
+    - Wraps neatly on smaller widths.
+  - `.guild-timer-slot__time` – Narrow width and slight negative margin to visually pull hour/minute closer together.
+  - `.guild-timer-actions` – Horizontal `Save` / `Delete` row using the existing `.btn-primary` / `.btn-secondary` button styles, aligned with the rest of the app’s button language.
+
+---
+
+### Global Typography & Responsive Polish
+
+**Base font size**
+
+- Increased global root font size in `styles/base/_globals.scss`:
+  - `html { font-size: 18px; }`
+- Motivation:
+  - Improve legibility; several users reported the default text size felt too small on desktop.
+
+**Music player responsiveness**
+
+- The larger base font caused the music player’s `current / total` time label to overflow its right edge.
+  - Root cause: `.music-player` was hard-capped at `max-width: 420px` while internal text grew with `rem`.
+- Fix:
+  - Relaxed/removed the fixed desktop max width so the player can grow horizontally with its container:
+    - New pattern: `max-width: min(100%, 32rem);` on desktop; `max-width: 100%` on mobile.
+  - Kept the existing mobile media-query behavior:
+    - Slightly smaller title/subtitle fonts.
+    - Narrower volume slider.
+    - Controls allowed to wrap on very small widths.
+- Result: the player now scales cleanly with the new typography; the `0:00 / 3:42` label stays inside the card on both desktop and mobile without layout glitches.
+
+**Checklist mobile header alignment**
+
+- Problem:
+  - In the checklist cards, `.idea h3` used `display: flex` with `justify-content: space-between` for title + category (e.g. `CONTENT / EXPLORATION`).
+  - On mobile with larger font size, long titles wrapped to multiple lines, causing the category label to sit at inconsistent vertical positions (visually “floating” mid-block).
+- Fix:
+  - Added a mobile override for small screens:
+    - `.idea h3` switches to `flex-direction: column; align-items: flex-start;`.
+    - The category becomes a stacked subtitle directly under the title (smaller font size).
+  - Desktop behavior is unchanged (title left, category right in a single row).
+- Result:
+  - Consistent, readable alignment of checklist categories on mobile without sacrificing the denser desktop layout.
+
+
 ### Design System Consolidation & SCSS Refactoring
 
 **Motivation**

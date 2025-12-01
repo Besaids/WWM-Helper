@@ -51,6 +51,26 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'Located in Qinghe – Dreamscape: Blissful Retreat. On Expert: up to 900 Commerce Coin per day; each loss costs 150 Coin.',
     tags: ['economy', 'solo'],
   },
+    {
+    id: 'daily-trading-buy-goods',
+    frequency: 'daily',
+    importance: 'optional',
+    category: 'Economy',
+    label: 'Trade – buy weekly goods at Feng’s Tradehall (Fri→Sun).',
+    description:
+      'After the Friday 21:00 (UTC) trade reset, buy up to your slots from the Price Bulletin goods: usually 30 of the two priciest items and 20 of the last one.',
+    tags: ['economy', 'solo'],
+  },
+  {
+    id: 'daily-trading-check-prices',
+    frequency: 'daily',
+    importance: 'optional',
+    category: 'Economy',
+    label: 'Trade – check prices and offload goods.',
+    description:
+      'Use the Trading timers to remember mid-week checks: look for high Local %, refresh Remote Price for guild buyers, and sell everything before the next Friday 21:00 (UTC) trade reset.',
+    tags: ['economy', 'solo', 'guild'],
+  },
   {
     id: 'daily-stamina',
     frequency: 'daily',
@@ -70,6 +90,16 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     description:
       'Give/receive massages for Coins, character XP and Adventure Slips. A 10-day streak grants the “Bathrobe: Golden Threads” outfit.',
     tags: ['leisure', 'social', 'economy', 'multiplayer'],
+  },
+    {
+    id: 'daily-well-of-heaven-training',
+    frequency: 'daily',
+    importance: 'optional',
+    category: 'Adventure & progression',
+    label: 'Well of Heaven Special Training (+1 Constitution).',
+    description:
+      'From Wandering Paths → Casual Co-op → Adventure, queue for “Well of Heaven Special Training” (Qinghe – West Heaven’s Pier). Completing it once per day grants +1 Constitution (up to +10 total) plus normal co-op rewards, helping you meet Constitution requirements on gear.',
+    tags: ['adventure', 'progression', 'stats', 'multiplayer'],
   },
   {
     id: 'daily-gathering',

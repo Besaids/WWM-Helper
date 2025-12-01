@@ -144,4 +144,33 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       minute: 0,
     },
   },
+
+    // ========================
+  // Trading / Commerce
+  // ========================
+  {
+    id: 'trading-week-reset',
+    label: 'Trade Week Reset',
+    shortLabel: 'TradeWeek',
+    icon: 'bi-currency-exchange',
+    schedule: {
+      type: 'weekly',
+      weekday: 5, // Friday
+      hour: 21,
+      minute: 0,
+    },
+  },
+  {
+    id: 'trading-price-peak-check',
+    label: 'Trade Price Check',
+    shortLabel: 'TradePeak',
+    icon: 'bi-graph-up',
+    schedule: {
+      type: 'weekly',
+      weekday: 2, // Tuesday
+      hour: 21,
+      minute: 0,
+    },
+  },
+
 ];
