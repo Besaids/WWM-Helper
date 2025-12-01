@@ -362,9 +362,16 @@
 }
 
 /* Mobile */
+/* Mobile: stack idea title + category for consistent alignment */
 @media (max-width: 768px) {
-  .checklist-card-header {
-    gap: 1rem;
-    flex-wrap: wrap;
+  .idea h3 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .idea-category {
+    font-size: 0.7rem; // slight shrink so it feels like a subtitle
+    align-self: flex-start; // make sure it stays left-aligned under the title
   }
 }

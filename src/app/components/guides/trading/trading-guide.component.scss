@@ -1,0 +1,177 @@
+.guide-page {
+  padding: 1.5rem var(--spacing-outer-x, 1.5rem) 2rem;
+  max-width: 70rem;
+  margin: 0 auto;
+}
+
+.guide-page__header {
+  margin-bottom: 1.5rem;
+}
+
+.guide-page__title {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.guide-page__subtitle {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin-bottom: 0.75rem;
+}
+
+.guide-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.guide-toc__chip {
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  background: rgba(0, 255, 255, 0.04);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.guide-toc__chip:hover {
+  border-color: rgba(0, 255, 255, 0.35);
+  background: rgba(0, 255, 255, 0.07);
+}
+
+.guide-article {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.guide-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.guide-section h3 {
+  font-size: 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.guide-section p,
+.guide-section li {
+  font-size: 0.9rem;
+}
+
+.guide-section ul,
+.guide-section ol {
+  padding-left: 1.2rem;
+}
+
+.guide-note {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid rgba(255, 255, 255, 0.18);
+}
+
+.guide-figure {
+  margin: 0.75rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center; // center the image inside the article
+}
+
+.guide-figure img {
+  /* Responsive width clamp: never smaller than 18rem, never larger than 48rem,
+     but generally follow 70vw in between. */
+  width: clamp(18rem, 70vw, 48rem);
+
+  height: auto;
+  border-radius: 0.75rem;
+  display: block;
+}
+
+/* Optional: cap very tall images so they don't dominate the page */
+.guide-figure img {
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.guide-figure figcaption {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+.guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.guide-actions__btn {
+  min-width: 11rem;
+}
+
+.guide-section--meta {
+  margin-top: 4rem;
+  opacity: 0.85;
+}
+
+.guide-section--meta ul {
+  margin-bottom: 1rem;
+}
+
+h2 {
+  color: var(--color-accent-gold-soft);
+}
+
+.scroll-top-btn {
+  position: fixed;
+  right: clamp(1.25rem, 4vw, 2.5rem);
+  bottom: 1.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+
+  /* start hidden */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+}
+
+.scroll-top-btn i {
+  font-size: 1.2rem;
+}
+
+.scroll-top-btn--visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .scroll-top-btn {
+    bottom: 1.25rem;
+    right: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .guide-page {
+    padding-inline: 1rem;
+  }
+}

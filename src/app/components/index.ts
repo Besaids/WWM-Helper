@@ -1,5 +1,6 @@
 export * from './checklist';
 export * from './footer';
+export * from './guides';
 export * from './home';
 export * from './layout';
 export * from './music-player';

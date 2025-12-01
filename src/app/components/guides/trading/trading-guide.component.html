@@ -1,0 +1,361 @@
+<main class="guide-page">
+  <header class="guide-page__header">
+    <h1 class="guide-page__title">Trading / Commerce Guide</h1>
+    <p class="guide-page__subtitle">
+      How Trade Week works, how Local vs Remote prices behave, and how to use mansion slots and
+      guild techniques to farm Commerce Coins.
+    </p>
+
+    <nav class="guide-toc">
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('overview')">Overview</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('resets')">Resets</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('bulletin')">
+        Price Bulletin
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('local-remote')">
+        Local vs Remote
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('slots-weekly-loop')">
+        Slots &amp; weekly loop
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('guild-techniques')">
+        Guild techniques
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('timers-checklists')">
+        Timers &amp; checklists
+      </button>
+    </nav>
+  </header>
+
+  <article class="guide-article">
+    <section id="overview" class="guide-section">
+      <h2>1. What Trading Goods are</h2>
+      <p>
+        Each Trade Week, the game picks <strong>three Trading Goods</strong>: one
+        <strong>Local Fluctuation</strong> item and two <strong>Remote Fluctuation</strong> items.
+        You buy them from normal shops on your own world, then sell them in your world or in other
+        players’ worlds for Commerce Coins.
+      </p>
+      <p>
+        When a new Trade Week starts, the three goods rotate. Old-week goods are still items in your
+        bag but are no longer part of the structured Trading loop for that week.
+      </p>
+    </section>
+
+    <section id="resets" class="guide-section">
+      <h2>2. Important resets (UTC)</h2>
+      <ul>
+        <li>
+          <strong>Trade Week reset:</strong> Friday 21:00 UTC.<br />
+          The three Trading Goods rotate; the Price Bulletin changes and its “Time remaining” timer
+          resets.
+        </li>
+        <li>
+          <strong>Weekly reset:</strong> Sunday 21:00 UTC.<br />
+          Treat this as the point where vendor purchase amounts have refreshed at least once. If you
+          sold early, you can usually buy another batch of this week’s goods.
+        </li>
+      </ul>
+      <p class="guide-note">
+        Hard rule: aim to have <strong>no Trading Goods in your bag</strong>
+        when Friday 21:00 UTC hits. Dump everything before the next Trade Week.
+      </p>
+    </section>
+
+    <section id="bulletin" class="guide-section">
+      <h2>3. Price Bulletin &amp; where to buy</h2>
+      <p>You can open the <strong>Price Bulletin</strong> in two ways:</p>
+      <ul>
+        <li>
+          Talk to <strong>Zang Qiyue</strong> at the Trade Commission in Kaifeng and choose
+          <strong>“Price Fluctuations”</strong>, or
+        </li>
+        <li>
+          Open the Trade Commission UI and press
+          <strong>“Check Announcements”</strong>.
+        </li>
+      </ul>
+
+      <figure class="guide-figure">
+        <img
+          src="assets/guides/trading/trade-commission-map.png"
+          alt="World map of Kaifeng city with the Trade Commission location highlighted and its Price Bulletin panel open"
+        />
+        <figcaption>
+          Trade Commission in Kaifeng. Look for this icon on your city map; talking to Zang Qiyue
+          here lets you open the Price Bulletin and see this week’s Trading Goods and their Time
+          Remaining.
+        </figcaption>
+      </figure>
+
+      <p>The Bulletin shows, for the current Trade Week:</p>
+      <ul>
+        <li>Which three items are Trading Goods.</li>
+        <li>Which one is <strong>Local</strong> and which two are <strong>Remote</strong>.</li>
+        <li>
+          A <strong>“Go to purchase”</strong> line for each item that tells you where to buy it on
+          your world.
+        </li>
+        <li>
+          A “Time remaining” countdown to the next
+          <strong>Friday 21:00 UTC</strong> Trade Week reset.
+        </li>
+      </ul>
+    </section>
+
+    <figure class="guide-figure">
+      <img
+        src="assets/guides/trading/price-bulletin-overview.png"
+        alt="Price Bulletin showing the three Trading Goods and the Time Remaining timer"
+      />
+      <figcaption>
+        Price Bulletin in Kaifeng. One item will be marked Local Fluctuation, the other two Remote.
+        The “Go to purchase” line tells you where to buy it on your world.
+      </figcaption>
+    </figure>
+
+    <section id="local-remote" class="guide-section">
+      <h2>4. Local vs Remote fluctuation</h2>
+
+      <h3>Local Fluctuation (1 item)</h3>
+      <ul>
+        <li>
+          On your world, <strong>buy and sell price both move</strong> up and down during the week;
+          at any moment, buy = sell for you.
+        </li>
+        <li>You want to buy when the % is low and sell when it is clearly high for that week.</li>
+      </ul>
+
+      <h3>Remote Fluctuation (2 items)</h3>
+      <ul>
+        <li>On your world, the price is <strong>fixed</strong>; buy and sell don’t change.</li>
+        <li>
+          Other players’ worlds have different prices. You use
+          <strong>Remote Price</strong> / Co-op sale to find worlds with high prices and sell there.
+        </li>
+        <li>
+          Timing is about <strong>when you find good buyers</strong>, not about your own daily
+          reset.
+        </li>
+      </ul>
+    </section>
+
+    <figure class="guide-figure">
+      <img
+        src="assets/guides/trading/local-price-fluctuation.png"
+        alt="Local Price view in the Trade Commission showing a Trading Good with its current percentage change"
+      />
+      <figcaption>
+        Local Price view in the Trade Commission. Here the buy and sell price on your own world move
+        together; this is where you watch the Local Fluctuation item’s percentage to decide when to
+        buy low and sell high.
+      </figcaption>
+    </figure>
+
+    <section id="slots-weekly-loop" class="guide-section">
+      <h2>5. Inventory, mansion &amp; weekly loop</h2>
+
+      <h3>Slots &amp; the mansion</h3>
+      <p>
+        Most players start with 20 bag slots. Renting the big mansion at Feng’s Tradehall
+        (10&nbsp;000 Commerce Coins/month) adds
+        <strong>+60 slots</strong>, giving an effective <strong>80-slot Trading inventory</strong>.
+        This is the practical minimum for serious Trading.
+      </p>
+      <p>
+        There are three house options, but for Trading the mansion is the key one; the extra 60
+        slots make the method feel worth it.
+      </p>
+      <p>
+        Later, guild techniques can add more Trading slots. Once you have 90+ slots you simply buy
+        30 of each weekly good.
+      </p>
+
+      <h3>Buying pattern (80-slot baseline)</h3>
+      <ol>
+        <li>
+          After <strong>Friday 21:00 UTC</strong>, open the Price Bulletin and sort the three goods
+          by base price.
+        </li>
+        <li>
+          With 80 slots and a 30-per-item cap, buy:
+          <ul>
+            <li>30 of the most expensive item,</li>
+            <li>30 of the second most expensive item,</li>
+            <li>20 of the remaining item.</li>
+          </ul>
+        </li>
+        <li>
+          You now have a full bag optimised for profit; percentage gains apply to the base price, so
+          expensive items return more Coins per %.
+        </li>
+      </ol>
+
+      <h3>Weekly loop</h3>
+      <ol>
+        <li><strong>Friday</strong> – buy your weekly stock after 21:00 UTC.</li>
+        <li>
+          <strong>Across the week</strong> – monitor the Local item % and Remote buyers. Hold until
+          the numbers look good.
+        </li>
+        <li>
+          <strong>Mid-week (roughly Tue–Thu)</strong> – often good for Local peaks. Sell if the %
+          looks high for this week.
+        </li>
+        <li>
+          If you sell early, you can usually re-buy at least once before the next Trade Week,
+          especially after Sunday 21:00 UTC when stocks have refreshed.
+        </li>
+        <li>
+          <strong>Before the next Friday 21:00 UTC</strong> – dump any leftovers at the best price
+          you can find.
+        </li>
+      </ol>
+    </section>
+
+    <figure class="guide-figure">
+      <img
+        src="assets/guides/trading/trade-house-renting.png"
+        alt="House rental screen in Feng’s Tradehall showing the mansion option and its additional storage slots"
+      />
+      <figcaption>
+        House renting at Feng’s Tradehall. The large mansion costs 10&nbsp;000 Commerce Coins per
+        month but provides a big boost to storage, effectively giving you an 80-slot Trading
+        inventory and making the weekly Trading loop much more profitable.
+      </figcaption>
+    </figure>
+
+    <section id="guild-techniques" class="guide-section">
+      <h2>6. Guild techniques: Selling Bonus &amp; Market Tax</h2>
+      <p>
+        Under <strong>Techniques → Wealth → Wealth Through Trade</strong>, Chen Shusheng offers two
+        key Trading techniques:
+      </p>
+      <ul>
+        <li>
+          <strong>Selling Bonus</strong> – “Exchange Trading Goods with guild members, profit +X%”
+          (Commerce Coins acquisition +X%).
+        </li>
+        <li>
+          <strong>Market Tax</strong> – “Exchange Trading Goods with guild members, tax rate −Y%”
+          (Trading Goods transaction tax −Y%).
+        </li>
+      </ul>
+      <p>
+        These only work when trading with <strong>guild members</strong>, including your guild’s
+        Trade NPC. They do not apply to random public players.
+      </p>
+      <p><strong>Sell priority if you have these:</strong></p>
+      <ol>
+        <li>Guildmates’ worlds or your guild Trade NPC.</li>
+        <li>
+          Random high-price buyers (Remote Price) only if they beat your guild-boosted value by a
+          clear margin.
+        </li>
+        <li>Local sale in your own world as a last resort near the end of the week.</li>
+      </ol>
+    </section>
+
+    <figure class="guide-figure">
+      <img
+        src="assets/guides/trading/guild-wealth-through-trade.png"
+        alt="Wealth Through Trade techniques screen showing Selling Bonus and Market Tax for guild trading"
+      />
+      <figcaption>
+        Wealth Through Trade techniques under the Wealth tab. Selling Bonus and Market Tax only
+        apply when exchanging Trading Goods with guild members (including your guild Trade NPC),
+        making guild worlds the best place to sell when possible.
+      </figcaption>
+    </figure>
+
+    <section id="timers-checklists" class="guide-section">
+      <h2>7. Timers &amp; checklists in WWM Helper</h2>
+      <p>WWM Helper exposes Trading through:</p>
+      <ul>
+        <li>
+          <strong>Trade Week Reset</strong> timer – Friday 21:00 UTC, when the three goods rotate
+          and you should clear last week’s stock.
+        </li>
+        <li>
+          <strong>Trade Price Check</strong> timer – mid-week reminder to log in and check Local %
+          plus Remote buyers.
+        </li>
+        <li>
+          Optional <strong>daily checklist</strong> items:
+          <em>“Trade – buy weekly goods (Fri→Sun)”</em> and
+          <em>“Trade – check prices and offload goods”</em>.
+        </li>
+        <li>
+          An optional <strong>weekly checklist</strong> item:
+          <em>“Run your weekly Trading / Commerce loop”</em>.
+        </li>
+      </ul>
+      <p>
+        Use timers for the <strong>“when”</strong> and the checklist for
+        <strong>“did I actually do it”</strong>.
+      </p>
+
+      <div class="guide-actions">
+        <button type="button" class="btn-primary guide-actions__btn" routerLink="/timers">
+          Open Timers
+        </button>
+
+        <button type="button" class="btn-secondary guide-actions__btn" routerLink="/checklist">
+          Open Checklists
+        </button>
+      </div>
+    </section>
+    <section id="sources" class="guide-section guide-section--meta">
+      <h2>Sources &amp; disclaimer</h2>
+      <p>
+        This Trading / Commerce Guide is based on a combination of
+        <strong>player research, in-game testing, and community discussion</strong>. The core
+        structure of the Trading loop was originally inspired by a detailed Reddit guide:
+      </p>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.reddit.com/r/wherewindsmeet_/comments/1p2u0jn/guide_part_4_where_winds_meet_the_ultimate/"
+            target="_blank"
+            rel="noopener"
+          >
+            “Where Winds Meet – The Ultimate Guide (Part 4)” on r/WhereWindsMeet_
+          </a>
+          by
+          <a
+            href="https://www.reddit.com/user/Silent-Musician-7918/"
+            target="_blank"
+            rel="noopener"
+          >
+            u/Silent-Musician-7918 </a
+          >.
+        </li>
+      </ul>
+
+      <p>
+        All timings, slot patterns, selling strategies and reset interpretations in this guide were
+        <strong>verified and adjusted through direct play</strong> to match the global (UTC)
+        schedule and current game behaviour. Where the Reddit guide used CN-based or UTC+8 reset
+        times, these have been <strong>converted to actual global UTC resets</strong> used in the
+        live version.
+      </p>
+
+      <p class="guide-note">
+        As with all economy systems in Where Winds Meet, values and timings may change with future
+        patches. This guide reflects the <strong>current observed behaviour</strong> on the global
+        release and will be updated when new information becomes available.
+      </p>
+    </section>
+  </article>
+
+  <button
+    type="button"
+    class="btn-primary scroll-top-btn"
+    (click)="scrollToTop()"
+    [class.scroll-top-btn--visible]="showScrollTop"
+    aria-label="Back to top"
+  >
+    <i class="bi bi-chevron-up" aria-hidden="true"></i>
+  </button>
+</main>

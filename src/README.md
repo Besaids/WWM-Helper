@@ -495,3 +495,41 @@ Prepare for theme switching:
   - Ensure all raw colors/RGBA values are replaced with tokens
   - Apply appropriate mixins for common patterns
   - Update component-specific documentation in `src/README.md` if needed
+
+---
+
+## 8. Where the design system is used today
+
+The tokens and mixins documented here are now wired through most of the app. When you’re changing styles, it helps to know which pieces already consume the system and should stay aligned with it.
+
+### 8.1 High-traffic feature screens
+
+- **Timers**
+  - Timer rows use the `capsule` mixin for surfaces.
+  - Visibility toggles and per-timer checkboxes use the shared `diamond-toggle` pattern.
+  - Details / Hide pill buttons use `pill-outline` for consistent CTAs.
+  - Urgent countdown styling (e.g. timers under 10 minutes) uses the red accent tokens.
+
+- **Checklist**
+  - Daily / Weekly cards use `capsule` for card shells.
+  - View-mode tabs (Detailed / Simple) and the reset button use `pill-base` / `pill-outline`.
+  - Checklist item toggles are implemented with the same diamond-toggle mixin used by Timers.
+
+- **Home & Guides**
+  - Home section cards (Timers / Checklists / Guides / External resources) are all capsules.
+  - In-guide callouts (e.g. Trading / Commerce guide sections) use card helpers + typography tokens.
+  - The scroll-to-top button on long guides uses button tokens for radius, colors and motion.
+
+- **Music player**
+  - Player surface and playlist drawer use surface-layer tokens and elevation shadows.
+  - Transitions (open/close drawer, hover states) use motion tokens.
+
+### 8.2 Layout & chrome
+
+- **Navbar**
+  - Background, underline accent and hover states use color, gradient and shadow tokens.
+- **App shell & footer**
+  - Background gradient and noise overlay use `gradients` tokens for color and intensity.
+  - Footer uses the same surface layer and border tokens as other low-emphasis cards.
+
+When adding new components or pages (for example, future Guides beyond Trading), prefer copying patterns from these existing consumers instead of creating fresh ad‑hoc styles. That keeps the app visually cohesive and makes future theme changes cheaper.

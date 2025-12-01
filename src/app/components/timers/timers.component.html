@@ -580,6 +580,613 @@
                       }
                     }
 
+                    @case ('guild-breaking-army') {
+                      <section class="timers-section">
+                        <h3>Breaking Army – guild event</h3>
+                        <p>
+                          Breaking Army is your guild’s solo challenge event. Each session lasts
+                          <strong>1 hour</strong>. The exact schedule is set by your guild leader.
+                          Use the in-game card time (for example
+                          <strong>Wednesday 20:30 (UTC+8)</strong>) and enter it below.
+                        </p>
+
+                        @if (guildConfigs$ | async; as guildConfigs) {
+                          @let current = guildConfigs['guild-breaking-army'];
+
+                          <div class="guild-timer-config">
+                            <h4>Schedule</h4>
+
+                            <!-- Timezone offset (in hours) -->
+                            <div class="guild-timer-field">
+                              <span>Event timezone (card)</span>
+                              <div class="guild-timer-field__tz">
+                                <span>UTC + </span>
+                                <select #baTzHours>
+                                  @for (o of guildUtcOffsets; track o) {
+                                    <option
+                                      [value]="o"
+                                      [selected]="getGuildTimezoneHours(current) === o"
+                                    >
+                                      {{ o }}
+                                    </option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+
+                            <!-- Slot 1 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 1 weekday</span>
+                                <select #baDay1>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 hour</span>
+                                <select #baHour1>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[0]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 minute</span>
+                                <select #baMinute1>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[0]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <!-- Slot 2 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 2 weekday</span>
+                                <select #baDay2>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 hour</span>
+                                <select #baHour2>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[1]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 minute</span>
+                                <select #baMinute2>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[1]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <div class="guild-timer-actions">
+                              <button
+                                type="button"
+                                class="btn-primary"
+                                (click)="
+                                  saveGuildTimer(
+                                    'guild-breaking-army',
+                                    +baTzHours.value * 60,
+                                    buildGuildSlots(
+                                      baDay1.value,
+                                      baHour1.value,
+                                      baMinute1.value,
+                                      baDay2.value,
+                                      baHour2.value,
+                                      baMinute2.value
+                                    )
+                                  )
+                                "
+                              >
+                                Save
+                              </button>
+
+                              <button
+                                type="button"
+                                class="btn-secondary"
+                                (click)="deleteGuildTimer('guild-breaking-army')"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </section>
+                    }
+
+                    @case ('guild-test-your-skills') {
+                      <section class="timers-section">
+                        <h3>Test Your Skills – guild event</h3>
+                        <p>
+                          Test Your Skills is your guild’s internal arena event. Each session lasts
+                          <strong>1 hour</strong>. The exact schedule is set by your guild leader.
+                          Use the in-game card times (for example
+                          <strong>Thursday 20:30 (UTC+8)</strong> and
+                          <strong>Sunday 20:30 (UTC+8)</strong>) and enter them below.
+                        </p>
+
+                        @if (guildConfigs$ | async; as guildConfigs) {
+                          @let current = guildConfigs['guild-test-your-skills'];
+
+                          <div class="guild-timer-config">
+                            <h4>Schedule</h4>
+
+                            <!-- Timezone offset (in hours) -->
+                            <div class="guild-timer-field">
+                              <span>Event timezone (card)</span>
+                              <div class="guild-timer-field__tz">
+                                <span>UTC + </span>
+                                <select #tysTzHours>
+                                  @for (o of guildUtcOffsets; track o) {
+                                    <option
+                                      [value]="o"
+                                      [selected]="getGuildTimezoneHours(current) === o"
+                                    >
+                                      {{ o }}
+                                    </option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+
+                            <!-- Slot 1 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 1 weekday</span>
+                                <select #tysDay1>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 hour</span>
+                                <select #tysHour1>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[0]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 minute</span>
+                                <select #tysMinute1>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[0]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <!-- Slot 2 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 2 weekday</span>
+                                <select #tysDay2>
+                                  <option
+                                    [value]="1"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    [value]="2"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    [value]="3"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    [value]="4"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    [value]="5"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    [value]="6"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    [value]="7"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 hour</span>
+                                <select #tysHour2>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[1]?.hour ?? 0) === h"
+                                    >
+                                      {{ h < 10 ? '0' + h : h }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 minute</span>
+                                <select #tysMinute2>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[1]?.minute ?? 0) === m"
+                                    >
+                                      {{ m < 10 ? '0' + m : m }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <div class="guild-timer-actions">
+                              <button
+                                type="button"
+                                class="btn-primary"
+                                (click)="
+                                  saveGuildTimer(
+                                    'guild-test-your-skills',
+                                    +tysTzHours.value * 60,
+                                    buildGuildSlots(
+                                      tysDay1.value,
+                                      tysHour1.value,
+                                      tysMinute1.value,
+                                      tysDay2.value,
+                                      tysHour2.value,
+                                      tysMinute2.value
+                                    )
+                                  )
+                                "
+                              >
+                                Save
+                              </button>
+
+                              <button
+                                type="button"
+                                class="btn-secondary"
+                                (click)="deleteGuildTimer('guild-test-your-skills')"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </section>
+                    }
+
+                    <!-- =======================
+                         Trade Week Reset
+                         ======================= -->
+                    @case ('trading-week-reset') {
+                      <p class="timer-settings-row__details-summary">
+                        Trade Week reset for <strong>Trading Goods</strong>. Every Friday at 21:00
+                        UTC the three featured trade items change in the
+                        <strong>Price Bulletin</strong>. Use this to remember when to clear out old
+                        stock and check the new week.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>What this timer tracks</h3>
+                            <ul>
+                              <li>
+                                When a new Trade Week starts and the three Trading Goods rotate.
+                              </li>
+                              <li>
+                                When last week’s trade items stop being part of the structured
+                                Trading loop.
+                              </li>
+                              <li>
+                                The hard deadline to sell any leftover Trading Goods before they go
+                                “off-rotation”.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Basic trading loop</h3>
+                            <ul>
+                              <li>
+                                After Friday 21:00 UTC, open the <strong>Price Bulletin</strong> at
+                                Zang Qiyue to see the week’s 1 Local + 2 Remote items.
+                              </li>
+                              <li>
+                                With 80 slots, buy
+                                <strong>30 of the two most expensive items</strong> and
+                                <strong>20 of the remaining one</strong> to maximise profit.
+                              </li>
+                              <li>
+                                Hold them and watch prices over the week; aim to sell all stock
+                                before the next Friday 21:00 UTC reset.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <section class="timers-section">
+                            <h3>Guild bonus tips</h3>
+                            <ul>
+                              <li>
+                                The <strong>Selling Bonus</strong> and
+                                <strong>Market Tax</strong> techniques only apply when exchanging
+                                Trading Goods with <strong>guild members</strong>, including your
+                                guild’s trade NPC.
+                              </li>
+                              <li>
+                                Prefer selling Remote items in guildmates’ worlds or to your guild
+                                NPC; only use random buyers if their price is much higher than your
+                                guild options.
+                              </li>
+                            </ul>
+                          </section>
+
+                          <div class="timer-details-footer">
+                            <a
+                              class="timer-details-link"
+                              routerLink="/guides/trading"
+                              fragment="resets"
+                            >
+                              Open Trading / Commerce Guide (resets)
+                            </a>
+                          </div>
+                        </div>
+                      }
+                    }
+
+                    <!-- =======================
+                         Trade Price Peak Check
+                         ======================= -->
+                    @case ('trading-price-peak-check') {
+                      <p class="timer-settings-row__details-summary">
+                        Weekly reminder to check potential <strong>Trading Goods</strong> price
+                        peaks. Fires on <strong>Tuesday at 21:00 UTC</strong>, about halfway through
+                        the Trade Week, so you can log in, review Local % values and look for good
+                        Remote buyers.
+                      </p>
+
+                      <button
+                        type="button"
+                        class="timer-settings-row__details-toggle"
+                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
+                        (click)="toggleLongDetails(t.id)"
+                      >
+                        @if (longDetailsId === t.id) {
+                          <span>Show less</span>
+                        } @else {
+                          <span>Show more</span>
+                        }
+                      </button>
+
+                      @if (longDetailsId === t.id) {
+                        <div class="timer-settings-row__details-body">
+                          <section class="timers-section">
+                            <h3>What to do when it pings</h3>
+                            <ul>
+                              <li>
+                                Open the <strong>Price Bulletin</strong> and check the current Local
+                                item %.
+                              </li>
+                              <li>
+                                If the Local item looks high for this week, decide whether to sell
+                                now or keep holding.
+                              </li>
+                              <li>
+                                Refresh <strong>Remote Price</strong> to see if any guild members /
+                                buyers are offering strong prices for Remote items.
+                              </li>
+                              <li>
+                                Remember you still have time until
+                                <strong>Friday 21:00 UTC</strong> to fully dump your stock.
+                              </li>
+                            </ul>
+                          </section>
+                          <div class="timer-details-footer">
+                            <a
+                              class="timer-details-link"
+                              routerLink="/guides/trading"
+                              fragment="timers-checklists"
+                            >
+                              Open Trading / Commerce Guide (timers & checklist loop)
+                            </a>
+                          </div>
+                        </div>
+                      }
+                    }
+
                     <!-- =======================
                          Default
                          ======================= -->

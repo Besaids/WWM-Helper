@@ -114,4 +114,62 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
       ],
     },
   },
+
+  // ========================
+  // Guild events – user-configured
+  // ========================
+
+  {
+    id: 'guild-breaking-army',
+    label: 'Breaking Army (Guild)',
+    shortLabel: 'BreakArmy',
+    icon: 'bi-lightning-charge', // or whatever fits
+    // Schedule is overridden at runtime by GuildEventTimersService; this is a dummy value.
+    schedule: {
+      type: 'weekly',
+      weekday: 1,
+      hour: 0,
+      minute: 0,
+    },
+  },
+  {
+    id: 'guild-test-your-skills',
+    label: 'Test Your Skills (Guild)',
+    shortLabel: 'TestSkills',
+    icon: 'bi-shield-shaded',
+    schedule: {
+      type: 'weekly',
+      weekday: 1,
+      hour: 0,
+      minute: 0,
+    },
+  },
+
+  // ========================
+  // Trading / Commerce
+  // ========================
+  {
+    id: 'trading-week-reset',
+    label: 'Trade Week Reset',
+    shortLabel: 'TradeWeek',
+    icon: 'bi-currency-exchange',
+    schedule: {
+      type: 'weekly',
+      weekday: 5, // Friday
+      hour: 21,
+      minute: 0,
+    },
+  },
+  {
+    id: 'trading-price-peak-check',
+    label: 'Trade Price Check',
+    shortLabel: 'TradePeak',
+    icon: 'bi-graph-up',
+    schedule: {
+      type: 'weekly',
+      weekday: 2, // Tuesday
+      hour: 21,
+      minute: 0,
+    },
+  },
 ];

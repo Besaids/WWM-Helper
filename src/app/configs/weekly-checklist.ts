@@ -42,14 +42,14 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     tags: ['guild', 'multiplayer'],
   },
   {
-    id: 'weekly-trading',
+    id: 'weekly-trading-loop',
     frequency: 'weekly',
     importance: 'optional',
     category: 'Economy',
-    label: 'Run trading at Feng’s Tradehall for Commerce Coins.',
+    label: 'Run your weekly Trading / Commerce loop.',
     description:
-      'Buy goods at Feng’s Tradehall and sell at the Trade Commission next door. Read a trading guide first; the system rewards understanding price trends.',
-    tags: ['economy', 'solo'],
+      'Use the Trading timers: buy this week’s goods after Friday 21:00 UTC, hold and sell across the week (Local peaks or good Remote buyers), then clear all stock before the next Trade Week reset.',
+    tags: ['economy', 'solo', 'guild'],
   },
   {
     id: 'weekly-cap-coin',

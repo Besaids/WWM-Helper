@@ -312,6 +312,162 @@
   }
 }
 
+/* =======================
+   Guild event timers
+   ======================= */
+
+.guild-timer-config {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guild-timer-config h4 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Top “Event timezone” field */
+
+.guild-timer-field {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  width: auto; // don't stretch across the row
+}
+
+.guild-timer-field__tz {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-layer-3);
+  box-shadow: var(--shadow-depth-1);
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+}
+
+.guild-timer-field__tz select {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.15rem 0.5rem;
+  background: var(--surface-layer-2);
+  color: var(--color-text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  min-width: 3.25rem;
+}
+
+.guild-timer-field__tz select:focus-visible {
+  border-color: var(--color-accent-gold-soft);
+  box-shadow: var(--shadow-depth-1);
+}
+
+.guild-timer-field__tz span {
+  white-space: nowrap;
+}
+
+.guild-timer-field__tz input {
+  width: 3rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.15rem 0.4rem;
+  background: var(--surface-layer-2);
+  color: var(--color-text-primary);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.guild-timer-field__tz input:focus-visible {
+  border-color: var(--color-accent-gold-soft);
+  box-shadow: var(--glow-gold-soft);
+}
+
+/* Slot rows */
+
+.guild-timer-slot {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.35rem; // tighter horizontally
+  row-gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.guild-timer-slot label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  min-width: 4rem;
+}
+
+.guild-timer-slot select {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.25rem 0.5rem;
+  background: var(--surface-layer-2);
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  outline: none;
+}
+
+/* Narrower selects for hour/minute */
+
+.guild-timer-slot__time {
+  min-width: auto;
+  margin-left: -0.1rem; // nudge hour & minute closer to the weekday
+}
+
+.guild-timer-slot__time select {
+  min-width: 3.1rem;
+  max-width: 3.1rem;
+  text-align: center;
+}
+
+.guild-timer-slot select:focus-visible {
+  border-color: var(--color-accent-gold-soft);
+  box-shadow: var(--shadow-depth-1);
+}
+
+/* Save / Delete buttons line */
+
+.guild-timer-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.timer-details-link {
+  font-size: 0.875rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* On narrow screens, stack controls more tightly */
+
+@media (max-width: 768px) {
+  .guild-timer-slot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .guild-timer-field__tz {
+    width: auto;
+  }
+
+  .guild-timer-field__tz input {
+    width: 3.5rem;
+  }
+}
+
 @keyframes fadeSlide {
   from {
     opacity: 0;

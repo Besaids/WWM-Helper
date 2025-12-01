@@ -10,8 +10,10 @@ export type ChecklistTag =
   | 'economy'
   | 'exploration'
   | 'leisure'
+  | 'adventure'
+  | 'progression'
+  | 'stats'
   | 'premium';
-
 export interface ChecklistItem {
   id: string;
   frequency: ChecklistFrequency;
