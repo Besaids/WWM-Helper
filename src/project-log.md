@@ -1,3 +1,131 @@
+## 2025-12-02 – Custom Timers System Implementation
+
+### Overview
+
+Implemented a complete custom timer system allowing users to create, edit, and delete their own timers with full localStorage persistence and real-time updates.
+
+### Features Added
+
+#### Custom Timer Creation
+
+- **4-Step Modal Wizard**:
+  1. Timer Type Selection (Recurring vs Event)
+  2. Basic Information (label, icon, summary)
+  3. Schedule Configuration (6 schedule types for recurring, date/category for events)
+  4. Review & Confirm
+- **Timer Types**:
+  - **Recurring Timers**: Daily, Weekly, Daily-Multi, Weekly-Multi, Weekly-Times, Weekly-Range
+  - **Event Timers**: One-time countdown timers with end date and category
+- **Auto-Generated Short Labels**: System automatically creates compact labels for timer strip from user's main label
+  - Creates acronyms when possible (e.g., "Fireworks Festival" → "FF")
+  - Falls back to intelligent truncation
+  - Removes need for manual short label input
+
+#### User Experience Improvements
+
+- **Local Time Input**: All schedule inputs use user's local timezone, automatically converted to UTC on save
+- **Timezone Conversion**: Bidirectional conversion (UTC↔Local) when editing existing timers
+- **Icon Picker**: 40+ curated Bootstrap icons with collapsible drawer interface
+- **Real-Time Preview**: Shows how timer will appear in timer strip during creation
+
+#### Validation & Safety
+
+- **Duplicate Name Prevention**: Case-insensitive check prevents creating timers with identical names
+- **Daily-Multi Overlap Detection**: Validates time windows don't overlap when window duration is set
+- **Weekly-Range Validation**: Ensures close time is after open time
+- **Form Validation**: Step-by-step validation prevents proceeding with incomplete/invalid data
+- **XSS Protection**: All user text inputs sanitized before storage
+
+#### Edit & Delete Functionality
+
+- **Edit Mode**:
+  - Skips Timer Type step (type cannot be changed)
+  - Pre-fills all form fields with existing timer data
+  - Converts stored UTC values back to local time for editing
+  - Back button disabled on Basic Info step when editing
+- **Delete Confirmation**: Confirmation dialog before deleting custom timers
+- **Action Buttons**: Edit/delete buttons appear on hover for event timer cards
+- **Details Drawer**: Custom recurring timers show summary or fallback message in details panel
+
+#### Integration
+
+- **Custom Recurring Timers**: Appear in main timer settings list with toggle controls
+- **Custom Event Timers**: Appear in "Limited-Time Content" section with compact cards
+- **Timer Strip**: Custom timers appear in top navigation strip when enabled
+- **Real-Time Updates**: Custom timers update every second alongside built-in timers
+- **Automatic Expiration**: Event timers disappear automatically after end date
+
+#### Storage & Data Management
+
+- **Versioned localStorage**: Uses `wwm-custom-timers` key with version 1 payload structure
+- **CRUD Operations**: Full Create, Read, Update, Delete support via `CustomTimerService`
+- **Signal-Based State**: Reactive state management with Angular signals
+- **Observable Integration**: Converts signals to observables for timer service integration
+- **UTC Storage**: All times stored in UTC ISO format for consistency
+
+#### UI/UX Polish
+
+- **Compact Create Button**: "Create Custom Timer" button sized to content (full-width on mobile)
+- **Event Timer Card Layout**: Icon + action buttons in horizontal row without extra vertical space
+- **Action Button Styling**: Subtle, always-visible buttons with hover effects
+- **Modal Overlay**: Scroll lock, click-outside-to-close, proper z-index stacking
+- **Progress Indicator**: Visual step tracker shows current position in wizard
+- **Responsive Design**: Mobile-optimized layouts and touch-friendly controls
+
+### Technical Details
+
+#### Architecture
+
+- **Services**: `CustomTimerService` (CRUD), `TimerService` (recurring integration), `EventTimerService` (event integration)
+- **Components**: `CustomTimerModalComponent` (4-step wizard), `TimersComponent` (page container)
+- **Models**: `CustomTimerDefinition`, `CustomTimerFormData`, `CUSTOM_TIMER_LIMITS`
+- **Storage Utilities**: Versioned save/load with SSR safety checks
+
+#### Schedule Types Supported
+
+1. **Daily**: Single time each day (e.g., "21:00 daily")
+2. **Weekly**: Single time each week (e.g., "Sunday 21:00")
+3. **Daily-Multi**: Multiple times per day, optional window duration (e.g., "10:00, 22:00 with 2h windows")
+4. **Weekly-Multi**: Same time on multiple weekdays (e.g., "Fri & Sat 20:30")
+5. **Weekly-Times**: Different times on different weekdays (e.g., "Sat 12:30, Sun 00:30")
+6. **Weekly-Range**: Open/close window (e.g., "Mon 01:00 - Fri 13:00")
+
+#### Event Timer Categories
+
+- Battle Pass
+- Season
+- Gacha Banner
+- Special Gacha
+- Limited Event
+- Other
+
+### Files Modified
+
+- `src/app/models/custom-timer.model.ts` - Type definitions and limits
+- `src/app/services/timer/custom-timer.service.ts` - CRUD service with localStorage
+- `src/app/services/timer/timer.service.ts` - Integrated custom recurring timers
+- `src/app/services/timer/event-timer.service.ts` - Integrated custom event timers
+- `src/app/components/timers/timers.component.ts/html/scss` - Main timers page updates
+- `src/app/components/timers/custom-timer-modal/custom-timer-modal.component.ts/html/scss` - Complete modal implementation
+
+### Known Limitations
+
+- Short labels limited to 15 characters
+- Timer labels limited to 40 characters
+- Maximum 6 time slots for daily-multi
+- Maximum 7 time slots for weekly-times
+- Event timers require future dates (no past dates allowed)
+- No validation for weekly-range close-after-open across week boundaries (future enhancement)
+
+### Future Enhancements (Potential)
+
+- Import/export custom timers
+- Timer templates/presets
+- Sharing custom timers between users
+- Advanced repeat patterns (e.g., "every 3rd Tuesday")
+- Timer groups/categories
+- Notifications/alerts integration
+
 ## 2025-12-01
 
 ### Home Page Enhancements & Timer Improvements

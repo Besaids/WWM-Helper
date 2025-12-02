@@ -1,3 +1,5 @@
+export * from './custom-timer.service';
+export * from './event-timer.service';
 export * from './guild-event-timers.service';
 export * from './timer-chip.builder';
 export * from './timer-preferences.service';

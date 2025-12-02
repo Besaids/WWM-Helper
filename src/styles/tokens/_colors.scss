@@ -17,6 +17,7 @@
   --color-accent-gold: #e4b86a;
   --color-accent-gold-soft: #f5d48c;
   --color-accent-teal: #42c3c6;
+  --color-accent-teal-active: #5ce0e2; /* brighter teal for active state */
   --color-accent-red: #f46a5c;
   --color-accent-gold-highlight: #f1c77a;
   --color-accent-gold-dim: #c9a45a;
@@ -51,6 +52,7 @@ $surface-chip: var(--color-surface-chip);
 $accent-gold: var(--color-accent-gold);
 $accent-gold-soft: var(--color-accent-gold-soft);
 $accent-teal: var(--color-accent-teal);
+$accent-teal-active: var(--color-accent-teal-active);
 $accent-red: var(--color-accent-red);
 $accent-gold-highlight: var(--color-accent-gold-highlight);
 $accent-gold-dim: var(--color-accent-gold-dim);
