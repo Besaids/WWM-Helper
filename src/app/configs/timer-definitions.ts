@@ -48,6 +48,64 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
   },
 
   // ========================
+  // Trading / Commerce
+  // ========================
+  {
+    id: 'trading-week-reset',
+    label: 'Trade Week Reset',
+    shortLabel: 'TradeWeek',
+    icon: 'bi-currency-exchange',
+    schedule: {
+      type: 'weekly',
+      weekday: 5, // Friday
+      hour: 21,
+      minute: 0,
+    },
+  },
+  {
+    id: 'trading-price-peak-check',
+    label: 'Trade Price Check',
+    shortLabel: 'TradePeak',
+    icon: 'bi-graph-up',
+    schedule: {
+      type: 'weekly',
+      weekday: 2, // Tuesday
+      hour: 21,
+      minute: 0,
+    },
+  },
+
+  // ========================
+  // Guild events – user-configured
+  // ========================
+
+  {
+    id: 'guild-breaking-army',
+    label: 'Breaking Army (Guild)',
+    shortLabel: 'BreakArmy',
+    icon: 'bi-lightning-charge', // or whatever fits
+    // Schedule is overridden at runtime by GuildEventTimersService; this is a dummy value.
+    schedule: {
+      type: 'weekly',
+      weekday: 1,
+      hour: 0,
+      minute: 0,
+    },
+  },
+  {
+    id: 'guild-test-your-skills',
+    label: 'Test Your Skills (Guild)',
+    shortLabel: 'TestSkills',
+    icon: 'bi-shield-shaded',
+    schedule: {
+      type: 'weekly',
+      weekday: 1,
+      hour: 0,
+      minute: 0,
+    },
+  },
+
+  // ========================
   // Fireworks hub – Kaifeng
   // ========================
 
@@ -112,64 +170,6 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
         { weekday: 7, hour: 11, minute: 0 }, // Sunday 11:00
         { weekday: 7, hour: 23, minute: 0 }, // Sunday 23:00
       ],
-    },
-  },
-
-  // ========================
-  // Guild events – user-configured
-  // ========================
-
-  {
-    id: 'guild-breaking-army',
-    label: 'Breaking Army (Guild)',
-    shortLabel: 'BreakArmy',
-    icon: 'bi-lightning-charge', // or whatever fits
-    // Schedule is overridden at runtime by GuildEventTimersService; this is a dummy value.
-    schedule: {
-      type: 'weekly',
-      weekday: 1,
-      hour: 0,
-      minute: 0,
-    },
-  },
-  {
-    id: 'guild-test-your-skills',
-    label: 'Test Your Skills (Guild)',
-    shortLabel: 'TestSkills',
-    icon: 'bi-shield-shaded',
-    schedule: {
-      type: 'weekly',
-      weekday: 1,
-      hour: 0,
-      minute: 0,
-    },
-  },
-
-  // ========================
-  // Trading / Commerce
-  // ========================
-  {
-    id: 'trading-week-reset',
-    label: 'Trade Week Reset',
-    shortLabel: 'TradeWeek',
-    icon: 'bi-currency-exchange',
-    schedule: {
-      type: 'weekly',
-      weekday: 5, // Friday
-      hour: 21,
-      minute: 0,
-    },
-  },
-  {
-    id: 'trading-price-peak-check',
-    label: 'Trade Price Check',
-    shortLabel: 'TradePeak',
-    icon: 'bi-graph-up',
-    schedule: {
-      type: 'weekly',
-      weekday: 2, // Tuesday
-      hour: 21,
-      minute: 0,
     },
   },
 ];
