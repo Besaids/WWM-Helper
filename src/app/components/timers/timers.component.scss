@@ -4,6 +4,7 @@
 @use 'tokens/surfaces' as *;
 @use 'tokens/shadows' as *;
 @use 'tokens/motion' as *;
+@use 'tokens/radius' as *;
 
 /* =======================
    Page layout
@@ -39,16 +40,15 @@
 .timers-settings-header {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 
   h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
+    margin: 0;
   }
 
   p {
-    max-width: 48rem;
+    margin: 0;
   }
 }
 
@@ -279,39 +279,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Mobile */
-
-@media (max-width: 768px) {
-  .timers-page-header h1 {
-    font-size: 1.4rem;
-  }
-
-  .timers-card-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .chip--timer {
-    margin-top: 0.25rem;
-    white-space: normal;
-  }
-
-  .timers-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .timer-settings-row__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .timer-settings-row__meta {
-    margin-left: 0;
-    width: 100%;
-    justify-content: space-between;
-  }
-}
-
 /* =======================
    Guild event timers
    ======================= */
@@ -330,7 +297,7 @@
   font-size: 0.9rem;
 }
 
-/* Top “Event timezone” field */
+/* Top "Event timezone" field */
 
 .guild-timer-field {
   display: inline-flex;
@@ -339,7 +306,7 @@
   gap: 0.35rem;
   font-size: 0.85rem;
   color: var(--color-text-secondary);
-  width: auto; // don't stretch across the row
+  width: auto;
 }
 
 .guild-timer-field__tz {
@@ -395,7 +362,7 @@
 .guild-timer-slot {
   display: flex;
   flex-wrap: wrap;
-  column-gap: 0.35rem; // tighter horizontally
+  column-gap: 0.35rem;
   row-gap: 0.5rem;
   margin-top: 0.25rem;
 }
@@ -423,7 +390,7 @@
 
 .guild-timer-slot__time {
   min-width: auto;
-  margin-left: -0.1rem; // nudge hour & minute closer to the weekday
+  margin-left: -0.1rem;
 }
 
 .guild-timer-slot__time select {
@@ -506,6 +473,12 @@
   gap: 0.5rem;
 }
 
+.event-timer-card__icon-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .event-timer-card__icon {
   width: 3rem;
   height: 3rem;
@@ -530,11 +503,50 @@
   }
 
   .event-timer-card[data-category='gacha-special'] & i {
-    color: #c084fc; // purple for special
+    color: #c084fc;
   }
 
   .event-timer-card[data-category='gacha-standard'] & i {
     color: var(--color-accent-gold-soft);
+  }
+}
+
+.event-timer-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.event-timer-card__action-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.375rem;
+  background: var(--surface-layer-2);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 120ms ease;
+  flex-shrink: 0;
+
+  i {
+    font-size: 0.75rem;
+  }
+
+  &:hover {
+    background: var(--surface-layer-3);
+  }
+
+  &--edit:hover {
+    color: #42c3c6;
+    background: rgba(66, 195, 198, 0.15);
+  }
+
+  &--delete:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
   }
 }
 
@@ -583,15 +595,69 @@
   align-self: flex-start;
 }
 
-@media (max-width: 768px) {
-  .event-timers-grid {
-    grid-template-columns: 1fr;
+/* Custom timer actions in details */
+.custom-timer-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn-danger {
+  &:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
   }
 }
 
-/* On narrow screens, stack controls more tightly */
+.btn-create-timer {
+  align-self: flex-start; // Don't stretch to full width
+  margin-top: 0.5rem;
+
+  i {
+    font-size: 0.875rem;
+    margin-right: 0.25rem;
+  }
+}
+
+/* Mobile */
 
 @media (max-width: 768px) {
+  .timers-page-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .timers-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chip--timer {
+    margin-top: 0.25rem;
+    white-space: normal;
+  }
+
+  .timers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timer-settings-row__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timer-settings-row__meta {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .event-timers-grid {
+    grid-template-columns: 1fr;
+  }
+
   .guild-timer-slot {
     flex-direction: column;
     align-items: flex-start;
@@ -603,6 +669,11 @@
 
   .guild-timer-field__tz input {
     width: 3.5rem;
+  }
+
+  .btn-create-timer {
+    align-self: stretch; // Only on mobile, take full width
+    justify-content: center;
   }
 }
 

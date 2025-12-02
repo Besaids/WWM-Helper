@@ -6,7 +6,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
   'daily-reset': {
     id: 'daily-reset',
     summary:
-      'At daily reset you regain <strong>Stamina</strong>, Jianghu Errands refresh, Bounties rotate, and daily-limited activities like <strong>Blessed Land</strong>, <strong>Five Animal Frolics</strong> and <strong>Scholar\'s Hearth</strong> reset. <strong>Energy</strong> keeps regenerating passively (1 every 9 minutes), but this breakpoint is where most daily activities and shops flip over.',
+      "At daily reset you regain <strong>Stamina</strong>, Jianghu Errands refresh, Bounties rotate, and daily-limited activities like <strong>Blessed Land</strong>, <strong>Five Animal Frolics</strong> and <strong>Scholar's Hearth</strong> reset. <strong>Energy</strong> keeps regenerating passively (1 every 9 minutes), but this breakpoint is where most daily activities and shops flip over.",
     hasLongDetails: true,
     longDetailsSections: [
       {
@@ -28,7 +28,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
             type: 'list',
             items: [
               '<strong>Jianghu Errands</strong> – Sect daily missions reset here. Grant <strong>Merit</strong> plus <strong>Reputation</strong> (Reputation has its own weekly gain cap).',
-              '<strong>Blessed Land for Cultivation</strong>, <strong>Five Animal Frolics</strong>, <strong>Scholar\'s Hearth</strong> – Online activities usually tied into Jianghu Errands; their participation rewards reset daily.',
+              "<strong>Blessed Land for Cultivation</strong>, <strong>Five Animal Frolics</strong>, <strong>Scholar's Hearth</strong> – Online activities usually tied into Jianghu Errands; their participation rewards reset daily.",
               '<strong>Bounties</strong> – NPC bounty list refreshes. Once you clear all NPC bounties you can only continue with player-posted bounties (for <strong>Fourfold Coin</strong> and leaderboard progress) until next reset.',
               '<strong>Ye Buxiu Betting Match (Chess)</strong> – Located in <em>Qinghe – Dreamscape: Blissful Retreat</em>. You can win up to <strong>3 times per day</strong>. On Expert difficulty that is up to <strong>900 Commerce Coin</strong> for 3 wins; each loss costs 150 Commerce Coin.',
             ],
@@ -72,8 +72,8 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
           {
             type: 'list',
             items: [
-              '<strong>Hero\'s Realm (Wandering Paths)</strong> – Up to 10-player raid-style instance. Two bosses per run; you get <strong>one weekly reward per boss</strong> (two rewards total). No Energy cost; gated by weekly loot.',
-              '<strong>Guild Hero\'s Realm</strong> – 5–10 guild members; separate weekly reward for clearing both bosses together as a guild. No matchmaking and no Energy cost; has its own weekly lockout.',
+              "<strong>Hero's Realm (Wandering Paths)</strong> – Up to 10-player raid-style instance. Two bosses per run; you get <strong>one weekly reward per boss</strong> (two rewards total). No Energy cost; gated by weekly loot.",
+              "<strong>Guild Hero's Realm</strong> – 5–10 guild members; separate weekly reward for clearing both bosses together as a guild. No matchmaking and no Energy cost; has its own weekly lockout.",
             ],
           },
         ],
@@ -249,7 +249,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
           {
             type: 'list',
             items: [
-              'There is a <strong>fixed weekly cruise</strong> every <strong>Sunday evening</strong> and <strong>Monday morning</strong> (UTC; check this timer\'s countdown and the in-game event panel for the exact times on your server).',
+              "There is a <strong>fixed weekly cruise</strong> every <strong>Sunday evening</strong> and <strong>Monday morning</strong> (UTC; check this timer's countdown and the in-game event panel for the exact times on your server).",
               'Mirage Boat owners can also spend currency to trigger extra cruises outside the fixed windows, so you may occasionally see additional departures.',
             ],
           },
@@ -276,7 +276,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
             items: [
               'You earn <strong>Fortune Points</strong> simply by staying on the boat and participating in its mini-games; at <strong>1,000 Fortune Points</strong> you can claim your reward via the Mirage Boat icon at the top-right of the screen.',
               'Rewards are mailed to you if you leave early; the quality scales with how much the owner spends to fund the cruise.',
-              'During the event you can temporarily wear <strong>any outfits owned by the boat\'s owner</strong>, letting you test premium cosmetics for free while you\'re on board.',
+              "During the event you can temporarily wear <strong>any outfits owned by the boat's owner</strong>, letting you test premium cosmetics for free while you're on board.",
             ],
           },
         ],
@@ -287,7 +287,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
   'guild-breaking-army': {
     id: 'guild-breaking-army',
     summary:
-      'Breaking Army is your guild\'s solo challenge event. Each session lasts <strong>1 hour</strong>. The exact schedule is set by your guild leader. Use the in-game card time (for example <strong>Wednesday 20:30 (UTC+8)</strong>) and enter it below.',
+      "Breaking Army is your guild's solo challenge event. Each session lasts <strong>1 hour</strong>. The exact schedule is set by your guild leader. Use the in-game card time (for example <strong>Wednesday 20:30 (UTC+8)</strong>) and enter it below.",
     hasLongDetails: false,
     hasGuildConfig: true,
   },
@@ -295,7 +295,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
   'guild-test-your-skills': {
     id: 'guild-test-your-skills',
     summary:
-      'Test Your Skills is your guild\'s internal arena event. Each session lasts <strong>1 hour</strong>. The exact schedule is set by your guild leader. Use the in-game card times (for example <strong>Thursday 20:30 (UTC+8)</strong> and <strong>Sunday 20:30 (UTC+8)</strong>) and enter them below.',
+      "Test Your Skills is your guild's internal arena event. Each session lasts <strong>1 hour</strong>. The exact schedule is set by your guild leader. Use the in-game card times (for example <strong>Thursday 20:30 (UTC+8)</strong> and <strong>Sunday 20:30 (UTC+8)</strong>) and enter them below.",
     hasLongDetails: false,
     hasGuildConfig: true,
   },
@@ -314,7 +314,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
             type: 'list',
             items: [
               'When a new Trade Week starts and the three Trading Goods rotate.',
-              'When last week\'s trade items stop being part of the structured Trading loop.',
+              "When last week's trade items stop being part of the structured Trading loop.",
               'The hard deadline to sell any leftover Trading Goods before they go "off-rotation".',
             ],
           },
@@ -326,7 +326,7 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
           {
             type: 'list',
             items: [
-              'After Friday 21:00 UTC, open the <strong>Price Bulletin</strong> at Zang Qiyue to see the week\'s 1 Local + 2 Remote items.',
+              "After Friday 21:00 UTC, open the <strong>Price Bulletin</strong> at Zang Qiyue to see the week's 1 Local + 2 Remote items.",
               'With 80 slots, buy <strong>30 of the two most expensive items</strong> and <strong>20 of the remaining one</strong> to maximise profit.',
               'Hold them and watch prices over the week; aim to sell all stock before the next Friday 21:00 UTC reset.',
             ],
@@ -339,8 +339,8 @@ export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
           {
             type: 'list',
             items: [
-              'The <strong>Selling Bonus</strong> and <strong>Market Tax</strong> techniques only apply when exchanging Trading Goods with <strong>guild members</strong>, including your guild\'s trade NPC.',
-              'Prefer selling Remote items in guildmates\' worlds or to your guild NPC; only use random buyers if their price is much higher than your guild options.',
+              "The <strong>Selling Bonus</strong> and <strong>Market Tax</strong> techniques only apply when exchanging Trading Goods with <strong>guild members</strong>, including your guild's trade NPC.",
+              "Prefer selling Remote items in guildmates' worlds or to your guild NPC; only use random buyers if their price is much higher than your guild options.",
             ],
           },
         ],

@@ -1,32 +1,52 @@
 // src/app/services/timer/event-timer.service.ts
 
-import { Injectable } from '@angular/core';
-import { interval, map, Observable, startWith } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { combineLatest, interval, map, Observable, startWith } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { DateTime, Duration } from 'luxon';
-import { EventTimerChip, EventTimerDefinition } from '../../models';
+import { EventTimerCategory, EventTimerChip, EventTimerDefinition } from '../../models';
 import { EVENT_TIMERS } from '../../configs';
+import { CustomTimerService } from './custom-timer.service';
 
 @Injectable({ providedIn: 'root' })
 export class EventTimerService {
+  private readonly customTimers = inject(CustomTimerService);
+
   private readonly tick$ = interval(1000).pipe(startWith(0));
+
+  // Convert signal to observable
+  private readonly customTimers$ = toObservable(this.customTimers.customTimers$);
 
   /**
    * Stream of active event timer chips
    * Automatically filters out expired timers (if autoRemoveWhenExpired is true)
    * Sorted by: end date ascending, then seasons last
    */
-  readonly eventTimerChips$: Observable<readonly EventTimerChip[]> = this.tick$.pipe(
-    map(() => {
+  readonly eventTimerChips$: Observable<readonly EventTimerChip[]> = combineLatest([
+    this.tick$,
+    this.customTimers$,
+  ]).pipe(
+    map(([, customTimers]) => {
       const now = DateTime.utc();
 
-      return EVENT_TIMERS.map((def) => ({
+      // Built-in event timers
+      const builtInEvents = EVENT_TIMERS.map((def) => ({
         chip: this.buildEventTimerChip(def, now),
-        def,
-      }))
+        def: { ...def, autoRemoveWhenExpired: def.autoRemoveWhenExpired ?? true },
+      }));
+
+      // Custom event timers
+      const customEvents = customTimers
+        .filter((t) => t.type === 'event' && t.endsAt)
+        .map((t) => ({
+          chip: this.buildCustomEventTimerChip(t, now),
+          def: { autoRemoveWhenExpired: true }, // Custom events always auto-remove
+        }));
+
+      return [...builtInEvents, ...customEvents]
         .filter(({ chip, def }) => {
-          // Remove expired timers if autoRemoveWhenExpired is true (default)
-          const shouldAutoRemove = def.autoRemoveWhenExpired ?? true;
-          return !shouldAutoRemove || !chip.isExpired;
+          // Remove expired timers if autoRemoveWhenExpired is true
+          return !def.autoRemoveWhenExpired || !chip.isExpired;
         })
         .sort((a, b) => {
           // Sort by end date first (soonest first)
@@ -43,20 +63,9 @@ export class EventTimerService {
             return -1;
           }
 
-          // Otherwise maintain original order
           return 0;
         })
         .map(({ chip }) => chip);
-    }),
-  );
-
-  /**
-   * Get all event timers including expired ones
-   */
-  readonly allEventTimerChips$: Observable<readonly EventTimerChip[]> = this.tick$.pipe(
-    map(() => {
-      const now = DateTime.utc();
-      return EVENT_TIMERS.map((def) => this.buildEventTimerChip(def, now));
     }),
   );
 
@@ -84,8 +93,45 @@ export class EventTimerService {
     };
   }
 
+  private buildCustomEventTimerChip(
+    timer: {
+      id: string;
+      label: string;
+      shortLabel: string;
+      icon: string;
+      endsAt?: string;
+      category?: string;
+    },
+    now: DateTime,
+  ): EventTimerChip {
+    const endsAt = DateTime.fromISO(timer.endsAt!, { zone: 'utc' });
+    const isExpired = now >= endsAt;
+
+    let remaining: string;
+    if (isExpired) {
+      remaining = 'Expired';
+    } else {
+      const duration = endsAt.diff(now);
+      remaining = this.formatEventRemaining(duration);
+    }
+
+    return {
+      id: timer.id,
+      label: timer.label,
+      shortLabel: timer.shortLabel,
+      icon: timer.icon,
+      category: (timer.category as EventTimerCategory) || 'other',
+      remaining,
+      isExpired,
+      endsAt,
+    };
+  }
+
   private parseEndDate(
-    endsAt: string | DateTime | { year: number; month: number; day: number; hour?: number; minute?: number },
+    endsAt:
+      | string
+      | DateTime
+      | { year: number; month: number; day: number; hour?: number; minute?: number },
   ): DateTime {
     if (typeof endsAt === 'string') {
       return DateTime.fromISO(endsAt, { zone: 'utc' });

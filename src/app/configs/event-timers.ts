@@ -23,13 +23,14 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     category: 'battle-pass',
     // 9d 8h 30m from 2025-12-02 12:30 UTC = 2025-12-11 21:00 UTC (daily reset)
     endsAt: {
-      year: 2025,  // ✅ Fixed: was 2024
+      year: 2025, // ✅ Fixed: was 2024
       month: 12,
       day: 11,
       hour: 21,
       minute: 0,
     },
-    description: 'Current battle pass with exclusive rewards and progression track. Complete weekly missions and daily tasks to maximize progress before it ends.',
+    description:
+      'Current battle pass with exclusive rewards and progression track. Complete weekly missions and daily tasks to maximize progress before it ends.',
     autoRemoveWhenExpired: true,
   },
 
@@ -50,7 +51,8 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
       hour: 21,
       minute: 0,
     },
-    description: 'Current game season with exclusive currency (Jade Fish), seasonal shop, and time-limited rewards. Season shop items and weekly caps reset with the season.',
+    description:
+      'Current game season with exclusive currency (Jade Fish), seasonal shop, and time-limited rewards. Season shop items and weekly caps reset with the season.',
     autoRemoveWhenExpired: true,
   },
 
@@ -65,13 +67,14 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     category: 'gacha-special',
     // Same end as BP Vol.1
     endsAt: {
-      year: 2025,  // ✅ Fixed: was 2024
+      year: 2025, // ✅ Fixed: was 2024
       month: 12,
       day: 11,
       hour: 21,
       minute: 0,
     },
-    description: 'Special limited-time gacha banner featuring exclusive cosmetic weapons and appearance items. Does not follow the standard rotation.',
+    description:
+      'Special limited-time gacha banner featuring exclusive cosmetic weapons and appearance items. Does not follow the standard rotation.',
     autoRemoveWhenExpired: true,
   },
 
@@ -86,13 +89,14 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     category: 'gacha-standard',
     // "9 days left" - likely syncs with BP
     endsAt: {
-      year: 2025,  // ✅ Fixed: was 2024
+      year: 2025, // ✅ Fixed: was 2024
       month: 12,
       day: 11,
       hour: 21,
       minute: 0,
     },
-    description: 'Current standard gacha banner rotation. Features rotating character outfits and equipment. Rotates with battle pass cycles.',
+    description:
+      'Current standard gacha banner rotation. Features rotating character outfits and equipment. Rotates with battle pass cycles.',
     autoRemoveWhenExpired: true,
   },
 ];

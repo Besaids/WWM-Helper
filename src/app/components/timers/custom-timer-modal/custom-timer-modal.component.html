@@ -1,0 +1,847 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- src/app/components/timers/custom-timer-modal/custom-timer-modal.component.html -->
+
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <header class="modal-header">
+        <h2 class="modal-title">
+          @if (editingTimer) {
+            Edit Custom Timer
+          } @else {
+            Create Custom Timer
+          }
+        </h2>
+        <button type="button" class="modal-close-btn" (click)="onClose()" aria-label="Close modal">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+
+      <!-- Progress Indicator -->
+      <div class="modal-progress">
+        <div
+          class="modal-progress-step"
+          [class.modal-progress-step--active]="currentStep() === 'type'"
+          [class.modal-progress-step--complete]="currentStep() !== 'type'"
+        >
+          <span class="modal-progress-step__number">1</span>
+          <span class="modal-progress-step__label">Type</span>
+        </div>
+        <div
+          class="modal-progress-line"
+          [class.modal-progress-line--active]="currentStep() !== 'type'"
+        ></div>
+        <div
+          class="modal-progress-step"
+          [class.modal-progress-step--active]="currentStep() === 'basic'"
+          [class.modal-progress-step--complete]="
+            currentStep() === 'schedule' || currentStep() === 'review'
+          "
+        >
+          <span class="modal-progress-step__number">2</span>
+          <span class="modal-progress-step__label">Basic Info</span>
+        </div>
+        <div
+          class="modal-progress-line"
+          [class.modal-progress-line--active]="
+            currentStep() === 'schedule' || currentStep() === 'review'
+          "
+        ></div>
+        <div
+          class="modal-progress-step"
+          [class.modal-progress-step--active]="currentStep() === 'schedule'"
+          [class.modal-progress-step--complete]="currentStep() === 'review'"
+        >
+          <span class="modal-progress-step__number">3</span>
+          <span class="modal-progress-step__label">Schedule</span>
+        </div>
+        <div
+          class="modal-progress-line"
+          [class.modal-progress-line--active]="currentStep() === 'review'"
+        ></div>
+        <div
+          class="modal-progress-step"
+          [class.modal-progress-step--active]="currentStep() === 'review'"
+        >
+          <span class="modal-progress-step__number">4</span>
+          <span class="modal-progress-step__label">Review</span>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Step 1: Timer Type -->
+        @if (currentStep() === 'type') {
+          <div class="form-step">
+            <h3 class="form-step-title">What type of timer do you want to create?</h3>
+            <p class="form-step-description">
+              Choose between a recurring timer that repeats on a schedule, or a one-time event timer
+              that counts down to a specific date.
+            </p>
+
+            <div class="timer-type-options">
+              <label
+                class="timer-type-option"
+                [class.timer-type-option--selected]="formData().type === 'recurring'"
+              >
+                <input
+                  type="radio"
+                  name="timerType"
+                  value="recurring"
+                  [checked]="formData().type === 'recurring'"
+                  (change)="updateFormData({ type: 'recurring' })"
+                />
+                <div class="timer-type-option__content">
+                  <i class="bi bi-arrow-repeat timer-type-option__icon"></i>
+                  <div>
+                    <strong class="timer-type-option__title">Recurring Timer</strong>
+                    <p class="timer-type-option__desc">
+                      Repeats daily, weekly, or on a custom schedule
+                    </p>
+                  </div>
+                </div>
+              </label>
+
+              <label
+                class="timer-type-option"
+                [class.timer-type-option--selected]="formData().type === 'event'"
+              >
+                <input
+                  type="radio"
+                  name="timerType"
+                  value="event"
+                  [checked]="formData().type === 'event'"
+                  (change)="updateFormData({ type: 'event' })"
+                />
+                <div class="timer-type-option__content">
+                  <i class="bi bi-calendar-x timer-type-option__icon"></i>
+                  <div>
+                    <strong class="timer-type-option__title">Event Timer</strong>
+                    <p class="timer-type-option__desc">One-time countdown to a specific end date</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        }
+
+        <!-- Step 2: Basic Information -->
+        @if (currentStep() === 'basic') {
+          <div class="form-step">
+            <h3 class="form-step-title">Basic Information</h3>
+            <p class="form-step-description">
+              Give your timer a name, choose an icon and a short summary (optional).
+            </p>
+
+            <div class="form-group">
+              <label class="form-label" for="timerLabel">
+                Timer Label
+                <span class="form-label-info"
+                  >({{ formData().label?.length || 0 }}/{{ limits.LABEL_MAX_LENGTH }})</span
+                >
+              </label>
+              <input
+                type="text"
+                id="timerLabel"
+                class="form-input"
+                placeholder="e.g., Fireworks Festival"
+                [value]="formData().label || ''"
+                (input)="updateFormData({ label: $any($event.target).value })"
+                [maxLength]="limits.LABEL_MAX_LENGTH"
+              />
+              <small class="form-help"> Full name shown in the timers page </small>
+
+              <!-- Duplicate name error -->
+              @if (getDuplicateLabelError()) {
+                <div class="form-error">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  {{ getDuplicateLabelError() }}
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="timerIcon">Icon</label>
+
+              <!-- Selected Icon Display -->
+              <button type="button" class="icon-picker-trigger" (click)="toggleIconPicker()">
+                <i class="bi" [ngClass]="formData().icon"></i>
+                <span>{{ getSelectedIconLabel() }}</span>
+                <i
+                  class="bi"
+                  [ngClass]="isIconPickerExpanded() ? 'bi-chevron-up' : 'bi-chevron-down'"
+                ></i>
+              </button>
+
+              <!-- Icon Grid (Collapsible) -->
+              @if (isIconPickerExpanded()) {
+                <div class="icon-selector">
+                  @for (iconOption of iconOptions; track iconOption.value) {
+                    <label
+                      class="icon-selector-option"
+                      [class.icon-selector-option--selected]="formData().icon === iconOption.value"
+                      [attr.title]="iconOption.label"
+                    >
+                      <input
+                        type="radio"
+                        name="icon"
+                        [value]="iconOption.value"
+                        [checked]="formData().icon === iconOption.value"
+                        (change)="updateFormData({ icon: iconOption.value }); toggleIconPicker()"
+                      />
+                      <i class="bi" [ngClass]="iconOption.value"></i>
+                    </label>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="timerSummary">
+                Summary (Optional)
+                <span class="form-label-info"
+                  >({{ formData().summary?.length || 0 }}/{{ limits.SUMMARY_MAX_LENGTH }})</span
+                >
+              </label>
+              <textarea
+                id="timerSummary"
+                class="form-textarea"
+                rows="3"
+                placeholder="Brief description of what this timer is for..."
+                [value]="formData().summary || ''"
+                (input)="updateFormData({ summary: $any($event.target).value })"
+                [maxLength]="limits.SUMMARY_MAX_LENGTH"
+              ></textarea>
+              <small class="form-help"> Shows in the timer details panel </small>
+            </div>
+          </div>
+        }
+
+        <!-- Step 3: Schedule Configuration -->
+        @if (currentStep() === 'schedule') {
+          <div class="form-step">
+            @if (formData().type === 'recurring') {
+              <h3 class="form-step-title">Schedule Configuration</h3>
+              <p class="form-step-description">
+                Define when your timer should trigger. All times are in your local time.
+                <br />
+                <small style="color: var(--color-accent-teal); font-weight: 500">
+                  Times will be automatically converted to UTC when saving.
+                </small>
+              </p>
+
+              <div class="form-group">
+                <label class="form-label" for="scheduleType">Schedule Type</label>
+                <select
+                  id="scheduleType"
+                  class="form-select"
+                  (change)="updateFormData({ scheduleType: $any($event.target).value })"
+                >
+                  <option value="" [selected]="!formData().scheduleType">
+                    Select a schedule type...
+                  </option>
+                  @for (option of scheduleTypeOptions; track option.value) {
+                    <option
+                      [value]="option.value"
+                      [selected]="option.value === formData().scheduleType"
+                    >
+                      {{ option.label }}
+                    </option>
+                  }
+                </select>
+                @if (formData().scheduleType) {
+                  <small class="form-help"> Example: {{ getScheduleTypeExample() }} </small>
+                }
+              </div>
+
+              <!-- Daily Schedule -->
+              @if (formData().scheduleType === 'daily') {
+                <div class="schedule-fields">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="dailyHour">Hour</label>
+                      <select
+                        id="dailyHour"
+                        class="form-select"
+                        (change)="updateFormData({ dailyHour: +$any($event.target).value })"
+                      >
+                        @for (hour of hourOptions; track hour) {
+                          <option [value]="hour" [selected]="hour === (formData().dailyHour ?? 21)">
+                            {{ hour < 10 ? '0' + hour : hour }}:00
+                          </option>
+                        }
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="dailyMinute">Minute</label>
+                      <select
+                        id="dailyMinute"
+                        class="form-select"
+                        (change)="updateFormData({ dailyMinute: +$any($event.target).value })"
+                      >
+                        @for (minute of minuteOptions; track minute) {
+                          <option
+                            [value]="minute"
+                            [selected]="minute === (formData().dailyMinute ?? 0)"
+                          >
+                            {{ minute < 10 ? '0' + minute : minute }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Weekly Schedule -->
+              @if (formData().scheduleType === 'weekly') {
+                <div class="schedule-fields">
+                  <div class="form-group">
+                    <label class="form-label" for="weeklyWeekday">Weekday</label>
+                    <select
+                      id="weeklyWeekday"
+                      class="form-select"
+                      (change)="updateFormData({ weeklyWeekday: +$any($event.target).value })"
+                    >
+                      @for (day of weekdayOptions; track day.value) {
+                        <option
+                          [value]="day.value"
+                          [selected]="day.value === (formData().weeklyWeekday ?? 1)"
+                        >
+                          {{ day.label }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="weeklyHour">Hour</label>
+                      <select
+                        id="weeklyHour"
+                        class="form-select"
+                        (change)="updateFormData({ weeklyHour: +$any($event.target).value })"
+                      >
+                        @for (hour of hourOptions; track hour) {
+                          <option
+                            [value]="hour"
+                            [selected]="hour === (formData().weeklyHour ?? 21)"
+                          >
+                            {{ hour < 10 ? '0' + hour : hour }}:00
+                          </option>
+                        }
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="weeklyMinute">Minute</label>
+                      <select
+                        id="weeklyMinute"
+                        class="form-select"
+                        (change)="updateFormData({ weeklyMinute: +$any($event.target).value })"
+                      >
+                        @for (minute of minuteOptions; track minute) {
+                          <option
+                            [value]="minute"
+                            [selected]="minute === (formData().weeklyMinute ?? 0)"
+                          >
+                            {{ minute < 10 ? '0' + minute : minute }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Daily Multi Schedule -->
+              @if (formData().scheduleType === 'daily-multi') {
+                <div class="schedule-fields">
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Time Slots ({{ dailyMultiSlots().length }}/{{
+                        limits.MAX_DAILY_MULTI_TIMES
+                      }})</label
+                    >
+                    @for (slot of dailyMultiSlots(); track $index) {
+                      <div class="time-slot">
+                        <select
+                          class="form-select form-select--inline"
+                          (change)="updateDailyMultiSlotHour($index, $any($event.target).value)"
+                        >
+                          @for (hour of hourOptions; track hour) {
+                            <option [value]="hour" [selected]="hour === slot.hour">
+                              {{ hour < 10 ? '0' + hour : hour }}:00
+                            </option>
+                          }
+                        </select>
+                        <span>:</span>
+                        <select
+                          class="form-select form-select--inline"
+                          (change)="updateDailyMultiSlotMinute($index, $any($event.target).value)"
+                        >
+                          @for (minute of minuteOptions; track minute) {
+                            <option [value]="minute" [selected]="minute === slot.minute">
+                              {{ minute < 10 ? '0' + minute : minute }}
+                            </option>
+                          }
+                        </select>
+                        @if (dailyMultiSlots().length > 1) {
+                          <button
+                            type="button"
+                            class="btn-icon-danger"
+                            (click)="removeDailyMultiSlot($index)"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        }
+                      </div>
+                    }
+
+                    @if (dailyMultiSlots().length < limits.MAX_DAILY_MULTI_TIMES) {
+                      <button
+                        type="button"
+                        class="btn-secondary btn-sm"
+                        (click)="addDailyMultiSlot()"
+                      >
+                        <i class="bi bi-plus-lg"></i> Add Time Slot
+                      </button>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="windowHours"
+                      >Window Duration (Hours, Optional)</label
+                    >
+                    <input
+                      type="number"
+                      id="windowHours"
+                      class="form-input"
+                      min="0"
+                      max="24"
+                      placeholder="0 = instant"
+                      [value]="formData().dailyMultiWindowHours ?? ''"
+                      (input)="
+                        updateFormData({
+                          dailyMultiWindowHours: $any($event.target).value
+                            ? +$any($event.target).value
+                            : undefined,
+                        })
+                      "
+                    />
+                    <small class="form-help">
+                      Leave empty or 0 for instant triggers. Set to show "X hours left" during the
+                      window (like Arena 1v1).
+                    </small>
+
+                    <!-- ADD THIS ERROR MESSAGE -->
+                    @if (getDailyMultiOverlapError()) {
+                      <div class="form-error">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        {{ getDailyMultiOverlapError() }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Weekly Multi Schedule -->
+              @if (formData().scheduleType === 'weekly-multi') {
+                <div class="schedule-fields">
+                  <div class="form-group">
+                    <label class="form-label">Select Weekdays</label>
+                    <div class="weekday-selector">
+                      @for (day of weekdayOptions; track day.value) {
+                        <label
+                          class="weekday-option"
+                          [class.weekday-option--selected]="isWeekdaySelected(day.value)"
+                        >
+                          <input
+                            type="checkbox"
+                            [checked]="isWeekdaySelected(day.value)"
+                            (change)="toggleWeekday(day.value)"
+                          />
+                          <span>{{ day.label.substring(0, 3) }}</span>
+                        </label>
+                      }
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="weeklyMultiHour">Hour</label>
+                      <select
+                        id="weeklyMultiHour"
+                        class="form-select"
+                        (change)="updateFormData({ weeklyMultiHour: +$any($event.target).value })"
+                      >
+                        @for (hour of hourOptions; track hour) {
+                          <option
+                            [value]="hour"
+                            [selected]="hour === (formData().weeklyMultiHour ?? 20)"
+                          >
+                            {{ hour < 10 ? '0' + hour : hour }}:00
+                          </option>
+                        }
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="weeklyMultiMinute">Minute</label>
+                      <select
+                        id="weeklyMultiMinute"
+                        class="form-select"
+                        (change)="updateFormData({ weeklyMultiMinute: +$any($event.target).value })"
+                      >
+                        @for (minute of minuteOptions; track minute) {
+                          <option
+                            [value]="minute"
+                            [selected]="minute === (formData().weeklyMultiMinute ?? 30)"
+                          >
+                            {{ minute < 10 ? '0' + minute : minute }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Weekly Times Schedule -->
+              @if (formData().scheduleType === 'weekly-times') {
+                <div class="schedule-fields">
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Weekly Time Slots ({{ weeklyTimeSlots().length }}/{{
+                        limits.MAX_WEEKLY_TIMES
+                      }})</label
+                    >
+                    @for (slot of weeklyTimeSlots(); track $index) {
+                      <div class="time-slot time-slot--weekly">
+                        <select
+                          class="form-select form-select--inline"
+                          (change)="updateWeeklyTimeSlotWeekday($index, $any($event.target).value)"
+                        >
+                          @for (day of weekdayOptions; track day.value) {
+                            <option [value]="day.value" [selected]="day.value === slot.weekday">
+                              {{ day.label }}
+                            </option>
+                          }
+                        </select>
+                        <select
+                          class="form-select form-select--inline"
+                          (change)="updateWeeklyTimeSlotHour($index, $any($event.target).value)"
+                        >
+                          @for (hour of hourOptions; track hour) {
+                            <option [value]="hour" [selected]="hour === slot.hour">
+                              {{ hour < 10 ? '0' + hour : hour }}:00
+                            </option>
+                          }
+                        </select>
+                        <span>:</span>
+                        <select
+                          class="form-select form-select--inline"
+                          (change)="updateWeeklyTimeSlotMinute($index, $any($event.target).value)"
+                        >
+                          @for (minute of minuteOptions; track minute) {
+                            <option [value]="minute" [selected]="minute === slot.minute">
+                              {{ minute < 10 ? '0' + minute : minute }}
+                            </option>
+                          }
+                        </select>
+                        @if (weeklyTimeSlots().length > 1) {
+                          <button
+                            type="button"
+                            class="btn-icon-danger"
+                            (click)="removeWeeklyTimeSlot($index)"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        }
+                      </div>
+                    }
+                    @if (weeklyTimeSlots().length < limits.MAX_WEEKLY_TIMES) {
+                      <button
+                        type="button"
+                        class="btn-secondary btn-sm"
+                        (click)="addWeeklyTimeSlot()"
+                      >
+                        <i class="bi bi-plus-lg"></i> Add Time Slot
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Weekly Range Schedule -->
+              @if (formData().scheduleType === 'weekly-range') {
+                <div class="schedule-fields">
+                  <div class="form-group">
+                    <label class="form-label">Opening Time</label>
+                    <div class="form-row">
+                      <select
+                        class="form-select"
+                        (change)="
+                          updateFormData({ weeklyRangeOpenWeekday: +$any($event.target).value })
+                        "
+                      >
+                        @for (day of weekdayOptions; track day.value) {
+                          <option
+                            [value]="day.value"
+                            [selected]="day.value === (formData().weeklyRangeOpenWeekday ?? 1)"
+                          >
+                            {{ day.label }}
+                          </option>
+                        }
+                      </select>
+                      <select
+                        class="form-select"
+                        (change)="
+                          updateFormData({ weeklyRangeOpenHour: +$any($event.target).value })
+                        "
+                      >
+                        @for (hour of hourOptions; track hour) {
+                          <option
+                            [value]="hour"
+                            [selected]="hour === (formData().weeklyRangeOpenHour ?? 0)"
+                          >
+                            {{ hour < 10 ? '0' + hour : hour }}:00
+                          </option>
+                        }
+                      </select>
+                      <select
+                        class="form-select"
+                        (change)="
+                          updateFormData({ weeklyRangeOpenMinute: +$any($event.target).value })
+                        "
+                      >
+                        @for (minute of minuteOptions; track minute) {
+                          <option
+                            [value]="minute"
+                            [selected]="minute === (formData().weeklyRangeOpenMinute ?? 0)"
+                          >
+                            {{ minute < 10 ? '0' + minute : minute }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Closing Time</label>
+                    <div class="form-row">
+                      <select
+                        class="form-select"
+                        (change)="
+                          updateFormData({ weeklyRangeCloseWeekday: +$any($event.target).value })
+                        "
+                      >
+                        @for (day of weekdayOptions; track day.value) {
+                          <option
+                            [value]="day.value"
+                            [selected]="day.value === (formData().weeklyRangeCloseWeekday ?? 5)"
+                          >
+                            {{ day.label }}
+                          </option>
+                        }
+                      </select>
+                      <select
+                        class="form-select"
+                        (change)="
+                          updateFormData({ weeklyRangeCloseHour: +$any($event.target).value })
+                        "
+                      >
+                        @for (hour of hourOptions; track hour) {
+                          <option
+                            [value]="hour"
+                            [selected]="hour === (formData().weeklyRangeCloseHour ?? 23)"
+                          >
+                            {{ hour < 10 ? '0' + hour : hour }}:00
+                          </option>
+                        }
+                      </select>
+                      <select
+                        class="form-select"
+                        (change)="
+                          updateFormData({ weeklyRangeCloseMinute: +$any($event.target).value })
+                        "
+                      >
+                        @for (minute of minuteOptions; track minute) {
+                          <option
+                            [value]="minute"
+                            [selected]="minute === (formData().weeklyRangeCloseMinute ?? 59)"
+                          >
+                            {{ minute < 10 ? '0' + minute : minute }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              }
+            } @else if (formData().type === 'event') {
+              <h3 class="form-step-title">Event Configuration</h3>
+              <p class="form-step-description">
+                Set when this event expires. The timer will automatically disappear after the end
+                date.
+              </p>
+
+              <div class="form-group">
+                <label class="form-label" for="eventEndsAt">End Date & Time</label>
+                <input
+                  type="datetime-local"
+                  id="eventEndsAt"
+                  class="form-input"
+                  [value]="formatLocalDateTimeForInput(formData().eventEndsAt ?? null)"
+                  (input)="updateEventEndsAt($any($event.target).value)"
+                />
+                <small class="form-help">
+                  Use your local time. It will be automatically converted to UTC when saving.
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="eventCategory">Category</label>
+                <select
+                  id="eventCategory"
+                  class="form-select"
+                  (change)="updateFormData({ eventCategory: $any($event.target).value })"
+                >
+                  @for (option of categoryOptions; track option.value) {
+                    <option
+                      [value]="option.value"
+                      [selected]="option.value === (formData().eventCategory || 'other')"
+                    >
+                      {{ option.label }}
+                    </option>
+                  }
+                </select>
+                <small class="form-help">
+                  Affects the icon color in the Limited-Time Content section
+                </small>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Step 4: Review -->
+        @if (currentStep() === 'review') {
+          <div class="form-step">
+            <h3 class="form-step-title">Review Your Timer</h3>
+            <p class="form-step-description">
+              Check everything looks correct before saving. You can edit this timer later if needed.
+            </p>
+
+            <div class="review-card">
+              <div class="review-card__header">
+                <div class="review-card__icon">
+                  <i class="bi" [ngClass]="formData().icon"></i>
+                </div>
+                <div>
+                  <h4 class="review-card__title">{{ formData().label }}</h4>
+                  <p class="review-card__subtitle">{{ formData().shortLabel }}</p>
+                </div>
+              </div>
+
+              @if (formData().summary) {
+                <div class="review-card__section">
+                  <strong>Summary:</strong>
+                  <p>{{ formData().summary }}</p>
+                </div>
+              }
+
+              <div class="review-card__section">
+                <strong>Type:</strong>
+                <p>{{ formData().type === 'recurring' ? 'Recurring Timer' : 'Event Timer' }}</p>
+              </div>
+
+              @if (formData().type === 'recurring') {
+                <div class="review-card__section">
+                  <strong>Schedule:</strong>
+                  <p>{{ getScheduleTypeLabel() }}</p>
+                </div>
+                <div class="review-card__section">
+                  <strong>Times:</strong>
+                  <p>{{ getScheduleSummary() }}</p>
+                </div>
+              } @else if (formData().type === 'event') {
+                <div class="review-card__section">
+                  <strong>Ends At:</strong>
+                  <p>{{ getEventEndsAtDisplay() }} (local time)</p>
+                </div>
+                <div class="review-card__section">
+                  <strong>Category:</strong>
+                  <p>{{ getCategoryLabel() }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Modal Footer -->
+      <footer class="modal-footer">
+        <div class="modal-footer-actions">
+          @if (currentStep() !== 'type' && !(currentStep() === 'basic' && editingTimer)) {
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="
+                goToStep(
+                  currentStep() === 'basic'
+                    ? 'type'
+                    : currentStep() === 'schedule'
+                      ? 'basic'
+                      : 'schedule'
+                )
+              "
+            >
+              <i class="bi bi-arrow-left"></i> Back
+            </button>
+          }
+
+          <div class="modal-footer-spacer"></div>
+
+          <button type="button" class="btn-secondary" (click)="onClose()">Cancel</button>
+
+          @if (currentStep() === 'type') {
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!canProceedFromType()"
+              (click)="goToStep('basic')"
+            >
+              Next <i class="bi bi-arrow-right"></i>
+            </button>
+          } @else if (currentStep() === 'basic') {
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!canProceedFromBasic()"
+              (click)="goToStep('schedule')"
+            >
+              Next <i class="bi bi-arrow-right"></i>
+            </button>
+          } @else if (currentStep() === 'schedule') {
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!canProceedFromSchedule()"
+              (click)="goToStep('review')"
+            >
+              Next <i class="bi bi-arrow-right"></i>
+            </button>
+          } @else if (currentStep() === 'review') {
+            <button type="button" class="btn-primary" (click)="onSubmit()">
+              <i class="bi bi-check-lg"></i>
+              @if (editingTimer) {
+                Update Timer
+              } @else {
+                Create Timer
+              }
+            </button>
+          }
+        </div>
+      </footer>
+    </div>
+  </div>
+}

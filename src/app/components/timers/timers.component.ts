@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
+  CustomTimerService,
   EventTimerService,
   GuildEventConfig,
   GuildEventSlot,
@@ -9,15 +10,22 @@ import {
   TimerPreferencesService,
   TimerService,
 } from '../../services';
-import { EventTimerCategory, TimerChip, TimerDetails } from '../../models';
+import {
+  CustomTimerDefinition,
+  CustomTimerFormData,
+  EventTimerCategory,
+  TimerChip,
+  TimerDetails,
+} from '../../models';
 import { DiamondToggleComponent } from '../ui';
 import { RouterModule } from '@angular/router';
 import { TIMER_DETAILS_CONFIG } from '../../configs';
+import { CustomTimerModalComponent } from './custom-timer-modal';
 
 @Component({
   selector: 'app-timers',
   standalone: true,
-  imports: [CommonModule, DiamondToggleComponent, RouterModule],
+  imports: [CommonModule, DiamondToggleComponent, RouterModule, CustomTimerModalComponent],
   templateUrl: './timers.component.html',
   styleUrls: ['./timers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +35,7 @@ export class TimersComponent {
   private readonly timerPrefs = inject(TimerPreferencesService);
   private readonly guildTimers = inject(GuildEventTimersService);
   private readonly eventTimerService = inject(EventTimerService);
+  private readonly customTimerService = inject(CustomTimerService);
 
   // All timer chips (unfiltered)
   readonly timers$ = this.timerService.timerChips$;
@@ -43,6 +52,13 @@ export class TimersComponent {
 
   // Timer details config
   readonly timerDetailsConfig = TIMER_DETAILS_CONFIG;
+
+  // Modal state
+  readonly isModalOpen = signal(false);
+  readonly editingCustomTimer = signal<CustomTimerDefinition | null>(null);
+
+  // Custom timers
+  readonly customTimers$ = this.customTimerService.customTimers$;
 
   // Which timer's details drawer is open in the settings list
   openTimerId: string | null = null;
@@ -216,19 +232,79 @@ export class TimersComponent {
   }
 
   getCategoryLabel(category: EventTimerCategory): string {
-  switch (category) {
-    case 'battle-pass':
-      return 'Battle Pass';
-    case 'season':
-      return 'Season';
-    case 'gacha-standard':
-      return 'Gacha Banner';
-    case 'gacha-special':
-      return 'Special Gacha';
-    case 'limited-event':
-      return 'Limited Event';
-    default:
-      return 'Event';
+    switch (category) {
+      case 'battle-pass':
+        return 'Battle Pass';
+      case 'season':
+        return 'Season';
+      case 'gacha-standard':
+        return 'Gacha Banner';
+      case 'gacha-special':
+        return 'Special Gacha';
+      case 'limited-event':
+        return 'Limited Event';
+      default:
+        return 'Event';
+    }
   }
-}
+
+  openCreateModal(): void {
+    this.editingCustomTimer.set(null);
+    this.isModalOpen.set(true);
+  }
+
+  openEditModal(timer: CustomTimerDefinition): void {
+    this.editingCustomTimer.set(timer);
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.editingCustomTimer.set(null);
+  }
+
+  handleModalSave(formData: CustomTimerFormData): void {
+    const editing = this.editingCustomTimer();
+
+    if (editing) {
+      // Update existing custom timer
+      const updated = this.customTimerService.update(editing.id, formData);
+      console.log('Custom timer updated:', updated);
+    } else {
+      // Create new custom timer
+      const created = this.customTimerService.create(formData);
+      console.log('Custom timer created:', created);
+    }
+
+    this.closeModal();
+  }
+
+  // Add these helper methods to TimersComponent
+
+  isCustomTimer(timerId: string): boolean {
+    return timerId.startsWith('custom-');
+  }
+
+  getCustomTimer(timerId: string): CustomTimerDefinition | undefined {
+    return this.customTimerService.getById(timerId);
+  }
+
+  deleteCustomTimer(timerId: string): void {
+    if (confirm('Are you sure you want to delete this timer?')) {
+      const deleted = this.customTimerService.delete(timerId);
+      if (deleted) {
+        console.log('Custom timer deleted:', timerId);
+        // Close details if this timer's details are open
+        if (this.openTimerId === timerId) {
+          this.openTimerId = null;
+          this.longDetailsId = null;
+        }
+      }
+    }
+  }
+
+  getCustomTimerSummary(timerId: string): string | null {
+    const timer = this.getCustomTimer(timerId);
+    return timer?.summary || null;
+  }
 }

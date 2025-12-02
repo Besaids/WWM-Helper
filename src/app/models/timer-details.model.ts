@@ -1,4 +1,4 @@
-import { TimerDefinition } from "./timer-definition.model";
+import { TimerDefinition } from './timer-definition.model';
 
 export interface TimerDetailsSection {
   heading: string;
