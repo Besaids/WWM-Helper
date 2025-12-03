@@ -9,13 +9,21 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { DAILY_CHECKLIST, WEEKLY_CHECKLIST, FREEPLAY_IDEAS } from '../../configs';
+import { FREEPLAY_IDEAS } from '../../configs';
 import { ChecklistStateService } from '../../services/checklist/checklist-state.service';
+import { ChecklistRegistryService } from '../../services/checklist/checklist-registry.service';
+import { CustomChecklistService } from '../../services/checklist/custom-checklist.service';
 import { ResetWatchService } from '../../services/reset/reset-watch.service';
-import { ChecklistImportance, ChecklistItem } from '../../models';
+import {
+  ChecklistImportance,
+  ChecklistItem,
+  ChecklistFrequency,
+  ChecklistTypeConfig,
+  CustomChecklistItemFormData,
+} from '../../models';
 import { ChecklistToggleComponent } from '../ui';
+import { CustomChecklistModalComponent } from './custom-checklist-modal';
 
-type ChecklistTab = 'daily' | 'weekly';
 type ChecklistViewMode = 'detailed' | 'compact';
 
 const CHECKLIST_VIEW_MODE_STORAGE_KEY = 'wwm-helper.checklist.view-mode';
@@ -28,7 +36,7 @@ interface ChecklistCategoryGroup {
 @Component({
   selector: 'app-checklist',
   standalone: true,
-  imports: [CommonModule, ChecklistToggleComponent],
+  imports: [CommonModule, ChecklistToggleComponent, CustomChecklistModalComponent],
   templateUrl: './checklist.component.html',
   styleUrl: './checklist.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,21 +44,30 @@ interface ChecklistCategoryGroup {
 export class ChecklistComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly state = inject(ChecklistStateService);
+  private readonly registry = inject(ChecklistRegistryService);
+  private readonly customChecklistService = inject(CustomChecklistService);
   private readonly resetWatch = inject(ResetWatchService);
 
-  readonly DAILY_ITEMS = DAILY_CHECKLIST;
-  readonly WEEKLY_ITEMS = WEEKLY_CHECKLIST;
   readonly FREEPLAY_IDEAS = FREEPLAY_IDEAS;
 
-  readonly activeTab = signal<ChecklistTab>('daily');
+  readonly availableTypes = this.registry.availableTypes;
+  readonly activeTab = signal<ChecklistFrequency>('daily');
   readonly viewMode = signal<ChecklistViewMode>('detailed');
+
+  // Modal state
+  readonly isModalOpen = signal(false);
+  readonly editingCustomItem = signal<ChecklistItem | null>(null);
+
+  // Custom items
+  readonly customItems$ = this.customChecklistService.customItems$;
 
   private subs = new Subscription();
 
   ngOnInit(): void {
     // Initial tab from query param
-    const tabParam = this.route.snapshot.queryParamMap.get('tab');
-    if (tabParam === 'daily' || tabParam === 'weekly') {
+    const tabParam = this.route.snapshot.queryParamMap.get('tab') as ChecklistFrequency;
+    const config = this.registry.getTypeConfig(tabParam);
+    if (config) {
       this.activeTab.set(tabParam);
     }
 
@@ -79,12 +96,16 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   // --- Tab handling ---
 
-  setTab(tab: ChecklistTab): void {
+  setTab(tab: ChecklistFrequency): void {
     this.activeTab.set(tab);
   }
 
-  isActiveTab(tab: ChecklistTab): boolean {
+  isActiveTab(tab: ChecklistFrequency): boolean {
     return this.activeTab() === tab;
+  }
+
+  getActiveTypeConfig(): ChecklistTypeConfig | undefined {
+    return this.registry.getTypeConfig(this.activeTab());
   }
 
   // --- View mode handling ---
@@ -135,23 +156,77 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetTab(tab: ChecklistTab): void {
-    this.state.resetTab(tab);
+  resetCurrentTab(): void {
+    this.state.resetType(this.activeTab());
   }
 
-  resetCurrentTab(): void {
-    this.resetTab(this.activeTab());
+  getCompletionCount(item: ChecklistItem): number {
+    return this.state.getCompletionCount(item);
+  }
+
+  // --- Modal handling ---
+
+  openCustomItemModal(): void {
+    this.editingCustomItem.set(null);
+    this.isModalOpen.set(true);
+  }
+
+  openEditCustomItemModal(item: ChecklistItem): void {
+    if (!item.isCustom) return;
+    this.editingCustomItem.set(item);
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.editingCustomItem.set(null);
+  }
+
+  handleModalSave(formData: CustomChecklistItemFormData): void {
+    const editing = this.editingCustomItem();
+
+    if (editing) {
+      // Update existing custom item
+      const updated = this.customChecklistService.update(editing.id, formData);
+      console.log('Custom checklist item updated:', updated);
+    } else {
+      // Create new custom item
+      const created = this.customChecklistService.create(formData);
+      console.log('Custom checklist item created:', created);
+    }
+
+    this.closeModal();
+  }
+
+  // --- Custom item helpers ---
+
+  isCustomItem(itemId: string): boolean {
+    return itemId.startsWith('custom-');
+  }
+
+  getCustomItem(itemId: string): ChecklistItem | undefined {
+    return this.customChecklistService.getById(itemId);
+  }
+
+  deleteCustomItem(itemId: string): void {
+    if (confirm('Are you sure you want to delete this checklist item?')) {
+      const deleted = this.customChecklistService.delete(itemId);
+      if (deleted) {
+        console.log('Custom checklist item deleted:', itemId);
+      }
+    }
   }
 
   // --- View helpers ---
 
-  // Add these new methods to the component:
+  /**
+   * Get all items for the active tab (filtered by importance and expired status)
+   */
+  getItemsForActiveTab(importance: ChecklistImportance, excludeHidden = false): ChecklistItem[] {
+    const allItems = this.registry.getItemsForType(this.activeTab());
 
-  getItemsForTab(importance: ChecklistImportance, excludeHidden = false): ChecklistItem[] {
-    const tab = this.activeTab();
-    const source = tab === 'daily' ? this.DAILY_ITEMS : this.WEEKLY_ITEMS;
-
-    let items = source.filter((item) => item.importance === importance);
+    // Filter out expired items and by importance
+    let items = allItems.filter((item) => !item.expired && item.importance === importance);
 
     // Optionally exclude hidden items
     if (excludeHidden) {
@@ -173,11 +248,14 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Get category groups for the active tab
+   */
   getCategoryGroups(
     importance: ChecklistImportance,
     excludeHidden = false,
   ): ChecklistCategoryGroup[] {
-    const items = this.getItemsForTab(importance, excludeHidden);
+    const items = this.getItemsForActiveTab(importance, excludeHidden);
 
     const grouped: Record<string, ChecklistItem[]> = {};
     for (const item of items) {
@@ -194,15 +272,17 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     }));
   }
 
-  // New method to get all hidden items for the current tab
+  /**
+   * Get all hidden items for the current tab (excluding expired)
+   */
   getHiddenItems(): ChecklistItem[] {
-    const tab = this.activeTab();
-    const source = tab === 'daily' ? this.DAILY_ITEMS : this.WEEKLY_ITEMS;
-
-    return source.filter((item) => this.state.isHidden(item));
+    const allItems = this.registry.getItemsForType(this.activeTab());
+    return allItems.filter((item) => !item.expired && this.state.isHidden(item));
   }
 
-  // New method to get hidden items grouped by category
+  /**
+   * Get hidden items grouped by category
+   */
   getHiddenCategoryGroups(): ChecklistCategoryGroup[] {
     const items = this.getHiddenItems();
 
@@ -219,5 +299,13 @@ export class ChecklistComponent implements OnInit, OnDestroy {
       category,
       items: categoryItems,
     }));
+  }
+
+  /**
+   * Check if the current tab has any items
+   */
+  hasItems(): boolean {
+    const allItems = this.registry.getItemsForType(this.activeTab());
+    return allItems.filter((item) => !item.expired).length > 0;
   }
 }

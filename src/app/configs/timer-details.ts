@@ -1,5 +1,3 @@
-// c:\Users\andcr\WWM-Helper\src\app\configs\timer-details.ts
-
 import { TimerDetails } from '../models';
 
 export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {

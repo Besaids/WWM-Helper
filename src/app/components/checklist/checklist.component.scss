@@ -483,3 +483,70 @@
     align-self: flex-start;
   }
 }
+
+/* Completion counter */
+.checklist-completion-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: rgb(34, 197, 94);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.9em;
+  }
+
+  .counter-value {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Custom item action buttons (edit/delete) */
+.checklist-item-action--edit {
+  color: var(--color-accent-teal);
+}
+
+.checklist-item-action--edit:hover,
+.checklist-item-action--edit:focus-visible {
+  border-color: var(--color-accent-teal);
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--color-accent-teal);
+}
+
+.checklist-item-action--delete {
+  color: var(--color-accent-red-soft);
+}
+
+.checklist-item-action--delete:hover,
+.checklist-item-action--delete:focus-visible {
+  border-color: var(--color-accent-red-soft);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-accent-red-soft);
+}
+
+/* Empty state styling */
+.checklist-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    max-width: 32rem;
+  }
+
+  .reset-link {
+    margin: 0;
+  }
+}

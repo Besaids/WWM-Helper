@@ -2,31 +2,24 @@
   <header class="checklist-header">
     <h1>Checklist</h1>
     <p class="text-muted-strong">
-      Daily and weekly tasks for Where Winds Meet. Tick off what you have done; entries reset
-      automatically with the game's daily and weekly resets.
+      Track your tasks across daily, weekly, seasonal, and custom checklists. Items reset
+      automatically based on their type.
     </p>
 
+    <!-- Dynamic tabs based on available types -->
     <div class="checklist-tabs">
-      <button
-        type="button"
-        class="tab-pill"
-        [class.tab-pill--active]="isActiveTab('daily')"
-        (click)="setTab('daily')"
-        [attr.aria-pressed]="isActiveTab('daily')"
-        aria-label="Show daily checklist"
-      >
-        Daily
-      </button>
-      <button
-        type="button"
-        class="tab-pill"
-        [class.tab-pill--active]="isActiveTab('weekly')"
-        (click)="setTab('weekly')"
-        [attr.aria-pressed]="isActiveTab('weekly')"
-        aria-label="Show weekly checklist"
-      >
-        Weekly
-      </button>
+      @for (type of availableTypes(); track type.id) {
+        <button
+          type="button"
+          class="tab-pill"
+          [class.tab-pill--active]="isActiveTab(type.id)"
+          (click)="setTab(type.id)"
+          [attr.aria-pressed]="isActiveTab(type.id)"
+          [attr.aria-label]="'Show ' + type.label + ' checklist'"
+        >
+          {{ type.label }}
+        </button>
+      }
     </div>
   </header>
 
@@ -35,12 +28,9 @@
     <article class="checklist-card card-surface card-padding">
       <header class="checklist-card-header">
         <div class="checklist-card-header-main">
-          <h2>
-            {{ activeTab() === 'daily' ? 'Daily checklist' : 'Weekly checklist' }}
-          </h2>
+          <h2>{{ getActiveTypeConfig()?.label }} checklist</h2>
           <p class="checklist-card-subtitle text-muted-strong">
-            Core priorities first, then nice-to-have extras. State is stored locally per reset
-            cycle.
+            {{ getActiveTypeConfig()?.description }}
           </p>
         </div>
 
@@ -64,175 +54,475 @@
             </button>
           </div>
 
+          @if (activeTab() === 'custom') {
+            <button type="button" class="reset-link" (click)="openCustomItemModal()">
+              Add custom item
+            </button>
+          }
+
           <button
             type="button"
             class="reset-link"
             (click)="resetCurrentTab()"
-            [attr.aria-label]="
-              activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist'
-            "
+            [attr.aria-label]="'Reset ' + getActiveTypeConfig()?.label + ' checklist'"
           >
-            {{ activeTab() === 'daily' ? 'Reset daily checklist' : 'Reset weekly checklist' }}
+            Reset {{ getActiveTypeConfig()?.label }}
           </button>
         </div>
       </header>
 
       <div class="checklist-card-body">
         <!-- Core section -->
-        <section class="checklist-group">
-          <h3 id="core-heading">Core priorities</h3>
+        @if (getCategoryGroups('core', true).length > 0) {
+          <section class="checklist-group">
+            <h3 id="core-heading">Core priorities</h3>
 
-          @for (group of getCategoryGroups('core', true); track group.category) {
-            <div class="checklist-category">
-              <h4>{{ group.category }}</h4>
+            @for (group of getCategoryGroups('core', true); track group.category) {
+              <div class="checklist-category">
+                <h4>{{ group.category }}</h4>
 
-              <ul>
-                @for (item of group.items; track item.id) {
-                  <li>
-                    <app-checklist-toggle
-                      [checked]="isChecked(item)"
-                      (checkedChange)="onToggleItem($event, item)"
-                      [ariaDescribedBy]="
-                        !isCompactView && item.description ? 'desc-' + item.id : null
-                      "
-                    >
-                      <span class="checklist-item-label">{{ item.label }}</span>
-
-                      @if (!isCompactView && item.description) {
-                        <span
-                          class="checklist-item-description text-muted-strong"
-                          [attr.id]="'desc-' + item.id"
-                        >
-                          {{ item.description }}
-                        </span>
-                      }
-
-                      @if (!isCompactView && item.tags?.length) {
-                        <div class="checklist-tags">
-                          @for (tag of item.tags; track tag) {
-                            <span class="checklist-tag">
-                              {{ tag }}
-                            </span>
-                          }
-                        </div>
-                      }
-                    </app-checklist-toggle>
-
-                    <span class="checklist-item-actions">
-                      <!-- Pin -->
-                      <button
-                        type="button"
-                        class="checklist-item-action checklist-item-action--pin"
-                        (click)="onTogglePinned(item)"
-                        [attr.aria-pressed]="isPinned(item)"
-                        [attr.aria-label]="isPinned(item) ? 'Unpin task' : 'Pin task'"
-                      >
-                        <i
-                          class="bi"
-                          [ngClass]="isPinned(item) ? 'bi-pin-angle-fill' : 'bi-pin-angle'"
-                        ></i>
-                      </button>
-
-                      <!-- Hide -->
-                      <button
-                        type="button"
-                        class="checklist-item-action checklist-item-action--hide"
-                        (click)="onToggleHidden(item)"
-                        [attr.aria-pressed]="isHidden(item)"
-                        [attr.aria-label]="
-                          isHidden(item) ? 'Show task in main list' : 'Hide task from main list'
+                <ul>
+                  @for (item of group.items; track item.id) {
+                    <li>
+                      <app-checklist-toggle
+                        [checked]="isChecked(item)"
+                        (checkedChange)="onToggleItem($event, item)"
+                        [ariaDescribedBy]="
+                          !isCompactView && item.description ? 'desc-' + item.id : null
                         "
                       >
-                        <i
-                          class="bi"
-                          [ngClass]="isHidden(item) ? 'bi-eye-slash-fill' : 'bi-eye-slash'"
-                        ></i>
-                      </button>
-                    </span>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-        </section>
+                        <span class="checklist-item-label">{{ item.label }}</span>
+
+                        @if (!isCompactView && item.description) {
+                          <span
+                            class="checklist-item-description text-muted-strong"
+                            [attr.id]="'desc-' + item.id"
+                          >
+                            {{ item.description }}
+                          </span>
+                        }
+
+                        @if (!isCompactView && item.tags?.length) {
+                          <div class="checklist-tags">
+                            @for (tag of item.tags; track tag) {
+                              <span class="checklist-tag">
+                                {{ tag }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </app-checklist-toggle>
+
+                      <span class="checklist-item-actions">
+                        <!-- Completion Counter -->
+                        @if (getCompletionCount(item) > 0) {
+                          <span
+                            class="checklist-completion-counter"
+                            [attr.aria-label]="
+                              'Completed ' + getCompletionCount(item) + ' times this cycle'
+                            "
+                          >
+                            <i class="bi bi-check-circle"></i>
+                            <span class="counter-value">{{ getCompletionCount(item) }}</span>
+                          </span>
+                        }
+
+                        <!-- Custom Item Actions (Edit/Delete) -->
+                        @if (isCustomItem(item.id)) {
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--edit"
+                            (click)="openEditCustomItemModal(item)"
+                            aria-label="Edit custom item"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--delete"
+                            (click)="deleteCustomItem(item.id)"
+                            aria-label="Delete custom item"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        }
+
+                        <!-- Pin -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--pin"
+                          (click)="onTogglePinned(item)"
+                          [attr.aria-pressed]="isPinned(item)"
+                          [attr.aria-label]="isPinned(item) ? 'Unpin task' : 'Pin task'"
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isPinned(item) ? 'bi-pin-angle-fill' : 'bi-pin-angle'"
+                          ></i>
+                        </button>
+
+                        <!-- Hide -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--hide"
+                          (click)="onToggleHidden(item)"
+                          [attr.aria-pressed]="isHidden(item)"
+                          [attr.aria-label]="
+                            isHidden(item) ? 'Show task in main list' : 'Hide task from main list'
+                          "
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isHidden(item) ? 'bi-eye-slash-fill' : 'bi-eye-slash'"
+                          ></i>
+                        </button>
+                      </span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </section>
+        }
 
         <!-- Nice extras / optional section -->
-        <section class="checklist-group checklist-group--optional">
-          <h3 id="optional-heading">Nice extras</h3>
+        @if (getCategoryGroups('optional', true).length > 0) {
+          <section class="checklist-group checklist-group--optional">
+            <h3 id="optional-heading">Nice extras</h3>
 
-          @for (group of getCategoryGroups('optional', true); track group.category) {
-            <div class="checklist-category">
-              <h4>{{ group.category }}</h4>
+            @for (group of getCategoryGroups('optional', true); track group.category) {
+              <div class="checklist-category">
+                <h4>{{ group.category }}</h4>
 
-              <ul>
-                @for (item of group.items; track item.id) {
-                  <li>
-                    <app-checklist-toggle
-                      [checked]="isChecked(item)"
-                      (checkedChange)="onToggleItem($event, item)"
-                      [ariaDescribedBy]="
-                        !isCompactView && item.description ? 'desc-' + item.id : null
-                      "
-                    >
-                      <span class="checklist-item-label">{{ item.label }}</span>
-
-                      @if (!isCompactView && item.description) {
-                        <span
-                          class="checklist-item-description text-muted-strong"
-                          [attr.id]="'desc-' + item.id"
-                        >
-                          {{ item.description }}
-                        </span>
-                      }
-
-                      @if (!isCompactView && item.tags?.length) {
-                        <div class="checklist-tags">
-                          @for (tag of item.tags; track tag) {
-                            <span class="checklist-tag">
-                              {{ tag }}
-                            </span>
-                          }
-                        </div>
-                      }
-                    </app-checklist-toggle>
-
-                    <span class="checklist-item-actions">
-                      <!-- Pin -->
-                      <button
-                        type="button"
-                        class="checklist-item-action checklist-item-action--pin"
-                        (click)="onTogglePinned(item)"
-                        [attr.aria-pressed]="isPinned(item)"
-                        [attr.aria-label]="isPinned(item) ? 'Unpin task' : 'Pin task'"
-                      >
-                        <i
-                          class="bi"
-                          [ngClass]="isPinned(item) ? 'bi-pin-angle-fill' : 'bi-pin-angle'"
-                        ></i>
-                      </button>
-
-                      <!-- Hide -->
-                      <button
-                        type="button"
-                        class="checklist-item-action checklist-item-action--hide"
-                        (click)="onToggleHidden(item)"
-                        [attr.aria-pressed]="isHidden(item)"
-                        [attr.aria-label]="
-                          isHidden(item) ? 'Show task in main list' : 'Hide task from main list'
+                <ul>
+                  @for (item of group.items; track item.id) {
+                    <li>
+                      <app-checklist-toggle
+                        [checked]="isChecked(item)"
+                        (checkedChange)="onToggleItem($event, item)"
+                        [ariaDescribedBy]="
+                          !isCompactView && item.description ? 'desc-' + item.id : null
                         "
                       >
-                        <i
-                          class="bi"
-                          [ngClass]="isHidden(item) ? 'bi-eye-slash-fill' : 'bi-eye-slash'"
-                        ></i>
-                      </button>
-                    </span>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-        </section>
+                        <span class="checklist-item-label">{{ item.label }}</span>
+
+                        @if (!isCompactView && item.description) {
+                          <span
+                            class="checklist-item-description text-muted-strong"
+                            [attr.id]="'desc-' + item.id"
+                          >
+                            {{ item.description }}
+                          </span>
+                        }
+
+                        @if (!isCompactView && item.tags?.length) {
+                          <div class="checklist-tags">
+                            @for (tag of item.tags; track tag) {
+                              <span class="checklist-tag">
+                                {{ tag }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </app-checklist-toggle>
+
+                      <span class="checklist-item-actions">
+                        <!-- Completion Counter -->
+                        @if (getCompletionCount(item) > 0) {
+                          <span
+                            class="checklist-completion-counter"
+                            [attr.aria-label]="
+                              'Completed ' + getCompletionCount(item) + ' times this cycle'
+                            "
+                          >
+                            <i class="bi bi-check-circle"></i>
+                            <span class="counter-value">{{ getCompletionCount(item) }}</span>
+                          </span>
+                        }
+
+                        <!-- Custom Item Actions (Edit/Delete) -->
+                        @if (isCustomItem(item.id)) {
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--edit"
+                            (click)="openEditCustomItemModal(item)"
+                            aria-label="Edit custom item"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--delete"
+                            (click)="deleteCustomItem(item.id)"
+                            aria-label="Delete custom item"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        }
+
+                        <!-- Pin -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--pin"
+                          (click)="onTogglePinned(item)"
+                          [attr.aria-pressed]="isPinned(item)"
+                          [attr.aria-label]="isPinned(item) ? 'Unpin task' : 'Pin task'"
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isPinned(item) ? 'bi-pin-angle-fill' : 'bi-pin-angle'"
+                          ></i>
+                        </button>
+
+                        <!-- Hide -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--hide"
+                          (click)="onToggleHidden(item)"
+                          [attr.aria-pressed]="isHidden(item)"
+                          [attr.aria-label]="
+                            isHidden(item) ? 'Show task in main list' : 'Hide task from main list'
+                          "
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isHidden(item) ? 'bi-eye-slash-fill' : 'bi-eye-slash'"
+                          ></i>
+                        </button>
+                      </span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </section>
+        }
+
+        <!-- Daily tasks section (for custom items) -->
+        @if (getCategoryGroups('daily', true).length > 0) {
+          <section class="checklist-group checklist-group--optional">
+            <h3 id="daily-heading">Daily Tasks</h3>
+
+            @for (group of getCategoryGroups('daily', true); track group.category) {
+              <div class="checklist-category">
+                <ul>
+                  @for (item of group.items; track item.id) {
+                    <li>
+                      <app-checklist-toggle
+                        [checked]="isChecked(item)"
+                        (checkedChange)="onToggleItem($event, item)"
+                        [ariaDescribedBy]="
+                          !isCompactView && item.description ? 'desc-' + item.id : null
+                        "
+                      >
+                        <span class="checklist-item-label">{{ item.label }}</span>
+
+                        @if (!isCompactView && item.description) {
+                          <span
+                            class="checklist-item-description text-muted-strong"
+                            [attr.id]="'desc-' + item.id"
+                          >
+                            {{ item.description }}
+                          </span>
+                        }
+
+                        @if (!isCompactView && item.tags?.length) {
+                          <div class="checklist-tags">
+                            @for (tag of item.tags; track tag) {
+                              <span class="checklist-tag">
+                                {{ tag }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </app-checklist-toggle>
+
+                      <span class="checklist-item-actions">
+                        <!-- Completion Counter -->
+                        @if (getCompletionCount(item) > 0) {
+                          <span
+                            class="checklist-completion-counter"
+                            [attr.aria-label]="
+                              'Completed ' + getCompletionCount(item) + ' times this cycle'
+                            "
+                          >
+                            <i class="bi bi-check-circle"></i>
+                            <span class="counter-value">{{ getCompletionCount(item) }}</span>
+                          </span>
+                        }
+
+                        <!-- Custom Item Actions (Edit/Delete) -->
+                        @if (isCustomItem(item.id)) {
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--edit"
+                            (click)="openEditCustomItemModal(item)"
+                            aria-label="Edit custom item"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--delete"
+                            (click)="deleteCustomItem(item.id)"
+                            aria-label="Delete custom item"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        }
+
+                        <!-- Pin -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--pin"
+                          (click)="onTogglePinned(item)"
+                          [attr.aria-pressed]="isPinned(item)"
+                          [attr.aria-label]="isPinned(item) ? 'Unpin task' : 'Pin task'"
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isPinned(item) ? 'bi-pin-angle-fill' : 'bi-pin-angle'"
+                          ></i>
+                        </button>
+
+                        <!-- Hide -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--hide"
+                          (click)="onToggleHidden(item)"
+                          [attr.aria-pressed]="isHidden(item)"
+                          [attr.aria-label]="
+                            isHidden(item) ? 'Show task in main list' : 'Hide task from main list'
+                          "
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isHidden(item) ? 'bi-eye-slash-fill' : 'bi-eye-slash'"
+                          ></i>
+                        </button>
+                      </span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </section>
+        }
+
+        <!-- Weekly tasks section (for custom items) -->
+        @if (getCategoryGroups('weekly', true).length > 0) {
+          <section class="checklist-group checklist-group--optional">
+            <h3 id="weekly-heading">Weekly Tasks</h3>
+
+            @for (group of getCategoryGroups('weekly', true); track group.category) {
+              <div class="checklist-category">
+                <ul>
+                  @for (item of group.items; track item.id) {
+                    <li>
+                      <app-checklist-toggle
+                        [checked]="isChecked(item)"
+                        (checkedChange)="onToggleItem($event, item)"
+                        [ariaDescribedBy]="
+                          !isCompactView && item.description ? 'desc-' + item.id : null
+                        "
+                      >
+                        <span class="checklist-item-label">{{ item.label }}</span>
+
+                        @if (!isCompactView && item.description) {
+                          <span
+                            class="checklist-item-description text-muted-strong"
+                            [attr.id]="'desc-' + item.id"
+                          >
+                            {{ item.description }}
+                          </span>
+                        }
+
+                        @if (!isCompactView && item.tags?.length) {
+                          <div class="checklist-tags">
+                            @for (tag of item.tags; track tag) {
+                              <span class="checklist-tag">
+                                {{ tag }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </app-checklist-toggle>
+
+                      <span class="checklist-item-actions">
+                        <!-- Completion Counter -->
+                        @if (getCompletionCount(item) > 0) {
+                          <span
+                            class="checklist-completion-counter"
+                            [attr.aria-label]="
+                              'Completed ' + getCompletionCount(item) + ' times this cycle'
+                            "
+                          >
+                            <i class="bi bi-check-circle"></i>
+                            <span class="counter-value">{{ getCompletionCount(item) }}</span>
+                          </span>
+                        }
+
+                        <!-- Custom Item Actions (Edit/Delete) -->
+                        @if (isCustomItem(item.id)) {
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--edit"
+                            (click)="openEditCustomItemModal(item)"
+                            aria-label="Edit custom item"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--delete"
+                            (click)="deleteCustomItem(item.id)"
+                            aria-label="Delete custom item"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        }
+
+                        <!-- Pin -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--pin"
+                          (click)="onTogglePinned(item)"
+                          [attr.aria-pressed]="isPinned(item)"
+                          [attr.aria-label]="isPinned(item) ? 'Unpin task' : 'Pin task'"
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isPinned(item) ? 'bi-pin-angle-fill' : 'bi-pin-angle'"
+                          ></i>
+                        </button>
+
+                        <!-- Hide -->
+                        <button
+                          type="button"
+                          class="checklist-item-action checklist-item-action--hide"
+                          (click)="onToggleHidden(item)"
+                          [attr.aria-pressed]="isHidden(item)"
+                          [attr.aria-label]="
+                            isHidden(item) ? 'Show task in main list' : 'Hide task from main list'
+                          "
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="isHidden(item) ? 'bi-eye-slash-fill' : 'bi-eye-slash'"
+                          ></i>
+                        </button>
+                      </span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </section>
+        }
 
         <!-- Hidden items section -->
         @if (getHiddenItems().length > 0) {
@@ -282,6 +572,40 @@
                       </app-checklist-toggle>
 
                       <span class="checklist-item-actions">
+                        <!-- Completion Counter -->
+                        @if (getCompletionCount(item) > 0) {
+                          <span
+                            class="checklist-completion-counter"
+                            [attr.aria-label]="
+                              'Completed ' + getCompletionCount(item) + ' times this cycle'
+                            "
+                          >
+                            <i class="bi bi-check-circle"></i>
+                            <span class="counter-value">{{ getCompletionCount(item) }}</span>
+                          </span>
+                        }
+
+                        <!-- Custom Item Actions (Edit/Delete) -->
+                        @if (isCustomItem(item.id)) {
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--edit"
+                            (click)="openEditCustomItemModal(item)"
+                            aria-label="Edit custom item"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="checklist-item-action checklist-item-action--delete"
+                            (click)="deleteCustomItem(item.id)"
+                            aria-label="Delete custom item"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        }
+
                         <!-- Pin -->
                         <button
                           type="button"
@@ -319,6 +643,15 @@
             }
           </section>
         }
+
+        <!-- Empty state (for tabs with no items like custom/seasonal) -->
+        @if (!hasItems()) {
+          <div class="checklist-empty-state">
+            <p class="text-muted-strong">
+              No items available for {{ getActiveTypeConfig()?.label }} checklist yet.
+            </p>
+          </div>
+        }
       </div>
     </article>
 
@@ -328,7 +661,7 @@
         <div class="checklist-card-header-main">
           <h2>Not sure what to do?</h2>
           <p class="checklist-card-subtitle text-muted-strong">
-            A few “freeplay” ideas to mix things up. None of these are mandatory.
+            A few "freeplay" ideas to mix things up. None of these are mandatory.
           </p>
         </div>
       </header>
@@ -360,3 +693,10 @@
     </article>
   </div>
 </section>
+
+<app-custom-checklist-modal
+  [isOpen]="isModalOpen()"
+  [editingItem]="editingCustomItem() ?? undefined"
+  (closeModal)="closeModal()"
+  (save)="handleModalSave($event)"
+/>

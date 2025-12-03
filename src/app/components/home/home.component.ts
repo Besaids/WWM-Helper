@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Subscription } from 'rxjs';
 import { TimerService } from '../../services/timer/timer.service';
+import { CustomTimerService } from '../../services/timer/custom-timer.service';
 import { ChecklistStateService } from '../../services/checklist/checklist-state.service';
-import { DAILY_CHECKLIST, WEEKLY_CHECKLIST } from '../../configs';
-import { ChecklistItem, TimerChip } from '../../models';
+import { ChecklistRegistryService } from '../../services/checklist/checklist-registry.service';
+import { CustomChecklistService } from '../../services/checklist/custom-checklist.service';
+import { ChecklistItem, TimerChip, CustomTimerDefinition, ChecklistFrequency } from '../../models';
 import { ChecklistToggleComponent } from '../ui';
+import { DateTime } from 'luxon';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 interface HomeSectionItem {
   label: string;
@@ -22,9 +25,23 @@ interface HomeSection {
   ctaLabel: string;
 }
 
+interface TimerState {
+  type: 'normal' | 'warning' | 'urgent' | 'active';
+  warningProgress?: number; // 0-1 for gradient (0 = yellow at 30m, 1 = red at 0m)
+}
+
 interface TimerWithPriority extends TimerChip {
-  priority: number; // Lower is higher priority
-  isActive: boolean; // Currently in a window
+  isActive: boolean;
+  isEvent: boolean;
+  eventTimer?: CustomTimerDefinition;
+  state: TimerState;
+  warningStyle: Record<string, string>;
+}
+
+interface PinnedBucket {
+  id: 'daily' | 'weekly' | 'seasonal-period';
+  label: string;
+  items: ChecklistItem[];
 }
 
 @Component({
@@ -34,55 +51,159 @@ interface TimerWithPriority extends TimerChip {
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent {
   private readonly timerService = inject(TimerService);
+  private readonly customTimerService = inject(CustomTimerService);
   private readonly checklistState = inject(ChecklistStateService);
-  private readonly dynamicCountScale = 1;
+  private readonly checklistRegistry = inject(ChecklistRegistryService);
+  private readonly customChecklistService = inject(CustomChecklistService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  private subs = new Subscription();
+  // Create a signal to trigger recomputation
+  private readonly refreshTrigger = signal(0);
 
-  // Track pinned count reactively
-  private pinnedCount$ = new BehaviorSubject<number>(0);
+  // Convert timer chips to signal
+  private readonly timerChips = toSignal(this.timerService.timerChips$, { initialValue: [] });
 
-  // Dynamic timer count based on pinned tasks
-  upcomingTimers$ = combineLatest([this.timerService.timerChips$, this.pinnedCount$]).pipe(
-    map(([chips, pinnedCount]) => {
-      // Calculate dynamic timer count
-      // Ratio: ~0.75 timers per pinned task (timers are more compact)
-      // Minimum 5 timers, scale up based on pinned tasks
-      const dynamicCount = Math.max(5, Math.ceil(pinnedCount * this.dynamicCountScale));
+  // Event timers signal
+  private readonly eventTimers = this.customTimerService.customTimers$;
 
-      // Add isActive flag
-      const withActiveFlag: TimerWithPriority[] = chips.map((chip) => ({
+  // Upcoming timers (max 4, includes custom event timers)
+  readonly upcomingTimers = computed(() => {
+    const chips = this.timerChips();
+    const now = DateTime.utc();
+
+    // Get event timers that haven't expired
+    const events = this.eventTimers().filter((t) => {
+      if (t.type !== 'event' || !t.endsAt) return false;
+      const endsAt = DateTime.fromISO(t.endsAt);
+      return now < endsAt; // Not expired
+    });
+
+    // Convert event timers to chips
+    const eventChips: TimerWithPriority[] = events.map((event) => {
+      const endsAt = DateTime.fromISO(event.endsAt!);
+      const diff = endsAt.diff(now);
+      const remaining = this.formatDuration(diff.as('seconds'));
+      const state = this.getTimerState(event.label, remaining);
+
+      return {
+        id: event.id,
+        label: event.label,
+        shortLabel: event.shortLabel,
+        icon: event.icon,
+        remaining,
+        isActive: false,
+        isEvent: true,
+        eventTimer: event,
+        state,
+        warningStyle: this.getWarningStyle(state),
+      };
+    });
+
+    // Convert regular chips
+    const withActiveFlag: TimerWithPriority[] = chips.map((chip) => {
+      const isActive = chip.label.includes('(open)');
+      const state = this.getTimerState(chip.label, chip.remaining);
+
+      return {
         ...chip,
-        priority: 0, // Not used anymore but keeping interface for now
-        isActive: this.isTimerActive(chip),
-      }));
+        isActive,
+        isEvent: false,
+        state,
+        warningStyle: this.getWarningStyle(state),
+      };
+    });
 
-      // Sort by: not-configured last, then active first, then by remaining time (soonest first)
-      return withActiveFlag
-        .sort((a, b) => {
-          // Push "Not configured" timers to the end
-          const aNotConfigured = a.remaining === 'Not configured';
-          const bNotConfigured = b.remaining === 'Not configured';
+    // Combine and sort
+    const allTimers = [...eventChips, ...withActiveFlag];
 
-          if (aNotConfigured !== bNotConfigured) {
-            return aNotConfigured ? 1 : -1;
-          }
+    return allTimers
+      .sort((a, b) => {
+        // Push "Not configured" to end
+        const aNotConfigured = a.remaining === 'Not configured';
+        const bNotConfigured = b.remaining === 'Not configured';
+        if (aNotConfigured !== bNotConfigured) {
+          return aNotConfigured ? 1 : -1;
+        }
 
-          // Then sort by active status (active timers first)
-          if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+        // Active timers first
+        if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
 
-          // Finally by remaining time (soonest first)
-          return this.compareRemainingTime(a.remaining, b.remaining);
-        })
-        .slice(0, dynamicCount);
-    }),
-  );
+        // Then by remaining time
+        return this.compareRemainingTime(a.remaining, b.remaining);
+      })
+      .slice(0, 4);
+  });
 
-  // Pinned checklist items
-  pinnedDaily: ChecklistItem[] = [];
-  pinnedWeekly: ChecklistItem[] = [];
+  // Pinned tasks organized by buckets
+  readonly pinnedBuckets = computed((): PinnedBucket[] => {
+    // Read the refresh trigger to make this reactive
+    this.refreshTrigger();
+
+    const buckets: PinnedBucket[] = [];
+
+    // Helper to get pinned items for a frequency
+    const getPinnedForFrequency = (frequencies: string[]): ChecklistItem[] => {
+      const allItems: ChecklistItem[] = [];
+
+      for (const freq of frequencies) {
+        const items = this.checklistRegistry.getItemsForType(freq as ChecklistFrequency);
+        const pinned = items.filter(
+          (item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item),
+        );
+        allItems.push(...pinned);
+      }
+
+      // Sort: custom items first, then by label
+      return allItems.sort((a, b) => {
+        if (a.isCustom !== b.isCustom) return a.isCustom ? -1 : 1;
+        return a.label.localeCompare(b.label);
+      });
+    };
+
+    // Daily bucket (daily + seasonal-daily + custom daily)
+    const dailyItems = getPinnedForFrequency(['daily', 'seasonal-daily']);
+    const customDaily = this.customChecklistService
+      .getAll()
+      .filter((item) => item.importance === 'daily')
+      .filter((item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item));
+
+    const allDaily = [...customDaily, ...dailyItems].sort((a, b) => {
+      if (a.isCustom !== b.isCustom) return a.isCustom ? -1 : 1;
+      return a.label.localeCompare(b.label);
+    });
+
+    if (allDaily.length > 0) {
+      buckets.push({ id: 'daily', label: 'Daily', items: allDaily });
+    }
+
+    // Weekly bucket (weekly + seasonal-weekly + custom weekly)
+    const weeklyItems = getPinnedForFrequency(['weekly', 'seasonal-weekly']);
+    const customWeekly = this.customChecklistService
+      .getAll()
+      .filter((item) => item.importance === 'weekly')
+      .filter((item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item));
+
+    const allWeekly = [...customWeekly, ...weeklyItems].sort((a, b) => {
+      if (a.isCustom !== b.isCustom) return a.isCustom ? -1 : 1;
+      return a.label.localeCompare(b.label);
+    });
+
+    if (allWeekly.length > 0) {
+      buckets.push({ id: 'weekly', label: 'Weekly', items: allWeekly });
+    }
+
+    // Season goals bucket (seasonal-period only)
+    const seasonalPeriod = getPinnedForFrequency(['seasonal-period']);
+    if (seasonalPeriod.length > 0) {
+      buckets.push({ id: 'seasonal-period', label: 'Season Goals', items: seasonalPeriod });
+    }
+
+    return buckets;
+  });
+
+  readonly hasPinnedItems = computed(() => this.pinnedBuckets().length > 0);
 
   readonly sections: HomeSection[] = [
     {
@@ -157,7 +278,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     },
   ];
 
-  // External resources – static links
   readonly resourceLinks = [
     {
       label: 'Official Website',
@@ -172,10 +292,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       href: 'https://store.steampowered.com/app/3564740/Where_Winds_Meet/',
     },
     {
-      label: 'Community Fandom Wiki',
-      href: 'https://where-winds-meet.fandom.com/wiki/Where_Winds_Meet',
-    },
-    {
       label: 'Reddit Community r/wherewindsmeet_',
       href: 'https://www.reddit.com/r/wherewindsmeet_/',
     },
@@ -185,35 +301,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     },
   ];
 
-  ngOnInit(): void {
-    this.updatePinnedItems();
-  }
+  private formatDuration(seconds: number): string {
+    if (seconds <= 0) return 'Expired';
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
-  }
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
 
-  private updatePinnedItems(): void {
-    this.pinnedDaily = DAILY_CHECKLIST.filter(
-      (item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item),
-    );
+    const parts: string[] = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+    if (secs > 0 && days === 0) parts.push(`${secs}s`);
 
-    this.pinnedWeekly = WEEKLY_CHECKLIST.filter(
-      (item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item),
-    );
-
-    // Update the reactive pinned count
-    const totalPinned = this.pinnedDaily.length + this.pinnedWeekly.length;
-    this.pinnedCount$.next(totalPinned);
-  }
-
-  private isTimerActive(chip: TimerChip): boolean {
-    // Check if the timer label contains "(open)" which indicates an active window
-    return chip.label.includes('(open)');
+    return parts.join(' ') || '0s';
   }
 
   private compareRemainingTime(a: string, b: string): number {
-    // Parse remaining time strings and compare
     const parseTime = (str: string): number => {
       const match = str.match(/(\d+)d|(\d+)h|(\d+)m|(\d+)s/g);
       if (!match) return Infinity;
@@ -232,6 +337,82 @@ export class HomeComponent implements OnInit, OnDestroy {
     return parseTime(a) - parseTime(b);
   }
 
+  /**
+   * Parse remaining time string to seconds
+   */
+  private parseRemaining(remaining: string | null | undefined): number {
+    if (!remaining) return Infinity;
+
+    const lower = remaining.toLowerCase().trim();
+
+    // Treat open/now states as 0
+    if (lower === 'open' || lower.includes('(open)') || lower.includes('now')) {
+      return 0;
+    }
+
+    let totalSeconds = 0;
+
+    const dayMatch = /(\d+)\s*d/.exec(lower);
+    if (dayMatch) totalSeconds += Number(dayMatch[1]) * 86400;
+
+    const hourMatch = /(\d+)\s*h/.exec(lower);
+    if (hourMatch) totalSeconds += Number(hourMatch[1]) * 3600;
+
+    const minuteMatch = /(\d+)\s*m/.exec(lower);
+    if (minuteMatch) totalSeconds += Number(minuteMatch[1]) * 60;
+
+    const secondMatch = /(\d+)\s*s/.exec(lower);
+    if (secondMatch) totalSeconds += Number(secondMatch[1]);
+
+    return totalSeconds || Infinity;
+  }
+
+  /**
+   * Get timer state for styling (matches timer-strip logic)
+   */
+  private getTimerState(label: string, remaining: string | null | undefined): TimerState {
+    // Check if active/open first
+    if (label.toLowerCase().includes('(open)')) {
+      return { type: 'active' };
+    }
+
+    const seconds = this.parseRemaining(remaining);
+
+    // 30 minutes = 1800 seconds
+    if (seconds <= 1800) {
+      // Calculate gradient progress: 0 at 30m (yellow), 1 at 0m (red)
+      const progress = 1 - seconds / 1800;
+      return {
+        type: seconds <= 600 ? 'urgent' : 'warning',
+        warningProgress: Math.max(0, Math.min(1, progress)),
+      };
+    }
+
+    return { type: 'normal' };
+  }
+
+  /**
+   * Get CSS custom properties for warning gradient
+   */
+  private getWarningStyle(state: TimerState): Record<string, string> {
+    if (
+      (state.type === 'warning' || state.type === 'urgent') &&
+      state.warningProgress !== undefined
+    ) {
+      // Interpolate from yellow (rgb(234, 179, 8)) to red (rgb(239, 68, 68))
+      const progress = state.warningProgress;
+
+      const r = Math.round(234 + (239 - 234) * progress);
+      const g = Math.round(179 + (68 - 179) * progress);
+      const b = Math.round(8 + (68 - 8) * progress);
+
+      return {
+        '--timer-warning-color': `rgb(${r}, ${g}, ${b})`,
+      };
+    }
+    return {};
+  }
+
   // Checklist toggle handlers
   isChecked(item: ChecklistItem): boolean {
     return this.checklistState.isChecked(item);
@@ -239,11 +420,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onToggleItem(checked: boolean, item: ChecklistItem): void {
     this.checklistState.toggle(item, checked);
-    // Update the pinned lists when an item is toggled
-    this.updatePinnedItems();
-  }
-
-  get hasPinnedItems(): boolean {
-    return this.pinnedDaily.length > 0 || this.pinnedWeekly.length > 0;
+    // Trigger recomputation of pinnedBuckets
+    this.refreshTrigger.update((v) => v + 1);
   }
 }

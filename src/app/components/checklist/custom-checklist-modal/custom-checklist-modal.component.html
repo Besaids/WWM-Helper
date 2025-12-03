@@ -1,0 +1,270 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- src/app/components/checklist/custom-checklist-modal/custom-checklist-modal.component.html -->
+
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <header class="modal-header">
+        <h2 class="modal-title">
+          @if (editingItem) {
+            Edit Checklist Item
+          } @else {
+            Create Checklist Item
+          }
+        </h2>
+        <button type="button" class="modal-close-btn" (click)="onClose()" aria-label="Close modal">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+
+      <!-- Progress Indicator -->
+      <div class="modal-progress">
+        <div
+          class="modal-progress-step"
+          [class.modal-progress-step--active]="currentStep() === 'type'"
+          [class.modal-progress-step--complete]="currentStep() !== 'type'"
+        >
+          <span class="modal-progress-step__number">1</span>
+          <span class="modal-progress-step__label">Type</span>
+        </div>
+        <div
+          class="modal-progress-line"
+          [class.modal-progress-line--active]="currentStep() !== 'type'"
+        ></div>
+        <div
+          class="modal-progress-step"
+          [class.modal-progress-step--active]="currentStep() === 'basic'"
+          [class.modal-progress-step--complete]="currentStep() === 'review'"
+        >
+          <span class="modal-progress-step__number">2</span>
+          <span class="modal-progress-step__label">Details</span>
+        </div>
+        <div
+          class="modal-progress-line"
+          [class.modal-progress-line--active]="currentStep() === 'review'"
+        ></div>
+        <div
+          class="modal-progress-step"
+          [class.modal-progress-step--active]="currentStep() === 'review'"
+        >
+          <span class="modal-progress-step__number">3</span>
+          <span class="modal-progress-step__label">Review</span>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Step 1: Task Type -->
+        @if (currentStep() === 'type') {
+          <div class="form-step">
+            <h3 class="form-step-title">What type of checklist item is this?</h3>
+            <p class="form-step-description">
+              Choose whether this task resets daily or weekly. This determines when your progress
+              resets.
+            </p>
+
+            <div class="task-type-options">
+              @for (option of importanceOptions; track option.value) {
+                <label
+                  class="task-type-option"
+                  [class.task-type-option--selected]="formData().importance === option.value"
+                >
+                  <input
+                    type="radio"
+                    name="taskImportance"
+                    [value]="option.value"
+                    [checked]="formData().importance === option.value"
+                    (change)="updateFormData({ importance: option.value })"
+                  />
+                  <div class="task-type-option__content">
+                    <i
+                      class="bi task-type-option__icon"
+                      [ngClass]="option.value === 'daily' ? 'bi-sunrise' : 'bi-calendar-week'"
+                    ></i>
+                    <div>
+                      <strong class="task-type-option__title">{{ option.label }}</strong>
+                      <p class="task-type-option__desc">{{ option.description }}</p>
+                    </div>
+                  </div>
+                </label>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Step 2: Basic Details -->
+        @if (currentStep() === 'basic') {
+          <div class="form-step">
+            <h3 class="form-step-title">Task Details</h3>
+            <p class="form-step-description">
+              Give your checklist item a clear name and optional description.
+            </p>
+
+            <div class="form-group">
+              <label class="form-label" for="itemLabel">
+                Task Name
+                <span class="form-label-info"
+                  >({{ formData().label?.length || 0 }}/{{ limits.LABEL_MAX_LENGTH }})</span
+                >
+              </label>
+              <input
+                type="text"
+                id="itemLabel"
+                class="form-input"
+                placeholder="e.g., Complete Guild Hero's Realm"
+                [value]="formData().label || ''"
+                (input)="updateFormData({ label: $any($event.target).value })"
+                [maxLength]="limits.LABEL_MAX_LENGTH"
+              />
+              <small class="form-help"> This is what will show in your checklist </small>
+
+              <!-- Duplicate name error -->
+              @if (getDuplicateLabelError()) {
+                <div class="form-error">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  {{ getDuplicateLabelError() }}
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="itemDescription">
+                Description (Optional)
+                <span class="form-label-info"
+                  >({{ formData().description?.length || 0 }}/{{
+                    limits.DESCRIPTION_MAX_LENGTH
+                  }})</span
+                >
+              </label>
+              <textarea
+                id="itemDescription"
+                class="form-textarea"
+                rows="3"
+                placeholder="Add notes or details about this task..."
+                [value]="formData().description || ''"
+                (input)="updateFormData({ description: $any($event.target).value })"
+                [maxLength]="limits.DESCRIPTION_MAX_LENGTH"
+              ></textarea>
+              <small class="form-help"> Shows below the task name (only in detailed view) </small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"> Tags (Optional, max {{ limits.MAX_TAGS }}) </label>
+              <p class="form-help" style="margin-bottom: 0.75rem">
+                Select up to {{ limits.MAX_TAGS }} tags to categorize this task
+              </p>
+
+              <div class="tag-selector">
+                @for (tag of tagOptions; track tag.value) {
+                  <label
+                    class="tag-option"
+                    [class.tag-option--selected]="isTagSelected(tag.value)"
+                    [class.tag-option--disabled]="
+                      !isTagSelected(tag.value) && (formData().tags?.length || 0) >= limits.MAX_TAGS
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="isTagSelected(tag.value)"
+                      [disabled]="
+                        !isTagSelected(tag.value) &&
+                        (formData().tags?.length || 0) >= limits.MAX_TAGS
+                      "
+                      (change)="toggleTag(tag.value)"
+                    />
+                    <span>{{ tag.label }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 3: Review -->
+        @if (currentStep() === 'review') {
+          <div class="form-step">
+            <h3 class="form-step-title">Review Your Checklist Item</h3>
+            <p class="form-step-description">
+              Check everything looks correct before saving. You can edit this item later if needed.
+            </p>
+
+            <div class="review-card">
+              <div class="review-card__section">
+                <strong>Type:</strong>
+                <p>{{ getImportanceLabel() }}</p>
+              </div>
+
+              <div class="review-card__section">
+                <strong>Task Name:</strong>
+                <p>{{ formData().label }}</p>
+              </div>
+
+              @if (formData().description) {
+                <div class="review-card__section">
+                  <strong>Description:</strong>
+                  <p>{{ formData().description }}</p>
+                </div>
+              }
+
+              <div class="review-card__section">
+                <strong>Tags:</strong>
+                <p>{{ getSelectedTagsDisplay() }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Modal Footer -->
+      <footer class="modal-footer">
+        <div class="modal-footer-actions">
+          @if (currentStep() !== 'type' && !(currentStep() === 'basic' && editingItem)) {
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="goToStep(currentStep() === 'basic' ? 'type' : 'basic')"
+            >
+              <i class="bi bi-arrow-left"></i> Back
+            </button>
+          }
+
+          <div class="modal-footer-spacer"></div>
+
+          <button type="button" class="btn-secondary" (click)="onClose()">Cancel</button>
+
+          @if (currentStep() === 'type') {
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!canProceedFromType()"
+              (click)="goToStep('basic')"
+            >
+              Next <i class="bi bi-arrow-right"></i>
+            </button>
+          } @else if (currentStep() === 'basic') {
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!canProceedFromBasic()"
+              (click)="goToStep('review')"
+            >
+              Next <i class="bi bi-arrow-right"></i>
+            </button>
+          } @else if (currentStep() === 'review') {
+            <button type="button" class="btn-primary" (click)="onSubmit()">
+              <i class="bi bi-check-lg"></i>
+              @if (editingItem) {
+                Update Item
+              } @else {
+                Create Item
+              }
+            </button>
+          }
+        </div>
+      </footer>
+    </div>
+  </div>
+}

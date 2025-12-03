@@ -62,7 +62,7 @@ export class TimerService {
           return buildTimerChip(def, now);
         });
 
-      return [...builtInChips, ...customRecurringChips];
+      return [...customRecurringChips, ...builtInChips];
     }),
   );
 }
