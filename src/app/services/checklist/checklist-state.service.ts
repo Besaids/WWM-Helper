@@ -1,15 +1,22 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { loadJsonFromStorage, loadVersioned, saveVersioned } from '../../utils';
 import { getDailyCycleId, getWeeklyCycleId } from '../../configs';
-import { ChecklistItem, ChecklistPrefs } from '../../models';
+import { ChecklistFrequency, ChecklistItem, ChecklistPrefs } from '../../models';
+import { ChecklistRegistryService } from './checklist-registry.service';
 
 type ChecklistTab = 'daily' | 'weekly';
 type ChecklistState = Record<string, boolean>;
+type CompletionCounts = Record<string, number>;
 
 const CHECKLIST_PREFS_KEY = 'wwm-helper.checklist.prefs';
 
 @Injectable({ providedIn: 'root' })
 export class ChecklistStateService {
+  private readonly registry = inject(ChecklistRegistryService);
+
+  private stateByType = new Map<ChecklistFrequency, Record<string, boolean>>();
+  private completionCountsByType = new Map<ChecklistFrequency, CompletionCounts>();
+
   private dailyState: ChecklistState = {};
   private weeklyState: ChecklistState = {};
 
@@ -18,9 +25,10 @@ export class ChecklistStateService {
 
   private pinned: Record<string, boolean> = {};
   private hidden: Record<string, boolean> = {};
+  private completionCounts: Record<string, number> = {}; // Global completion counts (non-cycle)
 
   constructor() {
-    this.loadState();
+    this.loadAllStates();
     this.loadPrefs();
   }
 
@@ -63,18 +71,64 @@ export class ChecklistStateService {
   }
 
   isChecked(item: ChecklistItem): boolean {
-    const state = item.frequency === 'daily' ? this.dailyState : this.weeklyState;
+    const state = this.getStateForType(item.frequency);
     return !!state[item.id];
   }
 
   toggle(item: ChecklistItem, checked: boolean): void {
-    const state = item.frequency === 'daily' ? this.dailyState : this.weeklyState;
+    const state = this.getStateForType(item.frequency);
+    const wasChecked = !!state[item.id];
+
     if (checked) {
       state[item.id] = true;
+      // Only increment if it wasn't already checked
+      if (!wasChecked) {
+        this.incrementCompletionCount(item);
+      }
     } else {
       delete state[item.id];
+      // Only decrement if it was checked before
+      if (wasChecked) {
+        this.decrementCompletionCount(item);
+      }
     }
-    this.saveState();
+
+    this.saveStateForType(item.frequency);
+  }
+
+  /**
+   * Get completion count for an item (persists across same cycle)
+   */
+  getCompletionCount(item: ChecklistItem): number {
+    const counts = this.getCompletionCountsForType(item.frequency);
+    return counts[item.id] ?? 0;
+  }
+
+  /**
+   * Increment completion count for an item
+   */
+  private incrementCompletionCount(item: ChecklistItem): void {
+    const counts = this.getCompletionCountsForType(item.frequency);
+    const currentCount = counts[item.id] ?? 0;
+    counts[item.id] = currentCount + 1;
+    this.saveCompletionCountsForType(item.frequency);
+  }
+
+  /**
+   * Decrement completion count for an item (min 0)
+   */
+  private decrementCompletionCount(item: ChecklistItem): void {
+    const counts = this.getCompletionCountsForType(item.frequency);
+    const currentCount = counts[item.id] ?? 0;
+    counts[item.id] = Math.max(0, currentCount - 1);
+    this.saveCompletionCountsForType(item.frequency);
+  }
+
+  resetType(type: ChecklistFrequency): void {
+    this.stateByType.set(type, {});
+    this.completionCountsByType.set(type, {}); // Also reset completion counts
+    this.saveStateForType(type);
+    this.saveCompletionCountsForType(type);
   }
 
   resetTab(tab: ChecklistTab): void {
@@ -108,12 +162,14 @@ export class ChecklistStateService {
 
     this.pinned = legacy?.pinned ?? {};
     this.hidden = legacy?.hidden ?? {};
+    this.completionCounts = legacy?.completionCounts ?? {};
   }
 
   private savePrefs(): void {
     const prefs: ChecklistPrefs = {
       pinned: this.pinned,
       hidden: this.hidden,
+      completionCounts: this.completionCounts,
     };
 
     saveVersioned<ChecklistPrefs>(CHECKLIST_PREFS_KEY, prefs);
@@ -139,5 +195,65 @@ export class ChecklistStateService {
 
     saveVersioned<ChecklistState>(dailyKey, this.dailyState);
     saveVersioned<ChecklistState>(weeklyKey, this.weeklyState);
+  }
+
+  private getStateForType(type: ChecklistFrequency): Record<string, boolean> {
+    if (!this.stateByType.has(type)) {
+      this.stateByType.set(type, {});
+    }
+    return this.stateByType.get(type)!;
+  }
+
+  private getCompletionCountsForType(type: ChecklistFrequency): CompletionCounts {
+    if (!this.completionCountsByType.has(type)) {
+      this.completionCountsByType.set(type, {});
+    }
+    return this.completionCountsByType.get(type)!;
+  }
+
+  private getStorageKey(type: ChecklistFrequency): string {
+    const config = this.registry.getTypeConfig(type);
+    const cycleId = config?.cycleKeyGenerator() ?? 'unknown';
+    return `wwm-checklist-${type}-${cycleId}`;
+  }
+
+  private getCompletionCountsStorageKey(type: ChecklistFrequency): string {
+    const config = this.registry.getTypeConfig(type);
+    const cycleId = config?.cycleKeyGenerator() ?? 'unknown';
+    return `wwm-checklist-counts-${type}-${cycleId}`;
+  }
+
+  private loadAllStates(): void {
+    // Load state for all known types
+    for (const typeConfig of this.registry.availableTypes()) {
+      this.loadStateForType(typeConfig.id);
+      this.loadCompletionCountsForType(typeConfig.id);
+    }
+  }
+
+  private loadStateForType(type: ChecklistFrequency): void {
+    const key = this.getStorageKey(type);
+    const versioned = loadVersioned<Record<string, boolean>>(key);
+    const state = versioned?.data ?? loadJsonFromStorage<Record<string, boolean>>(key) ?? {};
+    this.stateByType.set(type, state);
+  }
+
+  private loadCompletionCountsForType(type: ChecklistFrequency): void {
+    const key = this.getCompletionCountsStorageKey(type);
+    const versioned = loadVersioned<CompletionCounts>(key);
+    const counts = versioned?.data ?? loadJsonFromStorage<CompletionCounts>(key) ?? {};
+    this.completionCountsByType.set(type, counts);
+  }
+
+  private saveStateForType(type: ChecklistFrequency): void {
+    const key = this.getStorageKey(type);
+    const state = this.getStateForType(type);
+    saveVersioned(key, state);
+  }
+
+  private saveCompletionCountsForType(type: ChecklistFrequency): void {
+    const key = this.getCompletionCountsStorageKey(type);
+    const counts = this.getCompletionCountsForType(type);
+    saveVersioned(key, counts);
   }
 }

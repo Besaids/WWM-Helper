@@ -1,4 +1,4 @@
-// src/app/components/timers/custom-timer-modal/custom-timer-modal.component.scss
+// src/app/components/checklist/custom-checklist-modal/custom-checklist-modal.component.scss
 
 /* =======================
    Modal Overlay & Container - GLOBAL STYLES
@@ -185,7 +185,72 @@
   }
 
   /* =======================
-     Form Groups
+     Task Type Options (Radio Cards)
+     ======================= */
+
+  .task-type-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .task-type-option {
+    position: relative;
+    display: block;
+    cursor: pointer;
+
+    input[type='radio'] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .task-type-option__content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+  }
+
+  .task-type-option--selected .task-type-option__content {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: #38bdf8;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+  }
+
+  .task-type-option__icon {
+    font-size: 2rem;
+    color: #38bdf8;
+    flex-shrink: 0;
+  }
+
+  .task-type-option__title {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f5f5f7;
+    margin-bottom: 0.25rem;
+  }
+
+  .task-type-option__desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+
+  /* =======================
+     Form Elements
      ======================= */
 
   .form-group {
@@ -246,14 +311,6 @@
     line-height: 1.5;
   }
 
-  .form-select--inline {
-    display: inline-block;
-    width: auto;
-    min-width: 5rem;
-    padding: 0.625rem 0.75rem;
-    font-size: 0.875rem;
-  }
-
   .form-help {
     display: block;
     margin-top: 0.4rem;
@@ -280,226 +337,18 @@
     }
   }
 
-  .form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 0.75rem;
-  }
-
   /* =======================
-     Timer Type Options (Radio Cards)
+     Tag Selector
      ======================= */
 
-  .timer-type-options {
+  .tag-selector {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .timer-type-option {
-    position: relative;
-    display: block;
-    cursor: pointer;
-
-    input[type='radio'] {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-  }
-
-  .timer-type-option__content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    border-radius: 12px;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
-
-    &:hover {
-      background: rgba(15, 23, 42, 0.8);
-      border-color: rgba(56, 189, 248, 0.3);
-    }
-  }
-
-  .timer-type-option--selected .timer-type-option__content {
-    background: rgba(56, 189, 248, 0.12);
-    border-color: #38bdf8;
-    box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
-  }
-
-  .timer-type-option__icon {
-    font-size: 2rem;
-    color: #38bdf8;
-    flex-shrink: 0;
-  }
-
-  .timer-type-option__title {
-    display: block;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #f5f5f7;
-    margin-bottom: 0.25rem;
-  }
-
-  .timer-type-option__desc {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #94a3b8;
-    line-height: 1.4;
-  }
-
-  /* =======================
-     Icon Selector
-     ======================= */
-
-  .icon-picker-trigger {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 10px;
-    color: #f5f5f7;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
-
-    &:hover {
-      background: rgba(15, 23, 42, 0.8);
-      border-color: rgba(56, 189, 248, 0.3);
-    }
-
-    > i:first-child {
-      font-size: 1.5rem;
-      color: #38bdf8;
-    }
-
-    > span {
-      flex: 1;
-      text-align: left;
-    }
-
-    > i:last-child {
-      font-size: 1rem;
-      color: #94a3b8;
-    }
-  }
-
-  .icon-selector {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-    animation: fadeInSlide 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .icon-selector-option {
-    position: relative;
-    display: block;
-    cursor: pointer;
-
-    input[type='radio'] {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    i {
-      width: 3rem;
-      height: 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 10px;
-      color: #94a3b8;
-      transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    &:hover i {
-      background: rgba(15, 23, 42, 0.8);
-      border-color: rgba(56, 189, 248, 0.3);
-      color: #f5f5f7;
-    }
-
-    &--selected i {
-      background: rgba(56, 189, 248, 0.15);
-      border-color: #38bdf8;
-      color: #38bdf8;
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
-    }
-  }
-
-  /* =======================
-     Schedule Fields
-     ======================= */
-
-  .schedule-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 0.5rem;
-  }
-
-  .time-slot {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 10px;
-
-    &--weekly {
-      flex-wrap: wrap;
-    }
-
-    span {
-      color: #94a3b8;
-      font-weight: 500;
-    }
-  }
-
-  .btn-icon-danger {
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: transparent;
-    color: #ef4444;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
-    margin-left: auto;
-
-    &:hover {
-      background: rgba(239, 68, 68, 0.12);
-      color: #dc2626;
-    }
-  }
-
-  /* =======================
-     Weekday Selector
-     ======================= */
-
-  .weekday-selector {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 
-  .weekday-option {
-    position: relative;
-    display: block;
+  .tag-option {
+    display: inline-block;
     cursor: pointer;
 
     input[type='checkbox'] {
@@ -509,31 +358,34 @@
     }
 
     span {
-      height: 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-block;
+      padding: 0.5rem 0.875rem;
       background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 10px;
-      font-size: 0.75rem;
-      font-weight: 500;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 8px;
       color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 500;
       transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    &:hover span {
+    &:hover:not(.tag-option--disabled) span {
       background: rgba(15, 23, 42, 0.8);
-      border-color: rgba(56, 189, 248, 0.3);
+      border-color: rgba(56, 189, 248, 0.4);
       color: #f5f5f7;
     }
+  }
 
-    &--selected span {
-      background: rgba(56, 189, 248, 0.15);
-      border-color: #38bdf8;
-      color: #38bdf8;
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
-    }
+  .tag-option--selected span {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+    color: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+  }
+
+  .tag-option--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 
   /* =======================
@@ -545,44 +397,6 @@
     border: 1px solid rgba(148, 163, 184, 0.12);
     border-radius: 12px;
     padding: 1.25rem;
-  }
-
-  .review-card__header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .review-card__icon {
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(15, 23, 42, 0.72);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 10px;
-
-    i {
-      font-size: 1.5rem;
-      color: #38bdf8;
-    }
-  }
-
-  .review-card__title {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #f5f5f7;
-  }
-
-  .review-card__subtitle {
-    margin: 0.25rem 0 0;
-    font-size: 0.875rem;
-    color: #94a3b8;
   }
 
   .review-card__section {
@@ -617,6 +431,10 @@
     }
   }
 
+  .text-muted {
+    color: #94a3b8;
+  }
+
   /* =======================
      Modal Footer
      ======================= */
@@ -642,8 +460,7 @@
      ======================= */
 
   .btn-primary,
-  .btn-secondary,
-  .btn-sm {
+  .btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -683,19 +500,6 @@
   }
 
   .btn-secondary {
-    background: rgba(148, 163, 184, 0.12);
-    color: #f5f5f7;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-
-    &:hover:not(:disabled) {
-      background: rgba(148, 163, 184, 0.2);
-      border-color: rgba(148, 163, 184, 0.3);
-    }
-  }
-
-  .btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
     background: rgba(148, 163, 184, 0.12);
     color: #f5f5f7;
     border: 1px solid rgba(148, 163, 184, 0.2);
@@ -785,34 +589,12 @@
       font-size: 0.85rem;
     }
 
-    .timer-type-option__content {
+    .task-type-option__content {
       padding: 0.875rem 1rem;
     }
 
-    .timer-type-option__icon {
+    .task-type-option__icon {
       font-size: 1.5rem;
     }
-
-    .icon-selector {
-      grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
-    }
-
-    .icon-selector-option i {
-      width: 2.5rem;
-      height: 2.5rem;
-      font-size: 1.25rem;
-    }
-
-    .weekday-selector {
-      gap: 0.35rem;
-    }
-
-    .form-row {
-      grid-template-columns: 1fr;
-    }
   }
-}
-
-.add-time-slot-button {
-  margin-top: 0.75rem;
 }

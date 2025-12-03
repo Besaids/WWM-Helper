@@ -1,3 +1,197 @@
+## 2025-12-03 – Custom Checklist System & Home Page Redesign
+
+### Overview
+
+Implemented a complete custom checklist system allowing users to create their own daily and weekly tasks, alongside a major home page redesign featuring a three-column layout with logo, timer state indicators, and expanded pinned task organization.
+
+### Custom Checklist System
+
+#### Features Added
+
+- **3-Step Modal Wizard**:
+  1. Task Type Selection (Daily vs Weekly with reset time explanations)
+  2. Details Input (label, description, tags with character limits)
+  3. Review & Confirm
+- **Task Types**:
+  - **Daily Tasks**: Reset every day at 21:00 UTC
+  - **Weekly Tasks**: Reset every Sunday at 21:00 UTC
+- **Multi-Select Tag System**:
+  - Up to 5 tags per task from curated list (Combat, PvP, PvE, Economy, etc.)
+  - Visual checkboxes with disabled state when limit reached
+- **Completion Counter**: 
+  - Tracks how many times each task has been completed in the current cycle
+  - Green badge with checkmark icon displays count when > 0
+  - Counters reset automatically with the task's cycle
+
+#### Checklist Architecture Expansion
+
+- **Registry Pattern**: `ChecklistRegistryService` centralizes type definitions and item retrieval
+  - Six checklist types: `daily`, `weekly`, `seasonal-daily`, `seasonal-weekly`, `seasonal-period`, `custom`
+  - Dynamic cycle key generation per type
+  - Unified `getItemsForType()` interface
+- **Custom Checklist Service**: Full CRUD operations with localStorage persistence
+  - Versioned storage at `wwm-custom-checklist` key
+  - Auto-generates IDs with timestamp and random suffix
+  - Maps importance (`daily`/`weekly`) to category names
+  - Text sanitization on all user inputs
+- **State Service Updates**: Added completion counter tracking
+  - Per-cycle storage: `wwm-checklist-counts-{type}-{cycleId}`
+  - `incrementCompletionCount()` / `decrementCompletionCount()` methods
+  - Counters persist within cycle, reset automatically on cycle change
+
+#### Data Model Expansions
+
+- **`ChecklistFrequency`**: Extended from 2 types to 6 (`daily`, `weekly`, `seasonal-daily`, `seasonal-weekly`, `seasonal-period`, `custom`)
+- **`ChecklistImportance`**: Expanded from `core`|`optional` to include `daily`|`weekly` for custom items
+- **`ChecklistItem`**: Added optional fields:
+  - `expired: boolean` – for seasonal/event tasks
+  - `isCustom?: boolean` – flag for user-created items
+  - `createdAt?: string` – ISO timestamp
+  - `seasonId?: string` – ties item to specific season
+- **New Interfaces**:
+  - `ChecklistTypeConfig` – registry type definition
+  - `CustomChecklistItemFormData` – form data shape
+  - `CustomChecklistStorage` – versioned storage payload
+  - `CUSTOM_CHECKLIST_LIMITS` – validation constants
+
+#### UI/UX Features
+
+- **Modal Integration**:
+  - "Add custom item" button in Custom tab
+  - Edit mode skips type selection step
+  - Duplicate name detection (case-insensitive)
+  - Scroll lock when modal open, click-outside-to-close
+- **Checklist Display Updates**:
+  - Custom items appear in two new importance sections (`daily`, `weekly`)
+  - Custom items prioritized above system items (sorted by `isCustom` flag first)
+  - Edit (pencil icon) and delete (trash icon) buttons on hover
+  - Completion counter badge with green styling
+  - Empty state message when no custom items exist
+- **Modal Styling**:
+  - Cyan gradient theme matching custom timer modal
+  - Radio card selection for task types with icons
+  - Tag selector with checkbox grid layout
+  - Progress indicators: active uses cyan gradient, complete uses green
+  - Standardized button styling across modals
+
+#### Storage & Persistence
+
+- **Custom Items**: `wwm-custom-checklist` (version 1, global, non-cycle)
+- **Completion Counts**: `wwm-checklist-counts-{type}-{cycleId}` (per-cycle)
+- **Checklist State**: `wwm-checklist-{type}-{cycleId}` (checked items, per-cycle)
+- **Preferences**: `wwm-helper.checklist.prefs` (pinned/hidden, non-cycle)
+
+### Home Page Redesign
+
+#### Three-Column Hero Layout
+
+- **New Grid Structure**: `1fr auto 1fr` (left card | logo | right card)
+  - Left: "Where Winds Meet Helper" hero text (same content, equal width card)
+  - Center: WWM wheat logo (180px, 70% opacity, hidden on mobile <960px)
+  - Right: "Upcoming events" (equal width to hero, max 4 timers)
+- **Logo Styling**:
+  - Uses `assets/portal/wwm-wheat-256.png`
+  - Drop shadow for depth
+  - Subtle hover effect (opacity 0.7 → 0.85, scale 1.0 → 1.05)
+  - Completely hidden on mobile to prevent scrolling clutter
+
+#### Timer State Indicators
+
+- **Active Events (Green)**:
+  - Border: `rgba(34, 197, 94, 0.6)` with soft glow
+  - Applied when label includes "(open)"
+- **Warning Gradient (Yellow → Red)**:
+  - 30 minutes: Yellow `rgb(234, 179, 8)`
+  - Interpolates to Red `rgb(239, 68, 68)` at 0 minutes
+  - Border color + glow shadow with CSS custom properties
+  - Gradient progress calculated: `1 - (seconds / 1800)`
+- **Timer State Logic**:
+  - Matches timer-strip component behavior
+  - Parses remaining time strings to seconds
+  - Active > Warning/Urgent > Normal priority
+  - Uses `TimerState` interface with `warningProgress` tracking
+
+#### Expanded Pinned Tasks
+
+- **Full-Width Card**: Pinned tasks now span entire width below hero
+- **Three-Bucket Organization**:
+  - **Daily**: Regular daily + seasonal-daily + custom daily tasks
+  - **Weekly**: Regular weekly + seasonal-weekly + custom weekly tasks
+  - **Season Goals**: Seasonal-period tasks only
+- **Conditional Rendering**: Only displays buckets with pinned items (hides empty buckets)
+- **Priority Sorting**: Custom items appear first within each bucket (then alphabetical by label)
+- **Visual Distinction**: Custom items get subtle cyan border/background (no "Custom" badge)
+- **Grid Layout**: `repeat(auto-fit, minmax(300px, 1fr))` for responsive columns
+
+#### Reactive State Management
+
+- **Signal-Based Triggers**: `refreshTrigger` signal forces `pinnedBuckets` recomputation
+- **Immediate Updates**: Items disappear instantly when checked (via `refreshTrigger.update()`)
+- **Change Detection**: `ChangeDetectorRef.markForCheck()` ensures OnPush components update
+- **Timer State Computation**: Each timer gets `state` and `warningStyle` calculated in `upcomingTimers` computed signal
+
+### Technical Implementation
+
+#### Components Modified
+
+- `home.component.ts/html/scss` – Complete redesign with three-column layout, timer states, and bucket organization
+- `checklist.component.ts/html/scss` – Integrated custom modal, added importance sections, completion counters
+- `custom-checklist-modal.component.ts/html/scss` – Full 3-step wizard implementation
+
+#### Services Created/Updated
+
+- `checklist-registry.service.ts` – NEW: Type registry with dynamic item loading
+- `custom-checklist.service.ts` – NEW: CRUD service for custom tasks
+- `checklist-state.service.ts` – UPDATED: Added completion counter tracking
+
+#### Models Extended
+
+- `checklist.model.ts` – Expanded frequency types, importance types, added custom-related interfaces
+
+### Styling Consistency
+
+- **Design Token Usage**: All colors, surfaces, shadows from token system
+- **Modal Standardization**: Both custom timer and custom checklist modals now use identical cyan gradient theme
+- **Border Colors**: Fixed undefined variable errors (`$color-border-subtle` → `$border-subtle`)
+- **Active States**: Unified green/yellow/red indicators across timer strip and home page
+
+### Bug Fixes & Polish
+
+- Fixed import path for custom checklist modal component
+- Added missing importance filter sections for custom items display
+- Fixed completion counter loading (missing `loadCompletionCountsForType()` call)
+- Removed unused "Custom" badge from home page pinned items
+- Fixed change detection issues with `refreshTrigger` signal pattern
+- Corrected SCSS variable names to match token system
+
+### Files Modified/Created
+
+**New Files:**
+- `src/app/services/checklist/checklist-registry.service.ts`
+- `src/app/services/checklist/custom-checklist.service.ts`
+- `src/app/components/checklist/custom-checklist-modal/custom-checklist-modal.component.ts/html/scss`
+
+**Modified Files:**
+- `src/app/models/checklist.model.ts`
+- `src/app/services/checklist/checklist-state.service.ts`
+- `src/app/components/checklist/checklist.component.ts/html/scss`
+- `src/app/components/home/home.component.ts/html/scss`
+- `src/app/components/timers/custom-timer-modal/custom-timer-modal.component.scss`
+
+### Known Limitations
+
+- Seasonal checklist configs are placeholder arrays (ready for future season content)
+- Season ID tracking uses hardcoded `s1-2025` placeholder (TODO: implement proper season detection)
+- Custom checklist items cannot be reordered (display order is: custom first, then alphabetical)
+
+### Future Enhancements (Potential)
+
+- Import/export custom checklist items
+- Custom item templates/presets
+- Drag-and-drop reordering within buckets
+- Seasonal content population when seasons launch
+- Checklist item priorities/weighting system
+
 ## 2025-12-02 – Custom Timers System Implementation
 
 ### Overview
