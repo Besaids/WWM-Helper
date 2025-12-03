@@ -117,28 +117,28 @@ export class PathSeasonGuideComponent {
     return !!state[challengeId];
   }
 
-/**
- * Toggle challenge completion
- */
-toggleChallengeCompletion(event: Event, challengeId: string): void {
-  event.stopPropagation(); // Prevent any parent click handlers
-  event.preventDefault(); // Prevent default button behavior (form submission, scrolling, etc.)
-  this.completionService.toggleCompletion(challengeId);
-}
-
-  getPathCompletion(pathId: string): { completed: number; total: number } {
-  const state = this.completionState();
-  const seasonId = this.selectedSeasonId();
-  let completed = 0;
-
-  // Count challenges with format: {seasonId}-{pathId}-...
-  const prefix = `${seasonId}-${pathId}-`;
-  for (const challengeId in state) {
-    if (state[challengeId] && challengeId.startsWith(prefix)) {
-      completed++;
-    }
+  /**
+   * Toggle challenge completion
+   */
+  toggleChallengeCompletion(event: Event, challengeId: string): void {
+    event.stopPropagation(); // Prevent any parent click handlers
+    event.preventDefault(); // Prevent default button behavior (form submission, scrolling, etc.)
+    this.completionService.toggleCompletion(challengeId);
   }
 
-  return { completed, total: 5 };
-}
+  getPathCompletion(pathId: string): { completed: number; total: number } {
+    const state = this.completionState();
+    const seasonId = this.selectedSeasonId();
+    let completed = 0;
+
+    // Count challenges with format: {seasonId}-{pathId}-...
+    const prefix = `${seasonId}-${pathId}-`;
+    for (const challengeId in state) {
+      if (state[challengeId] && challengeId.startsWith(prefix)) {
+        completed++;
+      }
+    }
+
+    return { completed, total: 5 };
+  }
 }

@@ -303,7 +303,7 @@ export const BLADE_OUT_SEASON: PathSeasonConfig = {
           category: 'martial-art',
           name: '[Martial Art] Flamelash vs Lucky Seventeen',
           description:
-            'While using both Bamboocut - Wind weapons, defeat Lucky Seventeen (including trial). In a single run, maintain the Infernal Twinblades\' active Flamelash state 3 times. Repeat this requirement across 3 runs (3/3).',
+            "While using both Bamboocut - Wind weapons, defeat Lucky Seventeen (including trial). In a single run, maintain the Infernal Twinblades' active Flamelash state 3 times. Repeat this requirement across 3 runs (3/3).",
           conditions: {
             boss: 'Lucky Seventeen',
             mode: 'Campaign or Trial – single-player',
@@ -343,8 +343,7 @@ export const BLADE_OUT_SEASON: PathSeasonConfig = {
             effect: 'Samsara',
             perRunRequirement: 'Gain Samsara 5 times in one run',
             runsRequired: 5,
-            notes:
-              'Samsara only activates after the first breakthrough on Echoes of Oblivion.',
+            notes: 'Samsara only activates after the first breakthrough on Echoes of Oblivion.',
           },
         },
         {
