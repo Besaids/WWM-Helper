@@ -46,4 +46,12 @@ export class CookieConsentService {
     };
     this.save(payload);
   }
+
+  resetConsent(): void {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  }
 }

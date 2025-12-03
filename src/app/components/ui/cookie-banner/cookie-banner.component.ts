@@ -26,12 +26,13 @@ export class CookieBannerComponent {
 
   acceptAll(): void {
     this.consent.setAnalyticsConsent(true);
-    this.analytics.initialize(); // Start analytics immediately
+    this.analytics.grantConsent(); // Update consent mode
     this.isVisible.set(false);
   }
 
   rejectAll(): void {
     this.consent.setAnalyticsConsent(false);
+    this.analytics.denyConsent(); // Update consent mode
     this.isVisible.set(false);
   }
 }

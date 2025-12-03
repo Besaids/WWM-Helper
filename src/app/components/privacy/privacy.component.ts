@@ -1,5 +1,7 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { CookieConsentService } from '../../services/privacy/cookie-consent.service';
+import { AnalyticsService } from '../../services/analytics/analytics.service';
 
 @Component({
   selector: 'app-privacy',
@@ -10,16 +12,33 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class PrivacyComponent {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly cookieConsent = inject(CookieConsentService);
+  private readonly analytics = inject(AnalyticsService);
 
-  protected resetCookieConsent(): void {
+  protected readonly showResetMessage = signal(false);
+
+  resetCookieConsent(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    // Remove the consent decision
-    localStorage.removeItem('wwm-helper.cookie-consent');
+    // Clear the consent preference from localStorage
+    this.cookieConsent.resetConsent();
 
-    // Reload the page so the cookie banner appears again
-    window.location.reload();
+    // Reset analytics consent mode to denied
+    this.analytics.denyConsent();
+
+    // Show confirmation message
+    this.showResetMessage.set(true);
+
+    // Hide message after 3 seconds
+    setTimeout(() => {
+      this.showResetMessage.set(false);
+    }, 3000);
+
+    // Reload page to show cookie banner again
+    setTimeout(() => {
+      window.location.reload();
+    }, 3500);
   }
 }
