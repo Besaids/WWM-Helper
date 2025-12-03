@@ -1,0 +1,19 @@
+@if (isVisible()) {
+  <div class="cookie-banner">
+    <div class="cookie-banner-content">
+      <div class="cookie-banner-text">
+        <h3 class="cookie-banner-title">Cookie Notice</h3>
+        <p class="cookie-banner-description">
+          We use cookies to improve your experience and analyze site usage. By clicking "Accept",
+          you consent to analytics cookies.
+          <a routerLink="/privacy" class="cookie-banner-link">Learn more</a>
+        </p>
+      </div>
+
+      <div class="cookie-banner-actions">
+        <button type="button" class="btn-secondary" (click)="rejectAll()">Reject</button>
+        <button type="button" class="btn-primary" (click)="acceptAll()">Accept</button>
+      </div>
+    </div>
+  </div>
+}

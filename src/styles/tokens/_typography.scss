@@ -1,48 +1,86 @@
-@use 'tokens/colors' as *;
+@use 'colors' as *;
 
 /* ===========================
    Typography tokens
    =========================== */
 
 :root {
+  /* Font families */
   --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono:
+    'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
 
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.5rem;
-  --font-size-xxl: 2rem;
+  /* Font sizes */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-md: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.5rem; /* 24px */
+  --font-size-2xl: 2rem; /* 32px */
+  --font-size-3xl: 2.5rem; /* 40px */
 
+  /* Line heights */
+  --line-height-tight: 1.25;
   --line-height-base: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Letter spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
 }
 
 /* SCSS aliases */
 
 $font-family-base: var(--font-family-base);
+$font-family-mono: var(--font-family-mono);
 
 $font-size-xs: var(--font-size-xs);
 $font-size-sm: var(--font-size-sm);
 $font-size-md: var(--font-size-md);
 $font-size-lg: var(--font-size-lg);
 $font-size-xl: var(--font-size-xl);
-$font-size-xxl: var(--font-size-xxl);
+$font-size-2xl: var(--font-size-2xl);
+$font-size-3xl: var(--font-size-3xl);
 
+/* Legacy aliases */
+$font-size-xxl: var(--font-size-2xl);
+
+$line-height-tight: var(--line-height-tight);
 $line-height-base: var(--line-height-base);
+$line-height-relaxed: var(--line-height-relaxed);
+
+$font-weight-normal: var(--font-weight-normal);
+$font-weight-medium: var(--font-weight-medium);
+$font-weight-semibold: var(--font-weight-semibold);
+$font-weight-bold: var(--font-weight-bold);
+
+$letter-spacing-tight: var(--letter-spacing-tight);
+$letter-spacing-normal: var(--letter-spacing-normal);
+$letter-spacing-wide: var(--letter-spacing-wide);
 
 /* Optional heading helpers for reuse */
 
 .h-page-title {
-  font-size: $font-size-xxl;
-  font-weight: 600;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
 }
 
 .h-section-title {
   font-size: $font-size-xl;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
 }
 
 .h-section-subtitle {
   font-size: $font-size-sm;
   color: $text-muted;
+  line-height: $line-height-base;
 }

@@ -12,6 +12,7 @@
   /* Surfaces */
   --color-surface-card: rgba(15, 23, 42, 0.96);
   --color-surface-chip: rgba(15, 23, 42, 0.9);
+  --color-surface-subtle: rgba(15, 23, 42, 0.6);
 
   /* Accents */
   --color-accent-gold: #e4b86a;
@@ -19,6 +20,7 @@
   --color-accent-teal: #42c3c6;
   --color-accent-teal-active: #5ce0e2; /* brighter teal for active state */
   --color-accent-red: #f46a5c;
+  --color-accent-red-soft: #ef4444;
   --color-accent-gold-highlight: #f1c77a;
   --color-accent-gold-dim: #c9a45a;
   --color-accent-gold-active: #f5d47b;
@@ -37,6 +39,8 @@
 
   /* Borders */
   --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-medium: rgba(148, 163, 184, 0.2);
+  --color-border-strong: rgba(148, 163, 184, 0.4);
 }
 
 /* SCSS aliases for convenience */
@@ -48,12 +52,14 @@ $bg-strip: var(--color-bg-strip);
 
 $surface-card: var(--color-surface-card);
 $surface-chip: var(--color-surface-chip);
+$surface-subtle: var(--color-surface-subtle);
 
 $accent-gold: var(--color-accent-gold);
 $accent-gold-soft: var(--color-accent-gold-soft);
 $accent-teal: var(--color-accent-teal);
 $accent-teal-active: var(--color-accent-teal-active);
 $accent-red: var(--color-accent-red);
+$accent-red-soft: var(--color-accent-red-soft);
 $accent-gold-highlight: var(--color-accent-gold-highlight);
 $accent-gold-dim: var(--color-accent-gold-dim);
 $accent-gold-active: var(--color-accent-gold-active);
@@ -69,3 +75,5 @@ $text-muted: var(--color-text-muted);
 $text-muted-strong: var(--color-text-muted-strong);
 
 $border-subtle: var(--color-border-subtle);
+$border-medium: var(--color-border-medium);
+$border-strong: var(--color-border-strong);

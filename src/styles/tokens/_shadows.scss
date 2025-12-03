@@ -1,16 +1,49 @@
+/* ===========================
+   Shadow & Glow tokens
+   =========================== */
+
 :root {
+  /* Depth shadows - layered elevation */
   --shadow-depth-1: 0 0 0 1px rgba(0, 0, 0, 0.5);
   --shadow-depth-2: 0 2px 6px rgba(0, 0, 0, 0.45);
   --shadow-depth-3: 0 8px 20px rgba(0, 0, 0, 0.55);
   --shadow-depth-4: 0 16px 30px rgba(0, 0, 0, 0.55);
+  --shadow-depth-5: 0 24px 40px rgba(0, 0, 0, 0.65);
+
+  /* Soft shadows for cards and panels */
+  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
+  --shadow-soft-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
+
+  /* Accent glows - teal */
   --glow-teal-soft: 0 0 6px rgba(45, 212, 191, 0.35);
   --glow-teal-strong: 0 0 12px rgba(45, 212, 191, 0.55);
+  --glow-teal-intense: 0 0 16px rgba(66, 195, 198, 0.4);
+
+  /* Accent glows - gold */
   --glow-gold-soft: 0 0 6px rgba(245, 210, 139, 0.35);
+  --glow-gold-strong: 0 0 12px rgba(228, 184, 106, 0.45);
+
+  /* Inner shadows */
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-inset-strong: inset 0 4px 8px rgba(0, 0, 0, 0.5);
 }
+
+/* SCSS wrappers */
 $shadow-depth-1: var(--shadow-depth-1);
 $shadow-depth-2: var(--shadow-depth-2);
 $shadow-depth-3: var(--shadow-depth-3);
 $shadow-depth-4: var(--shadow-depth-4);
+$shadow-depth-5: var(--shadow-depth-5);
+
+$shadow-soft: var(--shadow-soft);
+$shadow-soft-lg: var(--shadow-soft-lg);
+
 $glow-teal-soft: var(--glow-teal-soft);
 $glow-teal-strong: var(--glow-teal-strong);
+$glow-teal-intense: var(--glow-teal-intense);
+
 $glow-gold-soft: var(--glow-gold-soft);
+$glow-gold-strong: var(--glow-gold-strong);
+
+$shadow-inset: var(--shadow-inset);
+$shadow-inset-strong: var(--shadow-inset-strong);

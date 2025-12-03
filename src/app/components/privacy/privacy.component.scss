@@ -1,0 +1,140 @@
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'mixins/capsule' as *;
+
+.privacy-page {
+  padding: 2rem $spacing-outer-x 3rem;
+}
+
+.privacy-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $text-primary;
+  }
+}
+
+.privacy-updated {
+  margin: 0;
+  font-size: 0.875rem;
+  color: $text-secondary;
+}
+
+.privacy-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.privacy-section {
+  @include capsule($layer: 3, $padding-y: 1.5rem, $padding-x: 2rem);
+  margin-bottom: 1.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  h3 {
+    margin: 1.25rem 0 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $text-primary;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin: 0 0 1rem;
+    line-height: 1.7;
+    color: $text-secondary;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ul {
+    margin: 0.5rem 0 1rem;
+    padding-left: 1.5rem;
+    color: $text-secondary;
+    line-height: 1.7;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong {
+    color: $text-primary;
+    font-weight: 600;
+  }
+}
+
+.privacy-link {
+  color: $accent-teal;
+  text-decoration: underline;
+  transition: color 120ms ease;
+
+  &:hover {
+    color: $accent-teal-active;
+  }
+}
+
+.privacy-action {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $border-subtle;
+}
+
+.privacy-action-hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: $text-muted;
+}
+
+@media (max-width: 768px) {
+  .privacy-page {
+    padding: 1.5rem $spacing-outer-x 2rem;
+  }
+
+  .privacy-header h1 {
+    font-size: 2rem;
+  }
+
+  .privacy-section {
+    padding: 1.25rem 1rem;
+
+    h2 {
+      font-size: 1.25rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}

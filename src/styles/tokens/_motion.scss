@@ -1,12 +1,37 @@
+/* ===========================
+   Motion tokens
+   =========================== */
+
+/**
+ * Duration and easing tokens for consistent animations
+ */
+
 :root {
-  --motion-fast: 120ms;
-  --motion-base: 160ms;
-  --motion-slow: 240ms;
-  --motion-emphasize: 300ms;
-  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Durations */
+  --motion-instant: 80ms; /* micro-interactions */
+  --motion-fast: 120ms; /* quick transitions */
+  --motion-base: 160ms; /* default duration */
+  --motion-slow: 240ms; /* deliberate animations */
+  --motion-emphasize: 300ms; /* important, emphasized transitions */
+
+  /* Easing curves */
+  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1); /* material-like ease */
+  --motion-ease-out: cubic-bezier(0, 0, 0.2, 1); /* snappy ease-out for entrances */
+  --motion-ease-in: cubic-bezier(0.4, 0, 1, 1); /* ease-in for exits */
+  --motion-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1); /* smooth both ways */
+  --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* bouncy spring */
 }
+
+/* SCSS aliases */
+
+$motion-instant: var(--motion-instant);
 $motion-fast: var(--motion-fast);
 $motion-base: var(--motion-base);
 $motion-slow: var(--motion-slow);
 $motion-emphasize: var(--motion-emphasize);
+
 $motion-ease: var(--motion-ease);
+$motion-ease-out: var(--motion-ease-out);
+$motion-ease-in: var(--motion-ease-in);
+$motion-ease-in-out: var(--motion-ease-in-out);
+$motion-spring: var(--motion-spring);

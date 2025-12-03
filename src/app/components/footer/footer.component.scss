@@ -33,7 +33,13 @@
   gap: 0.4rem; /* a bit tighter since we add separators */
 }
 
-/* Put a "|" between consecutive links */
+.app-footer-separator {
+  margin: 0 0.35rem;
+  opacity: 0.5;
+  color: $text-secondary;
+}
+
+/* Put a "|" between consecutive links (but not after separator or span) */
 .app-footer-links a + a::before {
   content: '|';
   margin: 0 0.35rem 0 0.15rem;

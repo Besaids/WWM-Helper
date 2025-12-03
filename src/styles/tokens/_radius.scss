@@ -10,26 +10,31 @@
 
 :root {
   /* Core radii */
-  --radius-card: 14px; /* cards, panels, modals */
-  --radius-pill: 999px; /* pill buttons, chips */
+  --radius-sm: 8px; /* small elements, tags, badges */
+  --radius-md: 10px; /* medium elements, inputs, form fields */
+  --radius-card: 14px; /* cards, panels, modal containers */
+  --radius-lg: 14px; /* large elements (alias for card) */
+  --radius-xl: 18px; /* extra large surfaces (modal overlays, major containers) */
+  --radius-pill: 999px; /* pill buttons, chips, rounded elements */
   --radius-toggle: 6px; /* small toggle / diamond helpers */
 
-  /**
-   * Convenience aliases
-   * - md/lg both map to card for now (no visual change)
-   * - xl is a slightly larger radius for big surfaces (modals, overlays)
-   */
-  --radius-md: var(--radius-card);
-  --radius-lg: var(--radius-card);
-  --radius-xl: 18px;
+  /* Semantic aliases */
+  --radius-input: var(--radius-md); /* form inputs */
+  --radius-button: var(--radius-pill); /* buttons */
+  --radius-modal: var(--radius-xl); /* modal containers */
 }
 
 /* SCSS wrappers */
 
+$radius-sm: var(--radius-sm);
+$radius-md: var(--radius-md);
 $radius-card: var(--radius-card);
+$radius-lg: var(--radius-lg);
+$radius-xl: var(--radius-xl);
 $radius-pill: var(--radius-pill);
 $radius-toggle: var(--radius-toggle);
 
-$radius-md: var(--radius-md);
-$radius-lg: var(--radius-lg);
-$radius-xl: var(--radius-xl);
+/* Semantic aliases */
+$radius-input: var(--radius-input);
+$radius-button: var(--radius-button);
+$radius-modal: var(--radius-modal);

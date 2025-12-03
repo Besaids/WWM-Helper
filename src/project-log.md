@@ -1,3 +1,163 @@
+## 2025-12-03 – Custom Timer Modal Validation Warnings & UI Polish
+
+### Overview
+
+Enhanced the custom timer modal with comprehensive validation warnings for all blocking conditions, plus various UI improvements including event timer card layout refinement and checklist button color differentiation.
+
+### Custom Timer Modal Validation System
+
+#### New Validation Error Messages
+
+- **Event Timer - Invalid End Date**:
+  - Added `getEventTimerError()` method to detect missing or past dates
+  - Error displayed below datetime-local input in Event Configuration step
+  - Messages:
+    - Missing date: "Please select an end date and time for this event."
+    - Past date: "End date must be in the future. Please choose a later date and time."
+  - Prevents proceeding to Review step until valid future date selected
+
+- **Weekly Range - Invalid Time Window**:
+  - Existing `getWeeklyRangeError()` method now displayed in UI
+  - Error shown below Closing Time input in Weekly Range schedule type
+  - Message: "Closing time must be after opening time in the same week."
+  - Validates that close time occurs after open time within weekly cycle
+
+- **Daily Multi - Time Slot Overlap** _(already implemented, verified working)_:
+  - `getDailyMultiOverlapError()` displayed below Window Duration input
+  - Checks for overlapping time windows when duration > 0 and multiple slots exist
+  - Message: "Time slots overlap with Xh window. Please adjust times or reduce window duration."
+  - Prevents invalid configurations that would cause timer conflicts
+
+#### Validation Architecture
+
+- **Consistent Error Display Pattern**:
+  - All errors use `.form-error` class with warning triangle icon
+  - Displayed immediately below relevant input/section
+  - Conditional rendering with `@if` blocks
+  - Errors are reactive – update as user modifies inputs
+- **Button Blocking Logic**:
+  - `canProceedFromSchedule()` checks all validations before allowing "Next" button
+  - Event timers require: valid `eventEndsAt` date in future + `eventCategory` selected
+  - Recurring timers require: valid `scheduleType` + schedule-specific data validation
+  - Daily-multi additionally checks: `!checkDailyMultiOverlap()`
+  - Weekly-range additionally checks: `validateWeeklyRange()`
+
+### Event Timer Card Layout Refinement
+
+#### Structure Reorganization
+
+- **New Three-Column Grid Layout**:
+  1. **Icon Wrapper Column**: Icon + category badge stacked vertically, center-aligned
+  2. **Content Column**: Timer label (h3) + remaining time stacked vertically
+  3. **Actions Column**: Edit/delete buttons (custom timers only)
+
+- **Previous Issue**: Category badge and remaining time were in same horizontal `meta` div, causing awkward wrapping and visual imbalance on desktop
+
+- **New Structure**:
+  - Category naturally paired with icon in left column (semantic grouping)
+  - Label and remaining time in content column (primary information)
+  - Clear visual hierarchy with logical content grouping
+  - Better responsive behavior across breakpoints
+
+#### Typography & Overflow Handling
+
+- **Text Truncation**:
+  - Timer labels: 2-line clamp with ellipsis for overflow
+  - `word-break: break-word` prevents long unbroken strings from breaking layout
+  - `min-width: 0` on flex/grid children allows text truncation to work
+- **Font Size Adjustments**:
+  - Label: 0.9rem (reduced for better multi-line display)
+  - Category badge: 0.7rem (compact, clear differentiation)
+  - Remaining time: 0.75rem (secondary information hierarchy)
+
+### Checklist UI Improvements
+
+#### Hide Button Color Change
+
+- **Problem**: Hide button used red color (`$accent-red-soft`), same as delete button for custom items
+- **Solution**: Changed to neutral slate (`#94a3b8`) with subtle hover state
+- **Result**: Clear visual distinction between:
+  - Pin (gold): Highlight/favorite action
+  - Hide (slate): Neutral visibility toggle
+  - Delete (red): Destructive permanent removal
+
+### Design System Enhancements
+
+#### Token System Expansion
+
+- **Radius Tokens**: Added missing semantic aliases
+  - `$radius-input` (alias for `$radius-md`)
+  - `$radius-button` (alias for `$radius-pill`)
+  - `$radius-sm` (8px), `$radius-xl` (18px)
+
+- **Shadow Tokens**: Enhanced depth system
+  - `$shadow-depth-1` through `$shadow-depth-5`
+  - Accent glows: `$glow-teal-soft`, `$glow-teal-strong`, `$glow-teal-intense`
+  - `$shadow-inset`, `$shadow-inset-strong`
+
+- **Color Tokens**: Added border and surface variants
+  - `$border-medium`, `$border-strong`
+  - `$surface-subtle`
+  - `$accent-red-soft` (for error states)
+
+#### Button System Standardization
+
+- **Unified Button Classes**:
+  - `.btn-primary` (teal), `.btn-secondary` (outline), `.btn-danger` (red)
+  - `.btn-ghost` (minimal), `.btn-gold` (alternative accent)
+  - `.btn-icon-*` variants for icon-only buttons
+  - Size modifiers: `.btn-sm`, `.btn-lg`, `.btn-block`
+
+- **Consistent Properties**:
+  - All buttons use `$radius-pill` for rounded edges
+  - `$shadow-depth-2` with hover lift effect
+  - Focus outline with teal accent
+  - Smooth transitions via motion tokens
+
+### Modal Design Consistency
+
+#### Teal Accent Conversion
+
+- **Custom Timer Modal**: Converted from blue (`#38bdf8`) to teal (`$accent-teal`)
+  - Progress indicators (active state uses teal)
+  - Selected states (radio cards, icon picker, weekday selector)
+  - Focus borders on inputs
+  - Icon colors and hover states
+
+- **Custom Checklist Modal**: Matching teal conversion
+  - Same accent color applied across all interactive elements
+  - Consistent with overall design system
+
+### Files Modified
+
+**Components**:
+
+- `src/app/components/timers/custom-timer-modal/custom-timer-modal.component.ts`
+- `src/app/components/timers/custom-timer-modal/custom-timer-modal.component.html`
+- `src/app/components/timers/custom-timer-modal/custom-timer-modal.component.scss`
+- `src/app/components/timers/timers.component.html`
+- `src/app/components/timers/timers.component.scss`
+- `src/app/components/checklist/checklist.component.scss`
+- `src/app/components/checklist/custom-checklist-modal/custom-checklist-modal.component.scss`
+
+**Design System**:
+
+- `src/styles/tokens/_radius.scss`
+- `src/styles/tokens/_shadows.scss`
+- `src/styles/tokens/_colors.scss`
+- `src/styles/tokens/_spacing.scss`
+- `src/styles/tokens/_motion.scss`
+- `src/styles/components/_buttons.scss`
+
+### Technical Notes
+
+- All validation methods follow pattern: `get[Feature]Error(): string | null`
+- Error messages provide clear, actionable feedback
+- Validation runs reactively as form data changes
+- Button states update immediately based on validation results
+- Design tokens ensure consistent styling across all components
+- SCSS compilation now error-free with complete token coverage
+
 ## 2025-12-03 – Custom Checklist System & Home Page Redesign
 
 ### Overview
@@ -18,7 +178,7 @@ Implemented a complete custom checklist system allowing users to create their ow
 - **Multi-Select Tag System**:
   - Up to 5 tags per task from curated list (Combat, PvP, PvE, Economy, etc.)
   - Visual checkboxes with disabled state when limit reached
-- **Completion Counter**: 
+- **Completion Counter**:
   - Tracks how many times each task has been completed in the current cycle
   - Green badge with checkmark icon displays count when > 0
   - Counters reset automatically with the task's cycle
@@ -167,11 +327,13 @@ Implemented a complete custom checklist system allowing users to create their ow
 ### Files Modified/Created
 
 **New Files:**
+
 - `src/app/services/checklist/checklist-registry.service.ts`
 - `src/app/services/checklist/custom-checklist.service.ts`
 - `src/app/components/checklist/custom-checklist-modal/custom-checklist-modal.component.ts/html/scss`
 
 **Modified Files:**
+
 - `src/app/models/checklist.model.ts`
 - `src/app/services/checklist/checklist-state.service.ts`
 - `src/app/components/checklist/checklist.component.ts/html/scss`
