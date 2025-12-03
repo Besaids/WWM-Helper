@@ -1,4 +1,4 @@
-import { ChecklistItem } from '../models';
+import { ChecklistItem } from '../../models';
 
 export const SEASONAL_WEEKLY_CHECKLIST: ChecklistItem[] = [
   {

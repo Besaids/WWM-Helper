@@ -264,6 +264,11 @@ export class HomeComponent {
             'How Trade Week works, Local vs Remote prices, mansion slots, and using guild tools.',
         },
         {
+          label: 'Seasonal Path Guide Challenges',
+          description:
+            'Detailed seasonal challenges for each sect path, integrated with completion tracking.',
+        },
+        {
           label: 'Integrated with tools',
           description:
             'Guides reference related timers and checklist items so everything stays in sync.',
@@ -298,6 +303,14 @@ export class HomeComponent {
     {
       label: 'Reddit Community r/WhereWindsMeet',
       href: 'https://www.reddit.com/r/WhereWindsMeet/',
+    },
+    {
+      label: 'Where Winds Meet Combos | PvP Combo Database',
+      href: 'https://www.wwmcombos.com/',
+    },
+    {
+      label: 'Where Winds Meet Map | Map Genie',
+      href: 'https://mapgenie.io/where-winds-meet/maps/world',
     },
   ];
 

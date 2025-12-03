@@ -1,6 +1,4 @@
-// src/app/configs/event-timers.ts
-
-import { EventTimerDefinition } from '../models';
+import { EventTimerDefinition } from '../../models';
 
 /**
  * Active limited-time content timers

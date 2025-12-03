@@ -1,4 +1,4 @@
-import { FreeplayIdea } from '../models';
+import { FreeplayIdea } from '../../models';
 
 export const FREEPLAY_IDEAS: FreeplayIdea[] = [
   {

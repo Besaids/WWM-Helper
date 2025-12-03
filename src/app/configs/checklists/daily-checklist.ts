@@ -1,4 +1,4 @@
-import { ChecklistItem } from '../models';
+import { ChecklistItem } from '../../models';
 
 export const DAILY_CHECKLIST: ChecklistItem[] = [
   {
@@ -32,6 +32,17 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     description:
       'Low-stress online content that gives character XP, Coins and Adventure Slips; often overlaps with Jianghu Errands.',
     tags: ['multiplayer', 'social'],
+    expired: false,
+  },
+  {
+    id: 'daily-sword-trial-joint-battle',
+    frequency: 'daily',
+    importance: 'core',
+    category: 'Sect & multiplayer',
+    label: 'Clear all 5 Joint Battle outposts (Sword Trial daily reward).',
+    description:
+      'In Hero’s Realm → Sword Trial → Joint Battle, clear all 5 outposts in a chain to claim the daily clear reward chest (40 Adventure Slips). Claim attempts refresh at daily reset.',
+    tags: ['multiplayer', 'combat', 'reward'],
     expired: false,
   },
   {

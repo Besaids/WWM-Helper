@@ -1,0 +1,486 @@
+// src/app/components/guides/path-season/path-season-guide.component.scss
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/shadows' as *;
+
+.path-season-guide {
+  .text-seasonal {
+    color: $accent-red;
+  }
+}
+
+/* Season Selector */
+.season-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.season-selector__btn {
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  border: 1px solid $border-medium;
+  background: rgba(255, 255, 255, 0.04);
+  color: $text-primary;
+  cursor: pointer;
+  font: inherit;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $accent-teal;
+    background: rgba(0, 255, 255, 0.08);
+  }
+
+  &--active {
+    border-color: $accent-teal;
+    background: rgba(0, 255, 255, 0.12);
+    color: $accent-teal-active;
+  }
+}
+
+.current-season-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background: rgba(228, 184, 106, 0.1);
+  border: 1px solid rgba(228, 184, 106, 0.3);
+  color: $accent-gold-soft;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Rewards Section */
+.rewards-section {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(228, 184, 106, 0.04);
+  border: 1px solid rgba(228, 184, 106, 0.15);
+}
+
+.rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.reward-card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid $border-subtle;
+  align-items: center;
+}
+
+.reward-card__image {
+  flex-shrink: 0;
+  width: auto;
+  height: 3.5rem;
+  max-width: 9rem;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.25rem;
+}
+
+.reward-card__content {
+  flex: 1;
+
+  h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0 0 0.2rem;
+    color: $text-secondary;
+  }
+
+  p {
+    font-size: 0.9rem;
+    margin: 0;
+    color: $text-primary;
+  }
+}
+
+.reward-card__note {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 0.2rem;
+  color: $text-muted;
+  font-style: italic;
+}
+
+/* Paths Layout */
+.paths-layout {
+  display: grid;
+  grid-template-columns: 18rem 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Path List (Left Sidebar) */
+.path-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  @media (max-width: 968px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.path-item {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid $border-subtle;
+  background: rgba(15, 23, 42, 0.6);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &:hover {
+    border-color: $accent-teal;
+    background: rgba(0, 255, 255, 0.06);
+  }
+
+  &--active {
+    border-color: $accent-teal;
+    background: rgba(0, 255, 255, 0.1);
+  }
+
+  @media (max-width: 968px) {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-width: 14rem;
+  }
+}
+
+.path-item__icon {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+
+  img {
+    height: 2rem;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
+    border-radius: 0.5rem;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+.path-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.path-item__name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.path-item__role {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.path-item__meta {
+  font-size: 0.75rem;
+  color: $text-secondary;
+}
+
+.path-item__weapons {
+  display: block;
+}
+
+/* Role Badge Colors */
+.role-dps {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.role-tank {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.role-healer {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.role-default {
+  background: rgba(148, 163, 184, 0.15);
+  color: $text-secondary;
+  border: 1px solid $border-medium;
+}
+
+/* Challenge Detail (Right Panel) */
+.challenge-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.challenge-detail__header {
+  h3 {
+    font-size: 1.3rem;
+    margin: 0 0 0.5rem;
+    color: $accent-gold-soft;
+  }
+}
+
+.challenge-detail__badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge-role {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.badge-category {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: $text-secondary;
+  border: 1px solid $border-subtle;
+}
+
+.challenge-detail__weapons {
+  font-size: 0.85rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+/* Challenges List */
+.challenges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.challenge-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid $border-subtle;
+}
+
+.challenge-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.challenge-card__category {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.category-combat {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.category-martial {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.category-inner {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.category-season {
+  background: rgba(66, 195, 198, 0.2);
+  color: $accent-teal-active;
+  border: 1px solid rgba(66, 195, 198, 0.4);
+}
+
+.challenge-card__order {
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-weight: 600;
+}
+
+.challenge-card__name {
+  font-size: 1rem;
+  margin: 0 0 0.4rem;
+  color: $text-primary;
+}
+
+.challenge-card__description {
+  font-size: 0.85rem;
+  color: $text-secondary;
+  margin: 0 0 0.75rem;
+  line-height: 1.5;
+}
+
+/* Requirements List */
+.challenge-requirements {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 0.8rem;
+}
+
+.requirement-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.5rem;
+
+  dt {
+    font-weight: 600;
+    color: $text-muted-strong;
+    margin: 0;
+  }
+
+  dd {
+    color: $text-primary;
+    margin: 0;
+  }
+
+  &--note {
+    grid-column: 1 / -1;
+    padding-top: 0.4rem;
+    border-top: 1px solid $border-subtle;
+
+    dt {
+      color: $accent-gold-soft;
+    }
+
+    dd {
+      color: $text-secondary;
+      font-style: italic;
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .requirement-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}
+
+/* Path item top section with icon and completion counter */
+.path-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.path-item__completion {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $accent-teal;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(66, 195, 198, 0.15);
+  border: 1px solid rgba(66, 195, 198, 0.3);
+}
+
+/* Challenge card header adjustment */
+.challenge-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.challenge-card__header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Completion checkbox button */
+.challenge-card__checkbox {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: $text-muted;
+  font-size: 1.5rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $accent-teal;
+    transform: scale(1.1);
+  }
+
+  i.bi-check-circle-fill {
+    color: $accent-teal;
+  }
+
+  i.bi-circle {
+    color: $text-muted-strong;
+  }
+}
+
+/* Completed challenge card styling */
+.challenge-card--completed {
+  opacity: 0.7;
+  border-color: rgba(66, 195, 198, 0.3);
+  background: rgba(66, 195, 198, 0.05);
+
+  .challenge-card__name {
+    text-decoration: line-through;
+    color: $text-secondary;
+  }
+}
