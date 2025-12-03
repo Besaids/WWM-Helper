@@ -1,4 +1,4 @@
-import { TimerDetails } from '../models';
+import { TimerDetails } from '../../models';
 
 export const TIMER_DETAILS_CONFIG: Record<string, TimerDetails> = {
   'daily-reset': {

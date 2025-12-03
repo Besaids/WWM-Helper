@@ -1,4 +1,4 @@
-import { ChecklistItem } from '../models';
+import { ChecklistItem } from '../../models';
 
 export const WEEKLY_CHECKLIST: ChecklistItem[] = [
   {
@@ -19,8 +19,19 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     category: 'Group content',
     label: 'Clear weekly Hero’s Realm (Wandering Paths).',
     description:
-      'Up to 10-player raid. Two bosses per run; 1 weekly reward per boss. Costs no Energy and even grants Energy plus key weekly rewards.',
+      'Run Hero’s Realm in Wandering Paths → Challenges and defeat all bosses to fill the Weekly Hero’s Realm Clearance Rewards panel. Up to 10 players, 1 weekly reward per boss, no Energy cost and you even gain some Energy back.',
     tags: ['combat', 'multiplayer'],
+    expired: false,
+  },
+  {
+    id: 'weekly-sword-trial-echo-reward',
+    frequency: 'weekly',
+    importance: 'optional',
+    category: 'Group content',
+    label: 'Claim the Weekly Echo Reward from Sword Trial (multi-boss run).',
+    description:
+      'In Wandering Paths → Challenges → Sword Trial, do at least one dungeon with more than one boss and defeat the final boss to trigger the Weekly Echo Reward chest (up to 1 time per week). Usually happens naturally while you are running Sword Trials, but this keeps the weekly box from being forgotten.',
+    tags: ['combat', 'multiplayer', 'reward'],
     expired: false,
   },
   {

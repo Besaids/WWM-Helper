@@ -1,0 +1,378 @@
+<!-- src/app/components/guides/path-season/path-season-guide.component.html -->
+<main class="guide-page path-season-guide">
+  <header class="guide-page__header">
+    <h1 class="guide-page__title">Seasonal Path Guide Challenges</h1>
+    <p class="guide-page__subtitle">
+      Understanding the <strong class="text-seasonal">red seasonal challenges</strong> in Path
+      Guides. These challenges reset at the end of each season and require clearing all 6 paths to
+      unlock exclusive seasonal rewards.
+    </p>
+
+    <!-- Season Selector -->
+    @if (seasons.length > 1) {
+      <nav class="season-selector">
+        @for (season of seasons; track season.seasonId) {
+          <button
+            type="button"
+            class="season-selector__btn"
+            [class.season-selector__btn--active]="selectedSeasonId() === season.seasonId"
+            (click)="selectSeason(season.seasonId)"
+          >
+            {{ season.seasonName }}
+          </button>
+        }
+      </nav>
+    } @else {
+      <div class="current-season-badge">
+        <i class="bi bi-trophy-fill"></i>
+        <span>Current Season: {{ selectedSeason()?.seasonName }}</span>
+      </div>
+    }
+
+    <!-- Quick Nav ToC -->
+    <nav class="guide-toc">
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('overview')">Overview</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('rewards')">Rewards</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('global-rules')">
+        Rules &amp; Notes
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('paths')">Paths</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('sources')">
+        Sources &amp; Disclaimer
+      </button>
+    </nav>
+  </header>
+
+  <article class="guide-article">
+    <!-- Overview Section -->
+    <section id="overview" class="guide-section">
+      <h2>What are Seasonal Path Challenges?</h2>
+      <p>
+        In the <strong>Path Guide</strong> system, each martial arts path (weapon combination) has
+        both <strong>permanent challenges</strong> (displayed in white/blue) and
+        <strong>seasonal challenges</strong> (displayed in red).
+      </p>
+      <p>
+        Seasonal challenges are <strong>season-limited</strong>: they reset when a new season
+        starts, and any progress is lost. Each path has 5 seasonal challenges that test your mastery
+        of specific combat mechanics, skills, and Inner Ways.
+      </p>
+      <p class="guide-note">
+        <strong>Important:</strong> Completing all 5 seasonal challenges across all 6 paths (30
+        total) unlocks exclusive seasonal rewards that are only available during that season window.
+      </p>
+    </section>
+
+    <!-- Rewards Section -->
+    <section id="rewards" class="guide-section rewards-section">
+      <h2>Seasonal Rewards (Blade Out)</h2>
+      <p>Clear all 6 paths' seasonal challenges to earn:</p>
+
+      <div class="rewards-grid">
+        <div class="reward-card">
+          <img
+            src="assets/guides/path-season-guide/blade-out/master-of-the-jianghu-badge.png"
+            alt="Master of the Jianghu badge"
+            class="reward-card__image"
+          />
+          <div class="reward-card__content">
+            <h3>Badge</h3>
+            <p>Master of the Jianghu</p>
+          </div>
+        </div>
+
+        <div class="reward-card">
+          <img
+            src="assets/guides/path-season-guide/blade-out/master-of-the-jianghu-title.png"
+            alt="Master of the Jianghu title"
+            class="reward-card__image"
+          />
+          <div class="reward-card__content">
+            <h3>Hero Title</h3>
+            <p>Master of the Jianghu</p>
+            <span class="reward-card__note">(Limited-time; expires with season)</span>
+          </div>
+        </div>
+
+        <div class="reward-card">
+          <img
+            src="assets/guides/path-season-guide/blade-out/the-masked-troupe-spring-icon.png"
+            alt="The Masked Troupe's Spring accessory icon"
+            class="reward-card__image"
+          />
+          <div class="reward-card__content">
+            <h3>Large Accessory</h3>
+            <p>The Masked Troupe's Spring</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Showcase wardrobe preview -->
+      <figure class="guide-figure">
+        <img
+          src="assets/guides/path-season-guide/blade-out/the-masked-troupe-spring-wardrobe.png"
+          alt="The Masked Troupe's Spring accessory preview on character"
+        />
+        <figcaption>
+          The Masked Troupe's Spring accessory visual on character. This exclusive seasonal reward
+          is only available by completing all 6 paths' challenges during the Blade Out season.
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- Global Rules Section -->
+    <section id="global-rules" class="guide-section">
+      <h2>Global Rules &amp; Clarifications</h2>
+      @if (selectedSeason(); as season) {
+        <ul>
+          @for (note of season.globalRules.notes; track $index) {
+            <li>{{ note }}</li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Paths & Challenges Section -->
+    <section id="paths" class="guide-section paths-section">
+      <h2>Path Challenges</h2>
+
+      @if (selectedSeason(); as season) {
+        <div class="paths-layout">
+          <!-- Left: Path List -->
+          <aside class="path-list">
+            @for (path of season.paths; track path.pathId) {
+              <button
+                type="button"
+                class="path-item"
+                [class.path-item--active]="selectedPathId() === path.pathId"
+                (click)="selectPath(path.pathId)"
+              >
+                <div class="path-item__top">
+                  <div class="path-item__icon">
+                    <img
+                      [src]="'assets/game/sect-paths/' + path.pathId + '.png'"
+                      [alt]="path.pathName + ' icon'"
+                    />
+                  </div>
+                  <div class="path-item__completion">
+                    {{ getPathCompletion(path.pathId).completed }}/{{
+                      getPathCompletion(path.pathId).total
+                    }}
+                  </div>
+                </div>
+                <div class="path-item__header">
+                  <span class="path-item__name">{{ path.pathName }}</span>
+                  <span class="path-item__role" [ngClass]="getRoleBadgeClass(path.role)">
+                    {{ path.role }}
+                  </span>
+                </div>
+                <div class="path-item__meta">
+                  <span class="path-item__weapons"
+                    >{{ path.weapons[0] }} + {{ path.weapons[1] }}</span
+                  >
+                </div>
+              </button>
+            }
+          </aside>
+
+          <!-- Right: Challenge Details -->
+          <div class="challenge-detail">
+            @if (selectedPath(); as path) {
+              <header class="challenge-detail__header">
+                <h3>{{ path.pathName }}</h3>
+                <div class="challenge-detail__badges">
+                  <span class="badge-role" [ngClass]="getRoleBadgeClass(path.role)">
+                    {{ path.role }}
+                  </span>
+                  <span class="badge-category">{{ path.category }}</span>
+                </div>
+                <p class="challenge-detail__weapons">
+                  <strong>Weapons:</strong> {{ path.weapons[0] }} + {{ path.weapons[1] }}
+                </p>
+              </header>
+
+              <div class="challenges-list">
+                @for (challenge of path.seasonalChallenges; track challenge.id) {
+                  <article
+                    class="challenge-card"
+                    [class.challenge-card--completed]="isChallengeCompleted(challenge.id)"
+                  >
+                    <header class="challenge-card__header">
+                      <div class="challenge-card__header-left">
+                        <span class="challenge-card__order">{{ challenge.order }}/5</span>
+                        <span
+                          class="challenge-card__category"
+                          [ngClass]="getCategoryInfo(challenge.category).cssClass"
+                        >
+                          {{ getCategoryInfo(challenge.category).label }}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        class="challenge-card__checkbox"
+                        (click)="toggleChallengeCompletion($event, challenge.id)"
+                        [attr.aria-label]="
+                          isChallengeCompleted(challenge.id)
+                            ? 'Mark as incomplete'
+                            : 'Mark as complete'
+                        "
+                      >
+                        <i
+                          class="bi"
+                          [ngClass]="
+                            isChallengeCompleted(challenge.id)
+                              ? 'bi-check-circle-fill'
+                              : 'bi-circle'
+                          "
+                        ></i>
+                      </button>
+                    </header>
+
+                    <h4 class="challenge-card__name">{{ challenge.name }}</h4>
+                    <p class="challenge-card__description">{{ challenge.description }}</p>
+
+                    @if (challenge.conditions; as cond) {
+                      <dl class="challenge-requirements">
+                        @if (cond.boss) {
+                          <div class="requirement-row">
+                            <dt>Boss:</dt>
+                            <dd>{{ cond.boss }}</dd>
+                          </div>
+                        }
+                        @if (cond.content) {
+                          <div class="requirement-row">
+                            <dt>Content:</dt>
+                            <dd>{{ cond.content }}</dd>
+                          </div>
+                        }
+                        @if (cond.mode) {
+                          <div class="requirement-row">
+                            <dt>Mode:</dt>
+                            <dd>{{ cond.mode }}</dd>
+                          </div>
+                        }
+                        @if (cond.weapon) {
+                          <div class="requirement-row">
+                            <dt>Weapon:</dt>
+                            <dd>{{ cond.weapon }}</dd>
+                          </div>
+                        }
+                        @if (cond.skill) {
+                          <div class="requirement-row">
+                            <dt>Skill:</dt>
+                            <dd>{{ cond.skill }}</dd>
+                          </div>
+                        }
+                        @if (cond.innerWay) {
+                          <div class="requirement-row">
+                            <dt>Inner Way:</dt>
+                            <dd>{{ cond.innerWay }}</dd>
+                          </div>
+                        }
+                        @if (cond.effect) {
+                          <div class="requirement-row">
+                            <dt>Effect:</dt>
+                            <dd>{{ cond.effect }}</dd>
+                          </div>
+                        }
+                        @if (cond.timeLimitSeconds) {
+                          <div class="requirement-row">
+                            <dt>Time Limit:</dt>
+                            <dd>{{ formatTime(cond.timeLimitSeconds) }}</dd>
+                          </div>
+                        }
+                        @if (cond.hpThresholdMin !== undefined) {
+                          <div class="requirement-row">
+                            <dt>HP Minimum:</dt>
+                            <dd>{{ (cond.hpThresholdMin * 100).toFixed(0) }}%</dd>
+                          </div>
+                        }
+                        @if (cond.restriction) {
+                          <div class="requirement-row">
+                            <dt>Restriction:</dt>
+                            <dd>{{ cond.restriction }}</dd>
+                          </div>
+                        }
+                        @if (cond.unlockLevel) {
+                          <div class="requirement-row">
+                            <dt>Unlock Level:</dt>
+                            <dd>{{ cond.unlockLevel }}</dd>
+                          </div>
+                        }
+                        @if (cond.perRunRequirement) {
+                          <div class="requirement-row">
+                            <dt>Per Run:</dt>
+                            <dd>{{ cond.perRunRequirement }}</dd>
+                          </div>
+                        }
+                        @if (cond.runsRequired) {
+                          <div class="requirement-row">
+                            <dt>Runs Required:</dt>
+                            <dd>{{ cond.runsRequired }}</dd>
+                          </div>
+                        }
+                        @if (cond.notes) {
+                          <div class="requirement-row requirement-row--note">
+                            <dt>Note:</dt>
+                            <dd>{{ cond.notes }}</dd>
+                          </div>
+                        }
+                      </dl>
+                    }
+                  </article>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </section>
+    <section id="sources" class="guide-section guide-section--meta">
+      <h2>Sources &amp; Disclaimer</h2>
+      <p>
+        This Seasonal Path Guide Challenges reference is based on
+        <strong>player research, in-game testing, and community documentation</strong>. The core
+        challenge requirements and strategies were originally compiled from a detailed Reddit guide:
+      </p>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.reddit.com/r/wherewindsmeet_/comments/1p36hx1/guide_how_to_complete_the_path_challenges/"
+            target="_blank"
+            rel="noopener"
+          >
+            "Guide: How to Complete the Path Challenges" on r/WhereWindsMeet_
+          </a>
+          by
+          <a href="https://www.reddit.com/user/LoafingSeal/" target="_blank" rel="noopener">
+            u/LoafingSeal </a
+          >.
+        </li>
+      </ul>
+
+      <p>
+        All challenge conditions, boss requirements, and skill mechanics have been
+        <strong>verified and structured</strong> to match the current game state and provide a
+        clear, data-driven reference for players completing seasonal Path Guide challenges.
+      </p>
+
+      <p class="guide-note">
+        As with all seasonal content in Where Winds Meet, challenge requirements and rewards may
+        change with future patches or new seasons. This guide reflects the
+        <strong>Blade Out season</strong> as observed on the global release and will be updated when
+        new seasons are announced.
+      </p>
+    </section>
+  </article>
+
+  <button
+    type="button"
+    class="btn-primary scroll-top-btn"
+    (click)="scrollToTop()"
+    [class.scroll-top-btn--visible]="showScrollTop()"
+    aria-label="Back to top"
+  >
+    <i class="bi bi-chevron-up" aria-hidden="true"></i>
+  </button>
+</main>

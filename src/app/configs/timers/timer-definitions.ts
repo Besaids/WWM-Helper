@@ -1,4 +1,4 @@
-import { TimerDefinition } from '../models';
+import { TimerDefinition } from '../../models';
 import { RESET_CONFIG } from './reset-config';
 
 export const TIMER_DEFINITIONS: TimerDefinition[] = [
