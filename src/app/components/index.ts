@@ -5,6 +5,7 @@ export * from './home';
 export * from './layout';
 export * from './music-player';
 export * from './navbar';
+export * from './privacy';
 export * from './timer-strip';
 export * from './timers';
 export * from './ui';

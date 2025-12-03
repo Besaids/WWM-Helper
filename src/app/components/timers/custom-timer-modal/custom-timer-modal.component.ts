@@ -485,6 +485,21 @@ export class CustomTimerModalComponent implements OnInit, OnChanges {
     this.closeModal.emit();
   }
 
+  getEventTimerError(): string | null {
+    const d = this.formData();
+    if (d.type !== 'event') return null;
+
+    if (!d.eventEndsAt) {
+      return 'Please select an end date and time for this event.';
+    }
+
+    if (d.eventEndsAt <= new Date()) {
+      return 'End date must be in the future. Please choose a later date and time.';
+    }
+
+    return null;
+  }
+
   private resetForm(): void {
     this.formData.set({
       type: undefined, // ← ADD THIS - clear the timer type

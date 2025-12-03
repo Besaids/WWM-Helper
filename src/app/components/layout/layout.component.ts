@@ -4,11 +4,19 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../navbar';
 import { TimerStripComponent } from '../timer-strip';
 import { FooterComponent } from '../footer';
+import { CookieBannerComponent } from '../ui';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, TimerStripComponent, FooterComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    NavbarComponent,
+    TimerStripComponent,
+    FooterComponent,
+    CookieBannerComponent,
+  ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -298,7 +298,7 @@
 }
 
 .checklist-item-action--hide {
-  color: var(--color-accent-red-soft);
+  color: #94a3b8; /* Neutral slate color instead of red */
 }
 
 /* Active state: pinned item gets gold border */
@@ -307,10 +307,10 @@
   background: rgba(250, 204, 21, 0.1);
 }
 
-/* Active state: hidden item gets red border */
+/* Active state: hidden item gets slate/purple border */
 .checklist-item-action--hide[aria-pressed='true'] {
-  border-color: var(--color-accent-red-soft);
-  background: rgba(239, 68, 68, 0.1);
+  border-color: #94a3b8;
+  background: rgba(148, 163, 184, 0.15);
 }
 
 /* Hover / focus states */
@@ -329,8 +329,8 @@
 }
 
 .checklist-item-action--hide[aria-pressed='true']:hover {
-  border-color: var(--color-accent-red-soft);
-  background: rgba(239, 68, 68, 0.15);
+  border-color: #94a3b8;
+  background: rgba(148, 163, 184, 0.2);
 }
 
 /* Mobile: keep icons tight and prevent weird wrapping */

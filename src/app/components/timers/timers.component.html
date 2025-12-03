@@ -38,34 +38,19 @@
               [class.event-timer-card--custom]="isCustom"
               [attr.data-category]="event.category"
             >
-              <div class="event-timer-card__left">
-                <div class="event-timer-card__icon-row">
-                  <div class="event-timer-card__icon">
-                    <i class="bi" [ngClass]="event.icon"></i>
-                  </div>
-
-                  <!-- Custom timer actions - positioned to the right of icon -->
-                  @if (isCustom) {
-                    <div class="event-timer-card__actions">
-                      <button
-                        type="button"
-                        class="event-timer-card__action-btn event-timer-card__action-btn--edit"
-                        (click)="openEditModal(getCustomTimer(event.id)!)"
-                        title="Edit timer"
-                      >
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <button
-                        type="button"
-                        class="event-timer-card__action-btn event-timer-card__action-btn--delete"
-                        (click)="deleteCustomTimer(event.id)"
-                        title="Delete timer"
-                      >
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  }
+              <!-- Icon + Category Column -->
+              <div class="event-timer-card__icon-wrapper">
+                <div class="event-timer-card__icon">
+                  <i class="bi" [ngClass]="event.icon"></i>
                 </div>
+                <span class="event-timer-card__category">
+                  {{ getCategoryLabel(event.category) }}
+                </span>
+              </div>
+
+              <!-- Content Column (Label + Remaining) -->
+              <div class="event-timer-card__content">
+                <h3 class="event-timer-card__label">{{ event.label }}</h3>
 
                 <span
                   class="event-timer-card__remaining"
@@ -81,13 +66,29 @@
                 </span>
               </div>
 
-              <div class="event-timer-card__content">
-                <h3 class="event-timer-card__label">{{ event.label }}</h3>
-
-                <span class="event-timer-card__category">
-                  {{ getCategoryLabel(event.category) }}
-                </span>
-              </div>
+              <!-- Actions Column (only for custom timers) -->
+              @if (isCustom) {
+                <div class="event-timer-card__actions">
+                  <button
+                    type="button"
+                    class="btn-icon-sm btn-icon-teal"
+                    (click)="openEditModal(getCustomTimer(event.id)!)"
+                    title="Edit timer"
+                    aria-label="Edit timer"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-icon-sm btn-icon-danger"
+                    (click)="deleteCustomTimer(event.id)"
+                    title="Delete timer"
+                    aria-label="Delete timer"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              }
             </div>
           }
         </div>
@@ -395,7 +396,7 @@
                         <div class="guild-timer-actions">
                           <button
                             type="button"
-                            class="btn btn-primary"
+                            class="btn-primary"
                             (click)="
                               onSaveGuildTimer(
                                 t.id,

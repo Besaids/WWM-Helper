@@ -15,7 +15,12 @@
             Create Custom Timer
           }
         </h2>
-        <button type="button" class="modal-close-btn" (click)="onClose()" aria-label="Close modal">
+        <button
+          type="button"
+          class="btn-icon btn-ghost"
+          (click)="onClose()"
+          aria-label="Close modal"
+        >
           <i class="bi bi-x-lg"></i>
         </button>
       </header>
@@ -675,6 +680,12 @@
                         }
                       </select>
                     </div>
+                    @if (getWeeklyRangeError()) {
+                      <div class="form-error">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        {{ getWeeklyRangeError() }}
+                      </div>
+                    }
                   </div>
                 </div>
               }
@@ -697,6 +708,12 @@
                 <small class="form-help">
                   Use your local time. It will be automatically converted to UTC when saving.
                 </small>
+                @if (getEventTimerError()) {
+                  <div class="form-error">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    {{ getEventTimerError() }}
+                  </div>
+                }
               </div>
 
               <div class="form-group">
