@@ -114,13 +114,22 @@
         </ul>
 
         <div class="privacy-action">
-          <button type="button" class="btn-primary" (click)="resetCookieConsent()">
-            <i class="bi bi-arrow-clockwise"></i>
-            Reset Cookie Preferences
-          </button>
-          <p class="privacy-action-hint">
-            Click this button to clear your cookie consent choice and see the cookie banner again.
-          </p>
+          <div class="privacy-action">
+            <button type="button" class="btn-primary" (click)="resetCookieConsent()">
+              <i class="bi bi-arrow-clockwise"></i>
+              Reset Cookie Preferences
+            </button>
+            <p class="privacy-action-hint">
+              Click this button to clear your cookie consent choice and see the cookie banner again.
+            </p>
+
+            @if (showResetMessage()) {
+              <div class="privacy-reset-message">
+                <i class="bi bi-check-circle"></i>
+                Cookie preferences reset! Page will reload...
+              </div>
+            }
+          </div>
         </div>
       </section>
 
