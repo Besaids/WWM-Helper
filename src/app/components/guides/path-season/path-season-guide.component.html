@@ -199,13 +199,13 @@
                   >
                     <header class="challenge-card__header">
                       <div class="challenge-card__header-left">
+                        <span class="challenge-card__order">{{ challenge.order }}/5</span>
                         <span
                           class="challenge-card__category"
                           [ngClass]="getCategoryInfo(challenge.category).cssClass"
                         >
                           {{ getCategoryInfo(challenge.category).label }}
                         </span>
-                        <span class="challenge-card__order">{{ challenge.order }}/5</span>
                       </div>
                       <button
                         type="button"
