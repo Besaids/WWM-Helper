@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://besaids.github.io/WWM-Helper/sitemap.xml
