@@ -1,5 +1,6 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <header class="app-header">
-  <!-- Top row: logo + desktop nav + burger -->
+  <!-- Top row: logo + desktop nav + music icon + burger -->
   <div class="app-header-inner">
     <a class="brand" routerLink="/home">
       <img src="assets/portal/wwm-logo.png" alt="WWM Helper logo" class="brand-mark" />
@@ -13,6 +14,20 @@
       <a routerLink="/checklist" routerLinkActive="active">Checklist</a>
       <a routerLink="/guides" routerLinkActive="active">Guides</a>
     </nav>
+
+    <button
+      type="button"
+      class="music-launcher"
+      [class.music-launcher--hidden]="isMusicPlayerOpen()"
+      (click)="openMusicPlayer()"
+      aria-label="Open soundtrack player"
+    >
+      <span class="music-launcher-inner">
+        <span class="music-launcher-diamond">
+          <i class="bi bi-music-note-beamed"></i>
+        </span>
+      </span>
+    </button>
 
     <button
       type="button"
@@ -40,8 +55,19 @@
     <a routerLink="/guides" routerLinkActive="active" (click)="closeMenu()"> Guides </a>
   </nav>
 
-  <!-- Player row: lives after the mobile menu in DOM so menu is above it on mobile -->
-  <div class="nav-music-player-container">
-    <app-music-player></app-music-player>
+  <!-- Player row: fixed-height drawer under navbar -->
+  <div
+    class="nav-music-player-container"
+    [class.nav-music-player-container--open]="isMusicPlayerOpen()"
+    (mouseenter)="onMusicAreaInteraction()"
+    (mousemove)="onMusicAreaInteraction()"
+    (click)="onMusicAreaInteraction()"
+    (keydown)="onMusicAreaInteraction()"
+    (focusin)="onMusicAreaInteraction()"
+    (touchstart)="onMusicAreaInteraction()"
+  >
+    <div class="nav-music-player-shell">
+      <app-music-player></app-music-player>
+    </div>
   </div>
 </header>

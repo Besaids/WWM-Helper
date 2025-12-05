@@ -21,6 +21,17 @@
   align-items: center;
   justify-content: flex-start;
   gap: 1.5rem;
+  flex: 1 1 auto;
+  width: 100%;
+  position: relative;
+}
+
+/* Right side: music icon + burger (unused wrapper, harmless) */
+.app-header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .brand {
@@ -66,6 +77,62 @@
   }
 }
 
+/* Music diamond – small card-style control */
+.music-launcher {
+  /* NOTE: no margin-left here; handled per breakpoint */
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .music-launcher-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .music-launcher-diamond {
+    width: 1.9rem;
+    height: 1.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(45deg);
+    border-radius: 0.3rem;
+
+    background: $surface-card;
+    border: 1px solid $border-subtle;
+    box-shadow: $shadow-soft;
+
+    i {
+      transform: rotate(-45deg);
+      font-size: 1.05rem;
+      color: var(--color-accent-gold);
+    }
+  }
+
+  &:hover .music-launcher-diamond {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.22),
+      0 0 10px rgba(255, 215, 140, 0.35),
+      var(--shadow-soft);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent-gold);
+    outline-offset: 2px;
+  }
+
+  &.music-launcher--hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 /* Burger */
 .nav-toggle {
   border: none;
@@ -102,25 +169,49 @@
   display: flex;
 }
 
-/* Player row */
+/* Player row – fixed-height drawer under navbar (desktop baseline) */
 .nav-music-player-container {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  padding: 0 0 0.1rem;
+  min-height: 4.6rem; // desktop: reserves space so timers don't jump
+
+  .nav-music-player-shell {
+    opacity: 0;
+    transform: translateX(16px);
+    pointer-events: none;
+    transition:
+      opacity 180ms ease,
+      transform 220ms ease;
+
+    app-music-player {
+      width: 420px;
+      max-width: 100%;
+    }
+  }
+}
+
+/* When open: fade/slide player in */
+.nav-music-player-container--open {
+  .nav-music-player-shell {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
 }
 
 /* Desktop ≥ 992px */
 @media (min-width: 992px) {
-  .app-header {
-    flex-direction: row;
-    align-items: center;
-    padding-bottom: 0.5rem;
+  .app-header-inner {
+    justify-content: flex-start;
+    gap: 1.5rem;
+    width: 100%; // ensure full width
   }
 
-  .app-header-inner {
-    flex: 0 0 auto;
-  }
   .main-nav--desktop {
-    display: flex;
+    margin-left: 1.5rem;
+    margin-right: auto; // pushes everything after nav to the right
   }
   .main-nav--mobile,
   .mobile-menu {
@@ -133,8 +224,36 @@
   .nav-music-player-container {
     flex: 0 0 auto;
     margin-left: auto;
+    padding-inline: 0;
     justify-content: flex-end;
   }
+
+  /* Desktop: icon is just another item at far right */
+  .music-launcher {
+    margin-left: auto; // push music icon to the right edge
+  }
+
+  .app-header {
+    padding-right: var(--spacing-outer-x); // use your design token for right padding
+  }
+
+  .nav-music-player-shell {
+    position: fixed;
+    top: 0.25rem; // shift up, adjust as needed
+    right: var(--spacing-outer-x);
+    z-index: 100;
+    max-width: none; // do not compress width
+  }
+
+  .nav-music-player-container {
+    min-height: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+.nav-music-player-container {
+  min-height: 0 !important; // Remove reserved space for music player
+  padding-bottom: 0 !important; // Remove extra bottom padding
 }
 
 /* Mobile < 992px */
@@ -144,7 +263,6 @@
   }
   .main-nav--mobile {
     display: block;
-    margin-left: auto;
   }
 
   .app-header {
@@ -152,19 +270,42 @@
   }
   .app-header-inner {
     gap: 0.75rem;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .mobile-menu {
     padding-inline: 0;
   }
 
-  .nav-music-player-container {
-    margin-top: 0.4rem;
-    justify-content: stretch;
+  .nav-toggle {
+    margin-left: 0.25rem;
   }
-  .nav-music-player-container app-music-player {
-    width: 100%;
-    max-width: 100%;
+
+  /* Mobile: icon + burger on the right */
+  .music-launcher {
+    margin-left: auto;
+  }
+
+  /* Mobile drawer behaviour: no empty space when closed */
+  .nav-music-player-container {
+    margin-top: 0;
+    justify-content: center; /* center player on mobile */
+    min-height: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 180ms ease-out,
+      margin-top 180ms ease-out;
+
+    .nav-music-player-shell app-music-player {
+      width: min(100%, 420px);
+      max-width: 100%;
+    }
+  }
+
+  .nav-music-player-container.nav-music-player-container--open {
+    margin-top: 0.4rem;
+    max-height: none; /* let it grow naturally */
+    overflow: visible; /* allow playlist drawer to extend */
   }
 }
