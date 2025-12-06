@@ -1,7 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './components/home';
-import { TimersComponent } from './components/timers';
-import { ChecklistComponent } from './components/checklist';
 import {
   GuidesHubComponent,
   PrivacyComponent,
@@ -11,6 +8,9 @@ import {
   ToolsHubComponent,
   ChineseChessComponent,
   ChessWinsGuideComponent,
+  HomeComponent,
+  TimersComponent,
+  ChecklistComponent,
 } from './components';
 
 export const routes: Routes = [

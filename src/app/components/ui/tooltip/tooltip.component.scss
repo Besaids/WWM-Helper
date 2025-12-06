@@ -1,0 +1,207 @@
+@use 'tokens/colors' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/typography' as *;
+@use 'tokens/motion' as *;
+
+/* ===========================
+   Tooltip Component
+   =========================== */
+
+:host {
+  display: block;
+  max-width: 280px;
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  box-shadow: $shadow-soft;
+  pointer-events: auto;
+
+  /* Entry animation */
+  animation: tooltip-enter $motion-fast $motion-ease-out;
+}
+
+@keyframes tooltip-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================
+   Layout Variants
+   =========================== */
+
+/* Image-only: very compact */
+:host.app-tooltip--image-only {
+  max-width: 120px;
+
+  .tooltip-content {
+    padding: $space-xs;
+  }
+}
+
+/* Title-only: small text bubble */
+:host.app-tooltip--title-only {
+  max-width: 200px;
+
+  .tooltip-content {
+    padding: $space-sm $space-md;
+  }
+}
+
+/* Image + Title: compact row */
+:host.app-tooltip--image-title {
+  max-width: 220px;
+
+  .tooltip-content {
+    padding: $space-sm;
+  }
+}
+
+/* Image + Description: medium width */
+:host.app-tooltip--image-description {
+  max-width: 260px;
+
+  .tooltip-content {
+    padding: $space-sm;
+  }
+}
+
+/* Title + Description: classic tooltip */
+:host.app-tooltip--title-description {
+  .tooltip-content {
+    padding: $space-sm $space-md;
+  }
+}
+
+/* Full layout: richest variant */
+:host.app-tooltip--full {
+  .tooltip-content {
+    padding: $space-sm;
+  }
+}
+
+/* ===========================
+   Content Elements
+   =========================== */
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.tooltip-full {
+  display: flex;
+  gap: $space-sm;
+  align-items: flex-start;
+}
+
+.tooltip-body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===========================
+   Image Styles
+   =========================== */
+
+.tooltip-image {
+  flex-shrink: 0;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: $bg-elevated;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.tooltip-image--only {
+  width: 100%;
+  max-width: 100px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.tooltip-image--small {
+  width: 32px;
+  height: 32px;
+}
+
+.tooltip-image--medium {
+  width: 48px;
+  height: 48px;
+}
+
+/* ===========================
+   Typography
+   =========================== */
+
+.tooltip-title {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+  line-height: $line-height-tight;
+}
+
+.tooltip-description {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  line-height: $line-height-base;
+}
+
+/* ===========================
+   Link CTA
+   =========================== */
+
+.tooltip-link {
+  padding-top: $space-xs;
+  border-top: 1px solid $border-subtle;
+  margin-top: $space-xs;
+}
+
+.tooltip-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $accent-teal;
+  text-decoration: none;
+  transition: color $motion-fast $motion-ease;
+
+  &:hover,
+  &:focus {
+    color: $accent-teal-active;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid $accent-teal;
+    outline-offset: 2px;
+    border-radius: $radius-sm;
+  }
+
+  i {
+    font-size: 0.75em;
+  }
+}

@@ -1,6 +1,8 @@
 @use 'tokens/colors' as *;
 @use 'tokens/radius' as *;
-@use 'tokens/elevation' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+@use 'tokens/spacing' as *;
 
 /* ===========================
    Card surfaces
@@ -15,4 +17,100 @@
 
 .card-padding {
   padding: 1.25rem;
+}
+
+/* ===========================
+   Banner Card - Reusable vertical layout
+   Used by: tool-card, guide-card
+   =========================== */
+
+.tool-card,
+.guide-card {
+  display: flex;
+  flex-direction: column;
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  box-shadow: $shadow-soft;
+  overflow: hidden;
+  width: 100%;
+  transition:
+    transform 180ms ease-out,
+    box-shadow 180ms ease-out;
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-3px);
+    box-shadow: $shadow-soft-lg;
+  }
+}
+
+/* ===========================
+   Banner Card - Banner section
+   =========================== */
+
+.tool-card__banner,
+.guide-card__banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 1;
+  overflow: hidden;
+  background: $bg-elevated;
+  flex-shrink: 0;
+}
+
+.tool-card__banner-img,
+.guide-card__banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition:
+    transform 220ms ease-out,
+    object-position 280ms ease-out;
+
+  .tool-card:hover &,
+  .tool-card:focus-within &,
+  .guide-card:hover &,
+  .guide-card:focus-within & {
+    transform: scale(1.06);
+    object-position: 50% 40%;
+  }
+}
+
+/* ===========================
+   Banner Card - Body section
+   =========================== */
+
+.tool-card__body,
+.guide-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  padding: $space-lg;
+  flex: 1;
+}
+
+.tool-card__title,
+.guide-card__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.tool-card__summary,
+.guide-card__summary {
+  font-size: 0.9rem;
+  color: $text-secondary;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+.tool-card__actions,
+.guide-card__actions {
+  margin-top: $space-md;
+  display: flex;
+  justify-content: flex-end;
 }

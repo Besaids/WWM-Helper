@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { LayoutComponent } from './components/layout';
+import { LayoutComponent } from './components';
 
 @Component({
   selector: 'app-root',

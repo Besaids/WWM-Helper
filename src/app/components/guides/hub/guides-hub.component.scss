@@ -1,7 +1,18 @@
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+
+/* ===========================
+   Guides listing page layout
+   =========================== */
+
 .guide-page {
   padding: 1.5rem var(--spacing-outer-x, 1.5rem) 2rem;
-  max-width: 80rem;
+  max-width: 80rem; // match tools-page
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding-inline: 1rem;
+  }
 }
 
 .guide-page__header {
@@ -15,32 +26,33 @@
 
 .guide-page__subtitle {
   font-size: 0.95rem;
-  opacity: 0.8;
+  opacity: 0.85;
+  margin-bottom: 0.75rem;
 }
+
+/* ===========================
+   Guides grid layout
+   =========================== */
 
 .guide-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+
+  /* 2 columns on medium screens */
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* 1 column on mobile */
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
 }
 
-.guide-card {
-  border-radius: 0.75rem;
-  padding: 1rem 1.25rem 1.25rem;
-  box-shadow: var(--shadow-soft-lg, 0 8px 24px rgba(0, 0, 0, 0.35));
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.guide-card__title {
-  font-size: 1.1rem;
-}
-
-.guide-card__summary {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
+/* ===========================
+   Optional: guide meta tags
+   =========================== */
 
 .guide-card__meta {
   display: flex;

@@ -322,22 +322,26 @@
   margin-top: 0.4rem;
 }
 
+/* Side-by-side row for Daily + Weekly */
+.home-pinned-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .home-pinned-bucket {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  background: $surface-layer-5; // Slightly different from parent card
+  background: $surface-layer-5;
   border-radius: $radius-card;
   padding: 0.75rem 0.75rem 0.75rem 0.75rem;
   border: 1px solid $border-subtle;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-
-  // Divider between buckets
-  & + .home-pinned-bucket {
-    margin-top: 0.5rem;
-    border-top: 1px solid $border-subtle;
-    box-shadow: none;
-  }
 }
 
 .home-pinned-bucket-title {
@@ -360,6 +364,11 @@
   gap: 0.35rem;
 }
 
+/* Single column list for side-by-side buckets */
+.home-pinned-list--single-col {
+  grid-template-columns: 1fr;
+}
+
 .home-pinned-item {
   padding: 0.5rem 0.7rem;
   border-radius: $radius-pill;
@@ -367,7 +376,8 @@
   border: 1px solid $border-subtle;
   transition:
     background-color $motion-fast,
-    box-shadow $motion-fast;
+    box-shadow $motion-fast,
+    opacity $motion-fast;
 
   &:hover {
     background: $surface-layer-4;
@@ -381,6 +391,26 @@
     &:hover {
       background: rgba(56, 189, 248, 0.12);
       border-color: rgba(56, 189, 248, 0.5);
+    }
+  }
+
+  /* Checked/completed item styling */
+  &.home-pinned-item--checked {
+    opacity: 0.7;
+    background: $surface-layer-2;
+
+    &:hover {
+      opacity: 0.85;
+      background: $surface-layer-3;
+    }
+
+    &.home-pinned-item--custom {
+      background: rgba(56, 189, 248, 0.03);
+      border-color: rgba(56, 189, 248, 0.25);
+
+      &:hover {
+        background: rgba(56, 189, 248, 0.08);
+      }
     }
   }
 

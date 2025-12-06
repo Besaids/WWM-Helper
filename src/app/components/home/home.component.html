@@ -104,35 +104,149 @@
 
     @if (hasPinnedItems()) {
       <div class="home-pinned-buckets">
-        @for (bucket of pinnedBuckets(); track bucket.id) {
-          <div class="home-pinned-bucket">
-            <h3 class="home-pinned-bucket-title">{{ bucket.label }}</h3>
-            <ul class="home-pinned-list">
-              @for (item of bucket.items; track item.id) {
-                <li class="home-pinned-item" [class.home-pinned-item--custom]="item.isCustom">
-                  <app-checklist-toggle
-                    [checked]="isChecked(item)"
-                    (checkedChange)="onToggleItem($event, item)"
-                  >
-                    <span class="checklist-item-label">
-                      {{ item.label }}
-                      @if (item.route) {
-                        <button
-                          type="button"
-                          class="guide-link guide-link--compact"
-                          (click)="navigateToGuide(item); $event.stopPropagation()"
-                          [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
-                          aria-label="Open guide"
-                        >
-                          <i class="bi bi-book"></i>
-                        </button>
-                      }
-                    </span>
-                  </app-checklist-toggle>
-                </li>
-              }
-            </ul>
+        <!-- Side-by-side layout for Daily + Weekly -->
+        @if (hasDailyAndWeekly()) {
+          <div class="home-pinned-row">
+            @if (dailyBucket(); as daily) {
+              <div class="home-pinned-bucket home-pinned-bucket--half">
+                <h3 class="home-pinned-bucket-title">{{ daily.label }}</h3>
+                <ul class="home-pinned-list home-pinned-list--single-col">
+                  @for (item of daily.items; track item.id) {
+                    <li
+                      class="home-pinned-item"
+                      [class.home-pinned-item--custom]="item.isCustom"
+                      [class.home-pinned-item--checked]="isChecked(item)"
+                    >
+                      <app-checklist-toggle
+                        [checked]="isChecked(item)"
+                        (checkedChange)="onToggleItem($event, item)"
+                      >
+                        <span class="checklist-item-label">
+                          {{ item.label }}
+                          @if (item.route) {
+                            <button
+                              type="button"
+                              class="guide-link guide-link--compact"
+                              (click)="navigateToGuide(item); $event.stopPropagation()"
+                              [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                              aria-label="Open guide"
+                            >
+                              <i class="bi bi-book"></i>
+                            </button>
+                          }
+                        </span>
+                      </app-checklist-toggle>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+            @if (weeklyBucket(); as weekly) {
+              <div class="home-pinned-bucket home-pinned-bucket--half">
+                <h3 class="home-pinned-bucket-title">{{ weekly.label }}</h3>
+                <ul class="home-pinned-list home-pinned-list--single-col">
+                  @for (item of weekly.items; track item.id) {
+                    <li
+                      class="home-pinned-item"
+                      [class.home-pinned-item--custom]="item.isCustom"
+                      [class.home-pinned-item--checked]="isChecked(item)"
+                    >
+                      <app-checklist-toggle
+                        [checked]="isChecked(item)"
+                        (checkedChange)="onToggleItem($event, item)"
+                      >
+                        <span class="checklist-item-label">
+                          {{ item.label }}
+                          @if (item.route) {
+                            <button
+                              type="button"
+                              class="guide-link guide-link--compact"
+                              (click)="navigateToGuide(item); $event.stopPropagation()"
+                              [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                              aria-label="Open guide"
+                            >
+                              <i class="bi bi-book"></i>
+                            </button>
+                          }
+                        </span>
+                      </app-checklist-toggle>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
           </div>
+          <!-- Seasonal bucket below the side-by-side row -->
+          @if (seasonalBucket(); as seasonal) {
+            <div class="home-pinned-bucket">
+              <h3 class="home-pinned-bucket-title">{{ seasonal.label }}</h3>
+              <ul class="home-pinned-list">
+                @for (item of seasonal.items; track item.id) {
+                  <li
+                    class="home-pinned-item"
+                    [class.home-pinned-item--custom]="item.isCustom"
+                    [class.home-pinned-item--checked]="isChecked(item)"
+                  >
+                    <app-checklist-toggle
+                      [checked]="isChecked(item)"
+                      (checkedChange)="onToggleItem($event, item)"
+                    >
+                      <span class="checklist-item-label">
+                        {{ item.label }}
+                        @if (item.route) {
+                          <button
+                            type="button"
+                            class="guide-link guide-link--compact"
+                            (click)="navigateToGuide(item); $event.stopPropagation()"
+                            [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                            aria-label="Open guide"
+                          >
+                            <i class="bi bi-book"></i>
+                          </button>
+                        }
+                      </span>
+                    </app-checklist-toggle>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        } @else {
+          <!-- Single-column layout (only one of daily/weekly, or seasonal only) -->
+          @for (bucket of singleColumnBuckets(); track bucket.id) {
+            <div class="home-pinned-bucket">
+              <h3 class="home-pinned-bucket-title">{{ bucket.label }}</h3>
+              <ul class="home-pinned-list">
+                @for (item of bucket.items; track item.id) {
+                  <li
+                    class="home-pinned-item"
+                    [class.home-pinned-item--custom]="item.isCustom"
+                    [class.home-pinned-item--checked]="isChecked(item)"
+                  >
+                    <app-checklist-toggle
+                      [checked]="isChecked(item)"
+                      (checkedChange)="onToggleItem($event, item)"
+                    >
+                      <span class="checklist-item-label">
+                        {{ item.label }}
+                        @if (item.route) {
+                          <button
+                            type="button"
+                            class="guide-link guide-link--compact"
+                            (click)="navigateToGuide(item); $event.stopPropagation()"
+                            [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                            aria-label="Open guide"
+                          >
+                            <i class="bi bi-book"></i>
+                          </button>
+                        }
+                      </span>
+                    </app-checklist-toggle>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
         }
       </div>
     } @else {
