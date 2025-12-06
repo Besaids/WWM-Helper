@@ -23,32 +23,9 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     expired: false,
   },
   {
-    id: 'daily-multiplayer-routine',
-    frequency: 'daily',
-    importance: 'core',
-    category: 'Sect & multiplayer',
-    label:
-      'Do Blessed Land for Cultivation, Five Animal Frolics and Scholar’s Hearth (multiplayer).',
-    description:
-      'Low-stress online content that gives character XP, Coins and Adventure Slips; often overlaps with Jianghu Errands.',
-    tags: ['multiplayer', 'social'],
-    expired: false,
-  },
-  {
-    id: 'daily-sword-trial-joint-battle',
-    frequency: 'daily',
-    importance: 'core',
-    category: 'Sect & multiplayer',
-    label: 'Clear all 5 Joint Battle outposts (Sword Trial daily reward).',
-    description:
-      'In Hero’s Realm → Sword Trial → Joint Battle, clear all 5 outposts in a chain to claim the daily clear reward chest (40 Adventure Slips). Claim attempts refresh at daily reset.',
-    tags: ['multiplayer', 'combat', 'reward'],
-    expired: false,
-  },
-  {
     id: 'daily-merchants',
     frequency: 'daily',
-    importance: 'core',
+    importance: 'optional',
     category: 'Economy',
     label: 'Check daily-reset merchants.',
     description:
@@ -66,6 +43,8 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'Located in Qinghe – Dreamscape: Blissful Retreat. On Expert: up to 900 Commerce Coin per day; each loss costs 150 Coin.',
     tags: ['economy', 'solo'],
     expired: false,
+    route: '/guides/chess-wins',
+    section: 'top',
   },
   {
     id: 'daily-trading-buy-goods',
@@ -77,6 +56,8 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'After the Friday 21:00 UTC trade reset, buy this week’s Trading Goods: usually 30 of the two most expensive items and 20 of the cheapest (if you have 80 slots). Refill again after Sunday reset if you already sold.',
     tags: ['economy', 'solo'],
     expired: false,
+    route: '/guides/trading',
+    section: 'top',
   },
   {
     id: 'daily-trading-check-prices',
@@ -88,6 +69,8 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'Use the Trading timers for mid-week checks: watch the Local item’s % and refresh Remote Price for high-value buyers (guild members give bonuses). Offload all goods before Friday 21:00 UTC.',
     tags: ['economy', 'solo', 'guild'],
     expired: false,
+    route: '/guides/trading',
+    section: 'top',
   },
   {
     id: 'daily-stamina',
@@ -125,7 +108,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
   {
     id: 'daily-gathering',
     frequency: 'daily',
-    importance: 'optional',
+    importance: 'core',
     category: 'Preparation',
     label: 'Gather flowers and materials used for Mystic Skill upgrades.',
     description:
@@ -136,7 +119,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
   {
     id: 'daily-bounties',
     frequency: 'daily',
-    importance: 'optional',
+    importance: 'core',
     category: 'Economy',
     label: 'Do Bounties (NPC and player-posted).',
     description:

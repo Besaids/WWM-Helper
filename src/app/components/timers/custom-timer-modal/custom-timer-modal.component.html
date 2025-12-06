@@ -715,27 +715,6 @@
                   </div>
                 }
               </div>
-
-              <div class="form-group">
-                <label class="form-label" for="eventCategory">Category</label>
-                <select
-                  id="eventCategory"
-                  class="form-select"
-                  (change)="updateFormData({ eventCategory: $any($event.target).value })"
-                >
-                  @for (option of categoryOptions; track option.value) {
-                    <option
-                      [value]="option.value"
-                      [selected]="option.value === (formData().eventCategory || 'other')"
-                    >
-                      {{ option.label }}
-                    </option>
-                  }
-                </select>
-                <small class="form-help">
-                  Affects the icon color in the Limited-Time Content section
-                </small>
-              </div>
             }
           </div>
         }

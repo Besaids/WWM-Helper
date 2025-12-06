@@ -39,6 +39,8 @@ export interface ChecklistPrefs {
   pinned: Record<string, boolean>;
   hidden: Record<string, boolean>;
   completionCounts: Record<string, number>;
+  /** Tracks whether default pins have been applied (v1). Set once and never reset. */
+  defaultPinsApplied?: boolean;
 }
 
 export interface ChecklistTypeConfig {
@@ -56,6 +58,8 @@ export interface ChecklistItem {
   label: string;
   description?: string;
   tags?: ChecklistTag[];
+  route?: string;
+  section?: string;
 
   // New optional fields for custom/seasonal
   seasonId?: string; // For seasonal items

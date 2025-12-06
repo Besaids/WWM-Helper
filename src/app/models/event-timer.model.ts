@@ -22,6 +22,7 @@ export interface EventTimerDefinition {
   label: string;
   shortLabel: string;
   icon: string;
+  image: string;
   category: EventTimerCategory;
 
   /**
@@ -61,6 +62,7 @@ export interface EventTimerChip {
   label: string;
   shortLabel: string;
   icon: string;
+  image: string;
   category: EventTimerCategory;
   remaining: string;
   isExpired: boolean;

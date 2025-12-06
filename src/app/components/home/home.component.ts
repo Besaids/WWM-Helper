@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, inject, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { TimerService } from '../../services/timer/timer.service';
 import { CustomTimerService } from '../../services/timer/custom-timer.service';
+import { TimerPreferencesService } from '../../services/timer/timer-preferences.service';
 import { ChecklistStateService } from '../../services/checklist/checklist-state.service';
 import { ChecklistRegistryService } from '../../services/checklist/checklist-registry.service';
 import { CustomChecklistService } from '../../services/checklist/custom-checklist.service';
@@ -10,20 +11,6 @@ import { ChecklistItem, TimerChip, CustomTimerDefinition, ChecklistFrequency } f
 import { ChecklistToggleComponent } from '../ui';
 import { DateTime } from 'luxon';
 import { toSignal } from '@angular/core/rxjs-interop';
-
-interface HomeSectionItem {
-  label: string;
-  description?: string;
-}
-
-interface HomeSection {
-  id: string;
-  title: string;
-  subtitle: string;
-  items: HomeSectionItem[];
-  routerLink: string;
-  ctaLabel: string;
-}
 
 interface TimerState {
   type: 'normal' | 'warning' | 'urgent' | 'active';
@@ -54,10 +41,11 @@ interface PinnedBucket {
 export class HomeComponent {
   private readonly timerService = inject(TimerService);
   private readonly customTimerService = inject(CustomTimerService);
+  private readonly timerPrefs = inject(TimerPreferencesService);
   private readonly checklistState = inject(ChecklistStateService);
   private readonly checklistRegistry = inject(ChecklistRegistryService);
   private readonly customChecklistService = inject(CustomChecklistService);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
 
   // Create a signal to trigger recomputation
   private readonly refreshTrigger = signal(0);
@@ -68,9 +56,15 @@ export class HomeComponent {
   // Event timers signal
   private readonly eventTimers = this.customTimerService.customTimers$;
 
-  // Upcoming timers (max 4, includes custom event timers)
+  // Enabled timer IDs (shown in strip) - to filter out duplicates
+  private readonly enabledTimerIds = toSignal(this.timerPrefs.enabledTimerIds$, {
+    initialValue: new Set<string>(),
+  });
+
+  // Upcoming timers - excludes those already in the timer strip
   readonly upcomingTimers = computed(() => {
     const chips = this.timerChips();
+    const enabledIds = this.enabledTimerIds();
     const now = DateTime.utc();
 
     // Get event timers that haven't expired
@@ -80,7 +74,7 @@ export class HomeComponent {
       return now < endsAt; // Not expired
     });
 
-    // Convert event timers to chips
+    // Convert event timers to chips (events are custom, so not in strip)
     const eventChips: TimerWithPriority[] = events.map((event) => {
       const endsAt = DateTime.fromISO(event.endsAt!);
       const diff = endsAt.diff(now);
@@ -101,19 +95,21 @@ export class HomeComponent {
       };
     });
 
-    // Convert regular chips
-    const withActiveFlag: TimerWithPriority[] = chips.map((chip) => {
-      const isActive = chip.label.includes('(open)');
-      const state = this.getTimerState(chip.label, chip.remaining);
+    // Convert regular chips, EXCLUDING those already in the timer strip
+    const withActiveFlag: TimerWithPriority[] = chips
+      .filter((chip) => !enabledIds.has(chip.id)) // Exclude timers shown in strip
+      .map((chip) => {
+        const isActive = chip.label.includes('(open)');
+        const state = this.getTimerState(chip.label, chip.remaining);
 
-      return {
-        ...chip,
-        isActive,
-        isEvent: false,
-        state,
-        warningStyle: this.getWarningStyle(state),
-      };
-    });
+        return {
+          ...chip,
+          isActive,
+          isEvent: false,
+          state,
+          warningStyle: this.getWarningStyle(state),
+        };
+      });
 
     // Combine and sort
     const allTimers = [...eventChips, ...withActiveFlag];
@@ -133,7 +129,7 @@ export class HomeComponent {
         // Then by remaining time
         return this.compareRemainingTime(a.remaining, b.remaining);
       })
-      .slice(0, 4);
+      .slice(0, 6); // Allow more since we're filtering duplicates
   });
 
   // Pinned tasks organized by buckets
@@ -205,84 +201,6 @@ export class HomeComponent {
 
   readonly hasPinnedItems = computed(() => this.pinnedBuckets().length > 0);
 
-  readonly sections: HomeSection[] = [
-    {
-      id: 'timers',
-      title: 'Timers',
-      subtitle: 'Live UTC-based countdowns for daily and weekly resets plus key world events.',
-      items: [
-        {
-          label: 'Reset tracking',
-          description:
-            'Daily and weekly resets with clear UTC times so you never guess when systems flip.',
-        },
-        {
-          label: 'World & event timers',
-          description:
-            'Arena 1v1, Fireworks events, Trading week reset, Mirage Boat and other time-based content.',
-        },
-        {
-          label: 'Custom strip',
-          description:
-            'Pick which timers appear in the top strip; preferences are saved per browser.',
-        },
-      ],
-      routerLink: '/timers',
-      ctaLabel: 'Open timers',
-    },
-    {
-      id: 'checklist',
-      title: 'Checklists',
-      subtitle: "Track what you've actually done this cycle with daily and weekly task lists.",
-      items: [
-        {
-          label: 'Daily & weekly lists',
-          description:
-            'Core priorities first, then optional extras; state resets automatically with the game.',
-        },
-        {
-          label: 'Detailed or compact view',
-          description:
-            'Swap between full descriptions or a denser list depending on how much text you want.',
-        },
-        {
-          label: 'Local storage only',
-          description: 'Progress is stored in your browser; no login or external accounts needed.',
-        },
-      ],
-      routerLink: '/checklist',
-      ctaLabel: 'Open checklist',
-    },
-    {
-      id: 'guides',
-      title: 'Guides',
-      subtitle: 'Long-form explanations for systems that deserve more than a tooltip.',
-      items: [
-        {
-          label: 'Trading / Commerce',
-          description:
-            'How Trade Week works, Local vs Remote prices, mansion slots, and using guild tools.',
-        },
-        {
-          label: 'Seasonal Path Guide Challenges',
-          description:
-            'Detailed seasonal challenges for each sect path, integrated with completion tracking.',
-        },
-        {
-          label: 'Integrated with tools',
-          description:
-            'Guides reference related timers and checklist items so everything stays in sync.',
-        },
-        {
-          label: 'Room to grow',
-          description: 'Space reserved for future guides as new systems or events are added.',
-        },
-      ],
-      routerLink: '/guides',
-      ctaLabel: 'Browse guides',
-    },
-  ];
-
   readonly resourceLinks = [
     {
       label: 'Official Website',
@@ -297,19 +215,19 @@ export class HomeComponent {
       href: 'https://store.steampowered.com/app/3564740/Where_Winds_Meet/',
     },
     {
-      label: 'Reddit Community r/wherewindsmeet_',
+      label: 'Reddit r/wherewindsmeet_',
       href: 'https://www.reddit.com/r/wherewindsmeet_/',
     },
     {
-      label: 'Reddit Community r/WhereWindsMeet',
+      label: 'Reddit r/WhereWindsMeet',
       href: 'https://www.reddit.com/r/WhereWindsMeet/',
     },
     {
-      label: 'Where Winds Meet Combos | PvP Combo Database',
+      label: 'WWM Combos (PvP Database)',
       href: 'https://www.wwmcombos.com/',
     },
     {
-      label: 'Where Winds Meet Map | Map Genie',
+      label: 'Map Genie',
       href: 'https://mapgenie.io/where-winds-meet/maps/world',
     },
   ];
@@ -435,5 +353,18 @@ export class HomeComponent {
     this.checklistState.toggle(item, checked);
     // Trigger recomputation of pinnedBuckets
     this.refreshTrigger.update((v) => v + 1);
+  }
+
+  /**
+   * Navigate to a guide route, optionally with a section fragment
+   */
+  navigateToGuide(item: ChecklistItem): void {
+    if (!item.route) return;
+
+    if (item.section) {
+      this.router.navigate([item.route], { fragment: item.section });
+    } else {
+      this.router.navigate([item.route]);
+    }
   }
 }

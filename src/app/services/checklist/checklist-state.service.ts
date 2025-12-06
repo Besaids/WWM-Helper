@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { loadJsonFromStorage, loadVersioned, saveVersioned } from '../../utils';
-import { getDailyCycleId, getWeeklyCycleId } from '../../configs';
+import { DEFAULT_PINNED_IDS, getDailyCycleId, getWeeklyCycleId } from '../../configs';
 import { ChecklistFrequency, ChecklistItem, ChecklistPrefs } from '../../models';
 import { ChecklistRegistryService } from './checklist-registry.service';
 
@@ -163,6 +163,26 @@ export class ChecklistStateService {
     this.pinned = legacy?.pinned ?? {};
     this.hidden = legacy?.hidden ?? {};
     this.completionCounts = legacy?.completionCounts ?? {};
+
+    // Apply default pins once (for new users or users who haven't had this applied)
+    if (!legacy?.defaultPinsApplied) {
+      this.applyDefaultPins();
+    }
+  }
+
+  /**
+   * Apply default pinned items for new users.
+   * Only runs once - merges with any existing pins, then sets the flag.
+   */
+  private applyDefaultPins(): void {
+    for (const id of DEFAULT_PINNED_IDS) {
+      // Only pin if not already pinned (preserve user choice if somehow set)
+      // Also don't pin if the item is hidden (user explicitly hid it)
+      if (!this.pinned[id] && !this.hidden[id]) {
+        this.pinned[id] = true;
+      }
+    }
+    this.savePrefs();
   }
 
   private savePrefs(): void {
@@ -170,6 +190,7 @@ export class ChecklistStateService {
       pinned: this.pinned,
       hidden: this.hidden,
       completionCounts: this.completionCounts,
+      defaultPinsApplied: true, // Always mark as applied after first save
     };
 
     saveVersioned<ChecklistPrefs>(CHECKLIST_PREFS_KEY, prefs);

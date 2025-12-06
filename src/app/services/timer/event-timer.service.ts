@@ -86,6 +86,7 @@ export class EventTimerService {
       label: def.label,
       shortLabel: def.shortLabel,
       icon: def.icon,
+      image: def.image,
       category: def.category,
       remaining,
       isExpired,
@@ -99,6 +100,7 @@ export class EventTimerService {
       label: string;
       shortLabel: string;
       icon: string;
+      image: string;
       endsAt?: string;
       category?: string;
     },
@@ -120,6 +122,7 @@ export class EventTimerService {
       label: timer.label,
       shortLabel: timer.shortLabel,
       icon: timer.icon,
+      image: timer.image,
       category: (timer.category as EventTimerCategory) || 'other',
       remaining,
       isExpired,

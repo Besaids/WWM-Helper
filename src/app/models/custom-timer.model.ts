@@ -17,6 +17,7 @@ export interface CustomTimerDefinition {
   label: string;
   shortLabel: string;
   icon: string;
+  image: string;
   summary?: string; // Optional user description
 
   // For recurring timers
