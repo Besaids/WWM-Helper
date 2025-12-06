@@ -24,8 +24,6 @@
               <h2>{{ getActiveTypeConfig()?.label }} checklist</h2>
             </div>
 
-            <!-- REPLACE the .checklist-card-header__controls div contents with: -->
-
             <div class="checklist-card-header__controls">
               @if (activeTab() === 'custom') {
                 <button
@@ -43,6 +41,7 @@
                   type="button"
                   class="checklist-view-toggle__btn"
                   [class.checklist-view-toggle__btn--active]="isCompactView"
+                  [appTooltip]="'checklist.view-simple'"
                   (click)="setViewMode('compact')"
                 >
                   Simple
@@ -51,6 +50,7 @@
                   type="button"
                   class="checklist-view-toggle__btn"
                   [class.checklist-view-toggle__btn--active]="!isCompactView"
+                  [appTooltip]="'checklist.view-detailed'"
                   (click)="setViewMode('detailed')"
                 >
                   Detailed
@@ -60,6 +60,7 @@
               <button
                 type="button"
                 class="reset-link reset-link--ghost"
+                [appTooltip]="'checklist.reset'"
                 (click)="resetCurrentTab()"
                 [attr.aria-label]="'Reset ' + getActiveTypeConfig()?.label + ' checklist'"
               >
@@ -116,7 +117,18 @@
 
                 @for (group of getCategoryGroups('core', true); track group.category) {
                   <div class="checklist-category">
-                    <h4>{{ group.category }}</h4>
+                    <h4>
+                      @if (shouldShowCategoryTooltip(group.category)) {
+                        <span
+                          class="has-tooltip"
+                          [appTooltip]="getCategoryTooltipKey(group.category)!"
+                        >
+                          {{ group.category }}
+                        </span>
+                      } @else {
+                        {{ group.category }}
+                      }
+                    </h4>
 
                     <ul>
                       @for (item of group.items; track item.id) {
@@ -173,6 +185,7 @@
                             @if (getCompletionCount(item) > 0) {
                               <span
                                 class="checklist-completion-counter"
+                                [appTooltip]="'checklist.completion-count'"
                                 [attr.aria-label]="
                                   'Completed ' + getCompletionCount(item) + ' times this cycle'
                                 "
@@ -187,6 +200,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--edit"
+                                [appTooltip]="'checklist.edit'"
                                 (click)="openEditCustomItemModal(item)"
                                 aria-label="Edit custom item"
                                 title="Edit item"
@@ -199,6 +213,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--pin"
+                              [appTooltip]="'checklist.pin'"
                               (click)="onTogglePinned(item)"
                               [attr.aria-pressed]="isPinned(item)"
                               aria-label="Pin task to Home page"
@@ -214,6 +229,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--hide"
+                              [appTooltip]="'checklist.hide'"
                               (click)="onToggleHidden(item)"
                               [attr.aria-pressed]="isHidden(item)"
                               aria-label="Hide task (move to Hidden items)"
@@ -230,6 +246,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--delete"
+                                [appTooltip]="'checklist.delete'"
                                 (click)="deleteCustomItem(item.id)"
                                 aria-label="Delete custom item"
                                 title="Delete item"
@@ -253,7 +270,18 @@
 
                 @for (group of getCategoryGroups('optional', true); track group.category) {
                   <div class="checklist-category">
-                    <h4>{{ group.category }}</h4>
+                    <h4>
+                      @if (shouldShowCategoryTooltip(group.category)) {
+                        <span
+                          class="has-tooltip"
+                          [appTooltip]="getCategoryTooltipKey(group.category)!"
+                        >
+                          {{ group.category }}
+                        </span>
+                      } @else {
+                        {{ group.category }}
+                      }
+                    </h4>
 
                     <ul>
                       @for (item of group.items; track item.id) {
@@ -310,6 +338,7 @@
                             @if (getCompletionCount(item) > 0) {
                               <span
                                 class="checklist-completion-counter"
+                                [appTooltip]="'checklist.completion-count'"
                                 [attr.aria-label]="
                                   'Completed ' + getCompletionCount(item) + ' times this cycle'
                                 "
@@ -324,6 +353,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--edit"
+                                [appTooltip]="'checklist.edit'"
                                 (click)="openEditCustomItemModal(item)"
                                 aria-label="Edit custom item"
                                 title="Edit item"
@@ -336,6 +366,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--pin"
+                              [appTooltip]="'checklist.pin'"
                               (click)="onTogglePinned(item)"
                               [attr.aria-pressed]="isPinned(item)"
                               aria-label="Pin task to Home page"
@@ -351,6 +382,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--hide"
+                              [appTooltip]="'checklist.hide'"
                               (click)="onToggleHidden(item)"
                               [attr.aria-pressed]="isHidden(item)"
                               aria-label="Hide task (move to Hidden items)"
@@ -367,6 +399,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--delete"
+                                [appTooltip]="'checklist.delete'"
                                 (click)="deleteCustomItem(item.id)"
                                 aria-label="Delete custom item"
                                 title="Delete item"
@@ -445,6 +478,7 @@
                             @if (getCompletionCount(item) > 0) {
                               <span
                                 class="checklist-completion-counter"
+                                [appTooltip]="'checklist.completion-count'"
                                 [attr.aria-label]="
                                   'Completed ' + getCompletionCount(item) + ' times this cycle'
                                 "
@@ -459,6 +493,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--edit"
+                                [appTooltip]="'checklist.edit'"
                                 (click)="openEditCustomItemModal(item)"
                                 aria-label="Edit custom item"
                                 title="Edit item"
@@ -471,6 +506,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--pin"
+                              [appTooltip]="'checklist.pin'"
                               (click)="onTogglePinned(item)"
                               [attr.aria-pressed]="isPinned(item)"
                               aria-label="Pin task to Home page"
@@ -486,6 +522,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--hide"
+                              [appTooltip]="'checklist.hide'"
                               (click)="onToggleHidden(item)"
                               [attr.aria-pressed]="isHidden(item)"
                               aria-label="Hide task (move to Hidden items)"
@@ -502,6 +539,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--delete"
+                                [appTooltip]="'checklist.delete'"
                                 (click)="deleteCustomItem(item.id)"
                                 aria-label="Delete custom item"
                                 title="Delete item"
@@ -580,6 +618,7 @@
                             @if (getCompletionCount(item) > 0) {
                               <span
                                 class="checklist-completion-counter"
+                                [appTooltip]="'checklist.completion-count'"
                                 [attr.aria-label]="
                                   'Completed ' + getCompletionCount(item) + ' times this cycle'
                                 "
@@ -594,6 +633,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--edit"
+                                [appTooltip]="'checklist.edit'"
                                 (click)="openEditCustomItemModal(item)"
                                 aria-label="Edit custom item"
                                 title="Edit item"
@@ -606,6 +646,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--pin"
+                              [appTooltip]="'checklist.pin'"
                               (click)="onTogglePinned(item)"
                               [attr.aria-pressed]="isPinned(item)"
                               aria-label="Pin task to Home page"
@@ -621,6 +662,7 @@
                             <button
                               type="button"
                               class="checklist-item-action checklist-item-action--hide"
+                              [appTooltip]="'checklist.hide'"
                               (click)="onToggleHidden(item)"
                               [attr.aria-pressed]="isHidden(item)"
                               aria-label="Hide task (move to Hidden items)"
@@ -637,6 +679,7 @@
                               <button
                                 type="button"
                                 class="checklist-item-action checklist-item-action--delete"
+                                [appTooltip]="'checklist.delete'"
                                 (click)="deleteCustomItem(item.id)"
                                 aria-label="Delete custom item"
                                 title="Delete item"
@@ -681,7 +724,18 @@
                   <div id="hidden-items-content" class="checklist-hidden-content">
                     @for (group of getHiddenCategoryGroups(); track group.category) {
                       <div class="checklist-category">
-                        <h4>{{ group.category }}</h4>
+                        <h4>
+                          @if (shouldShowCategoryTooltip(group.category)) {
+                            <span
+                              class="has-tooltip"
+                              [appTooltip]="getCategoryTooltipKey(group.category)!"
+                            >
+                              {{ group.category }}
+                            </span>
+                          } @else {
+                            {{ group.category }}
+                          }
+                        </h4>
 
                         <ul>
                           @for (item of group.items; track item.id) {
@@ -738,6 +792,7 @@
                                 @if (getCompletionCount(item) > 0) {
                                   <span
                                     class="checklist-completion-counter"
+                                    [appTooltip]="'checklist.completion-count'"
                                     [attr.aria-label]="
                                       'Completed ' + getCompletionCount(item) + ' times this cycle'
                                     "
@@ -754,6 +809,7 @@
                                   <button
                                     type="button"
                                     class="checklist-item-action checklist-item-action--edit"
+                                    [appTooltip]="'checklist.edit'"
                                     (click)="openEditCustomItemModal(item)"
                                     aria-label="Edit custom item"
                                     title="Edit item"
@@ -766,6 +822,7 @@
                                 <button
                                   type="button"
                                   class="checklist-item-action checklist-item-action--pin"
+                                  [appTooltip]="'checklist.pin'"
                                   (click)="onTogglePinned(item)"
                                   [attr.aria-pressed]="isPinned(item)"
                                   aria-label="Pin task to Home page"
@@ -783,6 +840,7 @@
                                 <button
                                   type="button"
                                   class="checklist-item-action checklist-item-action--hide"
+                                  [appTooltip]="'checklist.hide'"
                                   (click)="onToggleHidden(item)"
                                   [attr.aria-pressed]="isHidden(item)"
                                   aria-label="Hide task (move to Hidden items)"
@@ -801,6 +859,7 @@
                                   <button
                                     type="button"
                                     class="checklist-item-action checklist-item-action--delete"
+                                    [appTooltip]="'checklist.delete'"
                                     (click)="deleteCustomItem(item.id)"
                                     aria-label="Delete custom item"
                                     title="Delete item"

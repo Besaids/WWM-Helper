@@ -1,3 +1,4 @@
+// src/app/components/checklist/checklist.component.ts
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -15,6 +16,7 @@ import { ChecklistStateService } from '../../services/checklist/checklist-state.
 import { ChecklistRegistryService } from '../../services/checklist/checklist-registry.service';
 import { CustomChecklistService } from '../../services/checklist/custom-checklist.service';
 import { ResetWatchService } from '../../services/reset/reset-watch.service';
+import { TooltipRegistryService } from '../../services/tooltip/tooltip-registry.service';
 import {
   ChecklistImportance,
   ChecklistItem,
@@ -24,6 +26,7 @@ import {
 } from '../../models';
 import { ChecklistToggleComponent } from '../ui';
 import { CustomChecklistModalComponent } from './custom-checklist-modal';
+import { TooltipDirective } from '../../directives/tooltip/tooltip.directive';
 
 type ChecklistViewMode = 'detailed' | 'compact';
 
@@ -44,7 +47,12 @@ interface PinnedProgress {
 @Component({
   selector: 'app-checklist',
   standalone: true,
-  imports: [CommonModule, ChecklistToggleComponent, CustomChecklistModalComponent],
+  imports: [
+    CommonModule,
+    ChecklistToggleComponent,
+    CustomChecklistModalComponent,
+    TooltipDirective,
+  ],
   templateUrl: './checklist.component.html',
   styleUrl: './checklist.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +64,7 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   private readonly registry = inject(ChecklistRegistryService);
   private readonly customChecklistService = inject(CustomChecklistService);
   private readonly resetWatch = inject(ResetWatchService);
+  private readonly tooltipRegistry = inject(TooltipRegistryService);
 
   readonly FREEPLAY_IDEAS = FREEPLAY_IDEAS;
 
@@ -100,6 +109,154 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     return { total, completed };
   });
 
+  constructor() {
+    // Register tooltips for checklist controls and game assets
+    this.tooltipRegistry.registerAll({
+      // Control hints
+      'checklist.pin': {
+        title: 'Pin to Home',
+        description:
+          'Pin this task to show it on the Home page. Pinned tasks appear in a separate section for quick access.',
+        variant: 'controlHint',
+      },
+      'checklist.hide': {
+        title: 'Hide task',
+        description:
+          'Move this task to the Hidden section at the bottom. Use this for tasks you want to keep but not see in the main list.',
+        variant: 'controlHint',
+      },
+      'checklist.edit': {
+        title: 'Edit custom item',
+        description: 'Edit the label, description, and frequency of this custom checklist item.',
+        variant: 'controlHint',
+      },
+      'checklist.delete': {
+        title: 'Delete custom item',
+        description: 'Permanently delete this custom checklist item.',
+        variant: 'controlHint',
+      },
+      'checklist.completion-count': {
+        title: 'Completion count',
+        description:
+          "Number of times you've completed this task in the current cycle (daily/weekly/seasonal).",
+        variant: 'controlHint',
+      },
+      'checklist.view-simple': {
+        title: 'Simple view',
+        description: 'Show only task labels for a compact, scannable list.',
+        variant: 'controlHint',
+      },
+      'checklist.view-detailed': {
+        title: 'Detailed view',
+        description: 'Show task labels and descriptions with full context and guide links.',
+        variant: 'controlHint',
+      },
+      'checklist.reset': {
+        title: 'Reset checklist',
+        description:
+          'Uncheck all tasks in this checklist. Useful if you want to start fresh or accidentally checked items.',
+        variant: 'controlHint',
+      },
+
+      // System resources
+      'system.energy': {
+        imageUrl: 'assets/game/system/energy-small.png',
+        title: 'Energy',
+        description:
+          'Account-wide activity resource for high-value content. Regenerates over time.',
+        variant: 'inlineInfo',
+      },
+      'system.stamina': {
+        imageUrl: 'assets/game/system/stamina-small.png',
+        title: 'Stamina',
+        description: 'Character resource for crafting, gathering, and other production activities.',
+        variant: 'inlineInfo',
+      },
+
+      // Weekly-capped currencies
+      'currency.coin': {
+        imageUrl: 'assets/game/currency/currency-coin.png',
+        title: 'Coin',
+        description:
+          'Generic in-game money for merchants, fees, and basic services. Weekly cap: 175,000.',
+        variant: 'inlineInfo',
+      },
+      'currency.reputation': {
+        imageUrl: 'assets/game/currency/currency-reputation.png',
+        title: 'Reputation',
+        description:
+          'Sect currency from Jianghu Errands. Spent at sect shops on cosmetics and materials. Weekly cap: 1,200.',
+        variant: 'inlineInfo',
+      },
+      'currency.jade_fish': {
+        imageUrl: 'assets/game/currency/currency-jade-fish.png',
+        title: 'Jade Fish',
+        description:
+          'Universal activity currency from exploration, quests, and activities. Spent in Season shops. Weekly cap: 20,000.',
+        variant: 'inlineInfo',
+      },
+      'currency.treasure_token': {
+        imageUrl: 'assets/game/currency/currency-treasure-token.png',
+        title: 'Treasure Token',
+        description:
+          'Guild currency from guild events. Spent in guild shops on cosmetics. Weekly cap: 2,500.',
+        variant: 'inlineInfo',
+      },
+      'currency.harmony_charm': {
+        imageUrl: 'assets/game/currency/currency-harmony-charm.png',
+        title: 'Harmony Charm',
+        description:
+          'Social currency from partnerships and co-op play. Spent in Social shops. Weekly cap: 2,000.',
+        variant: 'inlineInfo',
+      },
+      'currency.fourfold_coin': {
+        imageUrl: 'assets/game/currency/currency-fourfold-coin.png',
+        title: 'Fourfold Coin',
+        description:
+          'Bounty currency from NPC and player bounties. Spent in Bounty Shop. Weekly cap.',
+        variant: 'inlineInfo',
+      },
+      'currency.commerce_coin': {
+        imageUrl: 'assets/game/currency/currency-commerce-coin.png',
+        title: 'Commerce Coin',
+        description: 'Mini-game currency for wagers in Pitch Pot, cards, Mahjong, and street food.',
+        variant: 'inlineInfo',
+      },
+
+      // Premium items & currencies
+      'currency.echo_jade': {
+        imageUrl: 'assets/game/currency/currency-echo-jade.png',
+        title: 'Echo Jade',
+        description:
+          'Premium-like earnable currency for Resonating Melodies, Inner Way materials, and progression items.',
+        variant: 'inlineInfo',
+      },
+      'items.lingering_melody': {
+        imageUrl: 'assets/game/items/item-common-lingering-melody.png',
+        title: 'Lingering Melody',
+        description:
+          'Premium gacha ticket for Celestial Echo draws. Purchased with Echo Beads or obtained from passes.',
+        variant: 'inlineInfo',
+      },
+
+      // Navigation concepts
+      'navigation.battle_pass': {
+        imageUrl: 'assets/game/navigation/battle-pass-icon.png',
+        title: 'Battle Pass',
+        description:
+          'Seasonal progression system with daily, weekly, and period objectives. Rewards cosmetics, currencies, and materials.',
+        variant: 'inlineInfo',
+      },
+      'navigation.season': {
+        imageUrl: 'assets/game/navigation/season-icon.png',
+        title: 'Season',
+        description:
+          'Time-limited content period featuring Battle Pass, seasonal shops, and exclusive rewards.',
+        variant: 'inlineInfo',
+      },
+    });
+  }
+
   ngOnInit(): void {
     // Initial tab from query param
     const tabParam = this.route.snapshot.queryParamMap.get('tab') as ChecklistFrequency;
@@ -141,6 +298,19 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  // --- Helper to check if category should have tooltip ---
+
+  shouldShowCategoryTooltip(category: string): boolean {
+    return category.includes('Battle Pass');
+  }
+
+  getCategoryTooltipKey(category: string): string | null {
+    if (category.includes('Battle Pass')) {
+      return 'navigation.battle_pass';
+    }
+    return null;
   }
 
   // --- Navigation helpers ---

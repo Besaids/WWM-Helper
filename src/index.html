@@ -68,6 +68,53 @@
     <!-- Icons -->
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="assets/portal/wwm-logo.png" />
+
+    <!-- Conditional Google Analytics (only loads if user has granted analytics consent) -->
+    <script>
+      (function () {
+        var STORAGE_KEY = 'wwm-helper.cookie-consent';
+        var GA_MEASUREMENT_ID = 'G-VTMKX3JJCQ';
+
+        /**
+         * Loads and initializes Google Analytics.
+         * Exposed globally so the cookie banner can call it after granting consent.
+         */
+        window.wwmLoadAnalyticsFromConsent = function () {
+          // Avoid loading GA twice
+          if (window.gaLoaded) return;
+          window.gaLoaded = true;
+
+          // Create and append gtag script
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
+          document.head.appendChild(script);
+
+          // Initialize dataLayer and gtag
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            window.dataLayer.push(arguments);
+          }
+          window.gtag = gtag;
+
+          gtag('js', new Date());
+          gtag('config', GA_MEASUREMENT_ID);
+        };
+
+        // Check if user has already granted analytics consent
+        try {
+          var consentData = localStorage.getItem(STORAGE_KEY);
+          if (!consentData) return;
+
+          var payload = JSON.parse(consentData);
+          if (payload && payload.analytics === 'granted') {
+            window.wwmLoadAnalyticsFromConsent();
+          }
+        } catch (e) {
+          // Silently fail if localStorage is unavailable or JSON is invalid
+        }
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

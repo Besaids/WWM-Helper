@@ -5,3 +5,4 @@ export * from './path-season.models';
 export * from './timer-chip.model';
 export * from './timer-definition.model';
 export * from './timer-details.model';
+export * from './tooltip.model';

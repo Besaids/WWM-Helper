@@ -1,0 +1,36 @@
+/* ===========================
+   Tooltip Global Styles
+   CDK Overlay panel and utility classes
+   =========================== */
+
+@use 'tokens/colors' as *;
+
+/* CDK Overlay panel wrapper */
+.app-tooltip-panel {
+  pointer-events: none;
+
+  /* Allow pointer events on the tooltip itself */
+  > * {
+    pointer-events: auto;
+  }
+}
+
+/* Inline text indicator for elements with tooltips */
+.has-tooltip {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: $text-muted;
+  text-underline-offset: 2px;
+  cursor: help;
+
+  &:hover,
+  &:focus {
+    text-decoration-color: $accent-teal;
+  }
+}
+
+/* Control hint indicator (no visual change, cursor only) */
+.has-tooltip--control {
+  text-decoration: none;
+  cursor: pointer;
+}

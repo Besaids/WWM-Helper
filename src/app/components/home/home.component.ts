@@ -11,6 +11,8 @@ import { ChecklistItem, TimerChip, CustomTimerDefinition, ChecklistFrequency } f
 import { ChecklistToggleComponent } from '../ui';
 import { DateTime } from 'luxon';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TooltipRegistryService } from '../../services';
+import { TooltipDirective } from '../../directives';
 
 interface TimerState {
   type: 'normal' | 'warning' | 'urgent' | 'active';
@@ -34,7 +36,7 @@ interface PinnedBucket {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, ChecklistToggleComponent],
+  imports: [CommonModule, RouterModule, ChecklistToggleComponent, TooltipDirective],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -46,6 +48,7 @@ export class HomeComponent {
   private readonly checklistRegistry = inject(ChecklistRegistryService);
   private readonly customChecklistService = inject(CustomChecklistService);
   private readonly router = inject(Router);
+  private readonly tooltipRegistry = inject(TooltipRegistryService);
 
   // Create a signal to trigger recomputation
   private readonly refreshTrigger = signal(0);
@@ -132,28 +135,34 @@ export class HomeComponent {
       .slice(0, 6); // Allow more since we're filtering duplicates
   });
 
-  // Pinned tasks organized by buckets
+  // Pinned tasks organized by buckets - NOW includes completed items at the bottom
   readonly pinnedBuckets = computed((): PinnedBucket[] => {
     // Read the refresh trigger to make this reactive
     this.refreshTrigger();
 
     const buckets: PinnedBucket[] = [];
 
-    // Helper to get pinned items for a frequency
+    // Helper to get pinned items for a frequency (includes completed items)
     const getPinnedForFrequency = (frequencies: string[]): ChecklistItem[] => {
       const allItems: ChecklistItem[] = [];
 
       for (const freq of frequencies) {
         const items = this.checklistRegistry.getItemsForType(freq as ChecklistFrequency);
-        const pinned = items.filter(
-          (item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item),
-        );
+        const pinned = items.filter((item) => this.checklistState.isPinned(item));
         allItems.push(...pinned);
       }
 
-      // Sort: custom items first, then by label
+      // Sort: incomplete first, then custom items, then by label
       return allItems.sort((a, b) => {
+        const aChecked = this.checklistState.isChecked(a);
+        const bChecked = this.checklistState.isChecked(b);
+
+        // Incomplete items first
+        if (aChecked !== bChecked) return aChecked ? 1 : -1;
+
+        // Then custom items first
         if (a.isCustom !== b.isCustom) return a.isCustom ? -1 : 1;
+
         return a.label.localeCompare(b.label);
       });
     };
@@ -163,10 +172,18 @@ export class HomeComponent {
     const customDaily = this.customChecklistService
       .getAll()
       .filter((item) => item.importance === 'daily')
-      .filter((item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item));
+      .filter((item) => this.checklistState.isPinned(item));
 
     const allDaily = [...customDaily, ...dailyItems].sort((a, b) => {
+      const aChecked = this.checklistState.isChecked(a);
+      const bChecked = this.checklistState.isChecked(b);
+
+      // Incomplete items first
+      if (aChecked !== bChecked) return aChecked ? 1 : -1;
+
+      // Then custom items first
       if (a.isCustom !== b.isCustom) return a.isCustom ? -1 : 1;
+
       return a.label.localeCompare(b.label);
     });
 
@@ -179,10 +196,18 @@ export class HomeComponent {
     const customWeekly = this.customChecklistService
       .getAll()
       .filter((item) => item.importance === 'weekly')
-      .filter((item) => this.checklistState.isPinned(item) && !this.checklistState.isChecked(item));
+      .filter((item) => this.checklistState.isPinned(item));
 
     const allWeekly = [...customWeekly, ...weeklyItems].sort((a, b) => {
+      const aChecked = this.checklistState.isChecked(a);
+      const bChecked = this.checklistState.isChecked(b);
+
+      // Incomplete items first
+      if (aChecked !== bChecked) return aChecked ? 1 : -1;
+
+      // Then custom items first
       if (a.isCustom !== b.isCustom) return a.isCustom ? -1 : 1;
+
       return a.label.localeCompare(b.label);
     });
 
@@ -200,6 +225,40 @@ export class HomeComponent {
   });
 
   readonly hasPinnedItems = computed(() => this.pinnedBuckets().length > 0);
+
+  // Check if we have both daily and weekly buckets (for side-by-side layout)
+  readonly hasDailyAndWeekly = computed(() => {
+    const buckets = this.pinnedBuckets();
+    const hasDaily = buckets.some((b) => b.id === 'daily');
+    const hasWeekly = buckets.some((b) => b.id === 'weekly');
+    return hasDaily && hasWeekly;
+  });
+
+  // Get daily bucket for side-by-side layout
+  readonly dailyBucket = computed(() => {
+    return this.pinnedBuckets().find((b) => b.id === 'daily') ?? null;
+  });
+
+  // Get weekly bucket for side-by-side layout
+  readonly weeklyBucket = computed(() => {
+    return this.pinnedBuckets().find((b) => b.id === 'weekly') ?? null;
+  });
+
+  // Get seasonal bucket (always displayed below)
+  readonly seasonalBucket = computed(() => {
+    return this.pinnedBuckets().find((b) => b.id === 'seasonal-period') ?? null;
+  });
+
+  // Get buckets for single-column layout (when NOT both daily and weekly)
+  readonly singleColumnBuckets = computed(() => {
+    if (this.hasDailyAndWeekly()) {
+      // Return only seasonal bucket (daily/weekly handled separately)
+      const seasonal = this.seasonalBucket();
+      return seasonal ? [seasonal] : [];
+    }
+    // Return all buckets for single-column layout
+    return this.pinnedBuckets();
+  });
 
   readonly resourceLinks = [
     {
@@ -231,6 +290,33 @@ export class HomeComponent {
       href: 'https://mapgenie.io/where-winds-meet/maps/world',
     },
   ];
+
+  constructor() {
+    // Register tooltips for timer badges and state indicators
+    this.tooltipRegistry.registerAll({
+      'timer-badge.active': {
+        title: 'Active Timer',
+        description: 'This event or window is currently open and available.',
+        variant: 'controlHint',
+      },
+      'timer-badge.event': {
+        title: 'Custom Event',
+        description: 'This is a custom event timer you created.',
+        variant: 'controlHint',
+      },
+      'timer-state.warning': {
+        title: 'Starting Soon',
+        description:
+          'This timer will reset or become available within 30 minutes. The color shifts from yellow to red as time runs out.',
+        variant: 'controlHint',
+      },
+      'timer-state.urgent': {
+        title: 'Expiring Now',
+        description: 'This timer is expiring or starting within 10 minutes.',
+        variant: 'controlHint',
+      },
+    });
+  }
 
   private formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Expired';

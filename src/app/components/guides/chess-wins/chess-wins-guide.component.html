@@ -3,7 +3,8 @@
     <h1 class="guide-page__title">Chess Wins Guide</h1>
     <p class="guide-page__subtitle">
       How to access Ye Buxiu, fulfill all prerequisites, and use Xiangqi.com to guarantee 3 chess
-      wins per day for 900 Commerce Coins.
+      wins per day for 900
+      <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>.
     </p>
 
     <nav class="guide-toc">
@@ -36,15 +37,31 @@
       <p>
         <strong>Ye Buxiu</strong> is a chess NPC inside the Dreamscape who offers 3 wins at chess
         matches per day. By winning all 3 matches on <strong>Expert difficulty</strong>, you earn
-        <strong>300 Commerce Coins per win</strong>, totaling:
+        <strong>
+          300
+          <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>
+          per win </strong
+        >, totaling:
       </p>
       <ul>
-        <li><strong>Daily total:</strong> 900 Commerce Coins</li>
-        <li><strong>Weekly total:</strong> 6,300 Commerce Coins</li>
+        <li>
+          <strong>Daily total:</strong> 900
+          <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>
+        </li>
+        <li>
+          <strong>Weekly total:</strong> 6,300
+          <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>
+        </li>
       </ul>
       <p>
-        However, losing a match costs you <strong>150 Commerce Coins</strong>. To guarantee wins
-        every time, we use <strong>Xiangqi.com</strong> as a simulated AI opponent.
+        However, losing a match costs you
+        <strong
+          >150
+          <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'"
+            >Commerce Coins</span
+          ></strong
+        >. To guarantee wins every time, we use <strong>Xiangqi.com</strong> as a simulated AI
+        opponent.
       </p>
 
       <h3>How the Xiangqi.com Method Works</h3>

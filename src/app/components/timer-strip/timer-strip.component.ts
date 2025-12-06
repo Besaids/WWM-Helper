@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { combineLatest, map } from 'rxjs';
 import { TimerService } from '../../services/timer/timer.service';
 import { TimerPreferencesService } from '../../services/timer/timer-preferences.service';
+import { TooltipRegistryService } from '../../services';
+import { TooltipDirective } from '../../directives';
 
 interface TimerState {
   type: 'normal' | 'warning' | 'urgent' | 'active';
@@ -13,13 +15,14 @@ interface TimerState {
 @Component({
   selector: 'app-timer-strip',
   standalone: true,
-  imports: [CommonModule], // gives @if, @for, AsyncPipe, ngClass, etc.
+  imports: [CommonModule, TooltipDirective],
   templateUrl: './timer-strip.component.html',
   styleUrls: ['./timer-strip.component.scss'],
 })
 export class TimerStripComponent {
   private readonly timerService = inject(TimerService);
   private readonly timerPrefs = inject(TimerPreferencesService);
+  private readonly tooltipRegistry = inject(TooltipRegistryService);
 
   // Only show timers that the user has enabled,
   // and order them so the soonest event is on the left.
@@ -36,6 +39,28 @@ export class TimerStripComponent {
         ),
     ),
   );
+
+  constructor() {
+    // Register tooltips for timer state indicators (reuse home definitions)
+    this.tooltipRegistry.registerAll({
+      'timer-badge.active': {
+        title: 'Active Timer',
+        description: 'This event or window is currently open and available.',
+        variant: 'controlHint',
+      },
+      'timer-state.warning': {
+        title: 'Starting Soon',
+        description:
+          'This timer will reset or become available within 30 minutes. The color shifts from yellow to red as time runs out.',
+        variant: 'controlHint',
+      },
+      'timer-state.urgent': {
+        title: 'Expiring Now',
+        description: 'This timer is expiring or starting within 10 minutes.',
+        variant: 'controlHint',
+      },
+    });
+  }
 
   /**
    * Convert a human-readable remaining string like:

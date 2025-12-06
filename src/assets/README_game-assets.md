@@ -48,3 +48,28 @@ This makes it easier to auto-generate UI, guides, and code that refer to these a
   },
 ]
 ```
+
+---
+
+## Using this manifest with tooltips
+
+The tooltip system in WWM Helper is built on top of this manifest:
+
+- Each `id` in `game-assets.json` can double as a tooltip registry key.
+  - Example: `id: "currency.echo_jade"` → `[appTooltip]="'currency.echo_jade'"`.
+- Tooltip content should be derived from the asset:
+  - `imageUrl` → `file`
+  - `title` → `label`
+  - `description` → short version of `description` or `ui_usage_notes`
+  - `variant` → `default_tooltip_variant` (falling back to `"inlineInfo"`)
+
+When scanning guides or templates:
+
+- Use `aliases` as well as `label` to decide whether a phrase refers to a known asset.
+- If multiple assets could match the same phrase, prefer:
+  - Exact `label` match over alias match,
+  - More specific `category`/`game_system_tags` for the current UI context.
+
+Not every mention of a concept needs a tooltip; use this manifest to provide
+good, consistent tooltips for **first mentions** and key UI elements, not to
+blanket every occurrence.

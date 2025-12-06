@@ -1,0 +1,64 @@
+<div class="tooltip-content">
+  <!-- Image-only layout -->
+  @if (layoutMode() === 'image-only') {
+    <div class="tooltip-image tooltip-image--only">
+      <img [src]="imageUrl()" alt="" loading="lazy" />
+    </div>
+  }
+
+  <!-- Title-only layout -->
+  @if (layoutMode() === 'title-only') {
+    <div class="tooltip-title">{{ title() }}</div>
+  }
+
+  <!-- Image + Title layout -->
+  @if (layoutMode() === 'image-title') {
+    <div class="tooltip-row">
+      <div class="tooltip-image tooltip-image--small">
+        <img [src]="imageUrl()" alt="" loading="lazy" />
+      </div>
+      <div class="tooltip-title">{{ title() }}</div>
+    </div>
+  }
+
+  <!-- Image + Description layout -->
+  @if (layoutMode() === 'image-description') {
+    <div class="tooltip-row">
+      <div class="tooltip-image tooltip-image--small">
+        <img [src]="imageUrl()" alt="" loading="lazy" />
+      </div>
+      <div class="tooltip-description">{{ description() }}</div>
+    </div>
+  }
+
+  <!-- Title + Description layout -->
+  @if (layoutMode() === 'title-description') {
+    <div class="tooltip-body">
+      <div class="tooltip-title">{{ title() }}</div>
+      <div class="tooltip-description">{{ description() }}</div>
+    </div>
+  }
+
+  <!-- Full layout -->
+  @if (layoutMode() === 'full') {
+    <div class="tooltip-full">
+      <div class="tooltip-image tooltip-image--medium">
+        <img [src]="imageUrl()" alt="" loading="lazy" />
+      </div>
+      <div class="tooltip-body">
+        <div class="tooltip-title">{{ title() }}</div>
+        <div class="tooltip-description">{{ description() }}</div>
+      </div>
+    </div>
+  }
+
+  <!-- Link CTA (shown for all layouts if present) -->
+  @if (hasLink()) {
+    <div class="tooltip-link">
+      <a [href]="linkUrl()" class="tooltip-cta" target="_blank" rel="noopener noreferrer">
+        {{ linkLabel() }}
+        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  }
+</div>

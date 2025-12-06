@@ -5,3 +5,4 @@ export * from './path-challenge';
 export * from './privacy';
 export * from './reset';
 export * from './timer';
+export * from './tooltip';

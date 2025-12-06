@@ -9,15 +9,27 @@
 
   <section class="tools-grid">
     <!-- Chinese Chess / Xiangqi -->
-    <article class="tool-card card-surface card-padding">
-      <h2 class="tool-card__title">Chinese Chess – Xiangqi</h2>
-      <p class="tool-card__summary">
-        Chinese Chess website to simulate matches against a highly efficient opponent for easy chess
-        wins.
-      </p>
-      <button type="button" class="tool-card__button btn-primary" routerLink="/tools/chinese-chess">
-        Open tool
-      </button>
+    <article class="tool-card">
+      <div class="tool-card__banner">
+        <img
+          class="tool-card__banner-img"
+          src="assets/banners/tool-chess-banner.png"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="tool-card__body">
+        <h2 class="tool-card__title">Chinese Chess – Xiangqi</h2>
+        <p class="tool-card__summary">
+          Simulate Xiangqi matches using a powerful AI to guarantee clean wins in the WWM chess
+          minigame.
+        </p>
+        <div class="tool-card__actions">
+          <button type="button" class="btn-primary" routerLink="/tools/chinese-chess">
+            Open tool
+          </button>
+        </div>
+      </div>
     </article>
 
     <!-- Future tools go here as more cards -->
