@@ -7,7 +7,7 @@ import {
   provideAppInitializer,
   inject,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 import { GlobalErrorHandler } from './utils/global-error-handler';
 import { AnalyticsService, CookieConsentService } from './services';
@@ -16,7 +16,16 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      }),
+      withRouterConfig({
+        onSameUrlNavigation: 'reload',
+      }),
+    ),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
 
     provideAppInitializer(() => {

@@ -1,176 +1,180 @@
 # WWM Helper – AI Coding Agent Instructions
 
-**Where Winds Meet Helper** is an Angular 21 standalone SPA providing timers, checklists, and guides for the game "Where Winds Meet". Built with modern Angular patterns, Luxon for time handling, and a comprehensive design system.
+**Where Winds Meet Helper** is an Angular 21 standalone SPA providing timers, checklists, path guides, and tools for the game **Where Winds Meet**. It uses UTC-based reset logic, a shared SCSS design system, and a structured game-asset manifest.
 
-## Architecture Overview
+---
+
+## 1. Architecture Overview
 
 ### Tech Stack
+
 - **Angular 21** – Standalone components, signals, OnPush change detection
-- **Luxon** – UTC-based datetime calculations for game resets and timers
+- **Luxon** – UTC-based datetime calculations for all game resets and timers
 - **Howler.js** – Music player audio management
-- **Bootstrap 5 + Icons** – Base UI components and icon library
-- **SCSS** – Design system with tokens, mixins, and utilities
+- **Bootstrap 5 + Icons** – Base UI and icon set
+- **SCSS** – Design system with tokens, mixins, base, components, utilities
 
-### Core Concepts
+### Core Time/State Concepts
 
-**UTC-First Time Handling**
-- All game resets and timers operate in UTC (game server time)
-- Daily reset: 21:00 UTC | Weekly reset: Sunday 21:00 UTC
-- Use Luxon's `DateTime.utc()` for all time calculations
-- Cycle IDs are ISO date strings (e.g., `2025-12-02`) derived from reset times via `getDailyCycleId()` / `getWeeklyCycleId()`
+- All game resets and timers operate in **UTC** (game server time), never local time
+- Reset times:
+  - **Daily reset**: 21:00 UTC
+  - **Weekly reset**: Sunday 21:00 UTC
+- Cycle IDs are ISO date strings:
+  - `getDailyCycleId()`
+  - `getWeeklyCycleId()`
 
-**Service-Based Architecture**
-- Components are thin presentation layers
-- Business logic lives in `@Injectable({ providedIn: 'root' })` services
-- State management via Angular signals (not NgRx/observables unless streaming)
-- Storage layer uses versioned payloads in `localStorage` with migration support
+### Service & Component Patterns
 
-**Reactive State with Signals**
-- Prefer signals over observables for synchronous state (e.g., `PlayerStore`, `TimerPreferencesService`)
-- Use observables for streams (e.g., `interval(1000)` for timer ticks, `ResetWatchService.resetChange$`)
-- All components use `ChangeDetectionStrategy.OnPush`
+- Components are **standalone**
+- Use `inject()` for DI
+- Prefer **signals** for local state and OnPush components
+- Use observables only for streams and terminate with `takeUntilDestroyed()`
 
-## Project Structure
+---
+
+## 2. Project Structure
 
 ```
 src/app/
-  components/     # Standalone UI components (timers, checklist, guides, layout)
-  services/       # Business logic services (timer, checklist, music-player, reset)
-  configs/        # Static definitions (timer-definitions, daily-checklist, reset-config)
-  models/         # TypeScript interfaces and types
-  utils/          # Storage helpers, global error handler
-src/styles/       # Design system (tokens, mixins, base, components, utilities)
+  components/
+  services/
+  configs/
+  models/
+  utils/
+
+src/styles/
+  base/
+  components/
+  mixins/
+  tokens/
+  utilities/
+
+src/assets/
+  game/
+  guides/
+  music/
+  portal/
 ```
 
-## Design System Guidelines
+Important docs:
 
-**Always use design tokens** – Never hard-code colors, shadows, or spacing.
+- `src/styles/README.md`
+- `src/assets/README_game-assets.md`
+- `src/assets/game-assets.json`
+- `src/project-log.md`
+- `src/README.md`
 
-### Import Pattern (Angular 21)
-```scss
-// ✅ Correct
+---
+
+## 3. Design System Rules (SCSS)
+
+**No ad-hoc theme values in component SCSS.**  
+Always use tokens & mixins.
+
+### Imports
+
+```
 @use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
 @use 'mixins/capsule' as *;
-
-// ❌ Wrong (no styles/ prefix)
-@use 'styles/tokens/colors' as *;
 ```
 
-### Key Token Files
-- `tokens/_colors.scss` – `$accent-teal`, `$accent-gold-soft`, `$text-primary`, etc.
-- `tokens/_surfaces.scss` – `$surface-layer-1` through `$surface-layer-5` (0.6→0.96 alpha)
-- `tokens/_gradients.scss` – `$gradient-radial-base`, `$gradient-radial-teal-core`, etc.
-- `tokens/_shadows.scss` – `$shadow-depth-1` through `$shadow-depth-4`, `$glow-teal-soft/strong`
-- `tokens/_motion.scss` – `$motion-fast/base/slow/emphasize` (120ms→300ms)
-- `tokens/_spacing.scss`, `tokens/_radius.scss`, `tokens/_typography.scss`
+### Token Categories
 
-### Common Mixins
-```scss
-// Card-like surfaces with consistent layering
-@include capsule($layer: 3, $radius: 0.75rem, $padding: 1rem);
+- Colors
+- Surfaces
+- Gradients
+- Shadows
+- Motion
+- Radius
+- Spacing
+- Typography
+- Elevation (legacy)
 
-// Pill-shaped buttons
-@include pill-base;      // Solid background
-@include pill-outline;   // Transparent with border
+### Mixins & Utilities
 
-// Diamond toggle indicator (requires __inner element)
-@include diamond-toggle;
+Common mixins:
 
-// Accent glows
-@include glow(teal, soft);
-```
+- `capsule`
+- `pill-base` / `pill-outline`
+- `diamond-toggle`
+- `glow()`
 
-**Rule**: No raw hex colors, `rgba()` values, or inline gradients in component SCSS. Use tokens only.
+Utilities:
 
-## Common Development Patterns
+- `.u-flex`, `.u-stack`, `.u-gap-*`
+- `.text-muted`, `.u-text-xs/sm/lg`
+- `.u-visually-hidden`
 
-### Adding a New Timer
-1. Add definition to `configs/timer-definitions.ts`:
-   ```typescript
-   {
-     id: 'new-event',
-     label: 'New Event',
-     shortLabel: 'Event',
-     icon: 'bi-star',
-     schedule: { type: 'daily', hour: 12, minute: 0 },
-   }
-   ```
-2. Schedule types: `daily`, `weekly`, `weekly-multi`, `weekly-range`, `daily-multi`, `weekly-times`
-3. Timer service automatically picks up new definitions; no component changes needed
-4. Add details drawer in `timers.component.html` with `@case ('new-event')` for documentation
+**New reusable patterns** go to:
 
-### Adding a Checklist Item
-1. Add to `configs/daily-checklist.ts` or `configs/weekly-checklist.ts`:
-   ```typescript
-   {
-     id: 'new-task',
-     label: 'Task Label',
-     description: 'Detailed explanation',
-     category: 'Combat',
-     isOptional: false,
-     frequency: 'daily',
-   }
-   ```
-2. Checklist service handles persistence automatically
-3. State keys are cycle-scoped: `wwm-checklist-daily-2025-12-02`
+- `utilities/` for layout/text helpers  
+- `components/` for shared visual patterns  
+- `mixins/` for low-level logic  
 
-### Storage Best Practices
-- Use `saveVersioned<T>(key, data)` / `loadVersioned<T>(key)` for all persistence
-- Prefix all keys with `STORAGE_PREFIX` (currently `wwm-`)
-- Handle SSR safety with `getSafeLocalStorage()` (returns `null` if unavailable)
-- Implement backward compatibility: load versioned, fall back to legacy JSON, then re-save versioned
+---
 
-### Time Calculations
-```typescript
-import { DateTime } from 'luxon';
+## 4. Game Assets Usage
 
-const now = DateTime.utc();
-const nextReset = now.set({ hour: 21, minute: 0, second: 0, millisecond: 0 });
-if (now >= nextReset) nextReset = nextReset.plus({ days: 1 });
-```
-- Never use local time zones for game logic (only for user-facing display if explicitly required)
-- ISO weekdays: 1=Monday, 7=Sunday
+### Source of Truth
 
-### Component Patterns
-- All components are standalone (`standalone: true`)
-- Use `inject()` for DI (not constructor injection)
-- Signal-based local state (`signal()`, `computed()`)
-- Use `takeUntilDestroyed()` for observable cleanup
-- Avoid template subscriptions with `async` pipe for OnPush; use signals instead
+- `src/assets/game-assets.json`
+- `src/assets/README_game-assets.md`
 
-## Testing & Development
+Each asset includes semantics, category, system tags, UI usage notes, and size.
 
-### Running the App
-```bash
-npm start        # Dev server (localhost:4200)
-npm run build    # Production build
-npm run test     # Vitest unit tests
-npm run lint     # ESLint + Angular lint
-npm run format   # Prettier (printWidth: 100, singleQuote: true)
-```
+### Rules for Copilot
 
-### Important Files
-- `angular.json` – Build config; note `stylePreprocessorOptions.includePaths: ["src/styles"]`
-- `package.json` – Scripts, dependencies, Prettier config
-- `src/styles/README.md` – Comprehensive design system documentation
-- `src/README.md` – Feature-level docs (less detailed than styles README)
-- `src/project-log.md` – Development changelog (add entries when making significant changes)
+1. **Use only `assets/game/` for in-game logic.**
+2. Pick correct icons via metadata.
+3. Use `width`, `height`, and `aspect_ratio` for layout decisions.
+4. Avoid scattering raw file paths; use centralized mappings.
 
-## Common Pitfalls
+---
 
-**Style Imports**: Angular 21 changed SCSS resolution. Use `@use 'tokens/colors'` not `@use 'styles/tokens/colors'`.
+## 5. Common Development Patterns
 
-**Change Detection**: All components use OnPush. If view doesn't update, check signal mutations or use `.set()` / `.update()`.
+### Timers
 
-**Guild Timers**: Two timers (`guild-breaking-army`, `guild-test-your-skills`) are user-configurable with custom schedules. Check `GuildEventTimersService` for override logic.
+- Add definitions in `configs/timers`
+- Always use UTC
+- Use helper functions for cycle IDs
 
-**Cycle Boundaries**: Checklist state keys include cycle IDs. When daily/weekly reset occurs, the key changes and old state becomes inaccessible (by design). Use `ResetWatchService.resetChange$` to detect transitions.
+### Checklists
 
-**Trading Timers**: Trade Week resets Friday 21:00 UTC (not daily reset). Price peak checks are Tuesday 21:00 UTC. See `guides/trading` for full context.
+- Definitions in `configs/checklists`
+- Use signals for state
+- Follow existing checklist toggle UI
 
-## Resources
+### Guides
 
-- Design system: `src/styles/README.md`
-- Changelog: `src/project-log.md`
-- License: AGPL-3.0-only (code); assets © Besaids
-- GitHub Pages: https://besaids.github.io/WWM-Helper/
+- Use `base/_guides.scss`
+- Use game assets from manifest
+
+---
+
+## 6. Storage & Privacy
+
+- Consent stored in localStorage  
+- Storage versions must be migrated cleanly  
+- No backend; everything is client-side  
+
+---
+
+## 7. Pitfalls to Avoid
+
+- Local time for game logic
+- Raw colors in SCSS
+- Icon misuse
+- Unversioned storage changes
+- Duplicating UI patterns
+
+---
+
+## 8. Quick Reference
+
+- Design system → `src/styles/README.md`
+- Game assets → `src/assets/README_game-assets.md`
+- Changelog → `src/project-log.md`
+- Root overview → `src/README.md`

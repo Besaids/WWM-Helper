@@ -18,6 +18,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     label: 'Battle Pass: Blade Out - Vol. 1',
     shortLabel: 'BP Vol.1',
     icon: 'bi-star-fill',
+    image: 'assets/game/navigation/menu-battle-pass-icon.png',
     category: 'battle-pass',
     // 9d 8h 30m from 2025-12-02 12:30 UTC = 2025-12-11 21:00 UTC (daily reset)
     endsAt: {
@@ -40,6 +41,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     label: 'Season: Blade Out Season 1',
     shortLabel: 'Season 1',
     icon: 'bi-calendar-range',
+    image: 'assets/game/navigation/menu-season-icon.png',
     category: 'season',
     // End date: 06/02/2026 at daily reset (21:00 UTC on Feb 5 → Feb 6 transition)
     endsAt: {
@@ -62,6 +64,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     label: 'Gacha: Swords Unseen (Special)',
     shortLabel: 'Swords',
     icon: 'bi-gem',
+    image: 'assets/game/navigation/menu-draw-icon.png',
     category: 'gacha-special',
     // Same end as BP Vol.1
     endsAt: {
@@ -84,6 +87,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     label: 'Gacha: Cloud Garment',
     shortLabel: 'Cloud',
     icon: 'bi-box-seam',
+    image: 'assets/game/navigation/menu-draw-icon.png',
     category: 'gacha-standard',
     // "9 days left" - likely syncs with BP
     endsAt: {

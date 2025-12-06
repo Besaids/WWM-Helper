@@ -6,79 +6,151 @@
 @use 'tokens/shadows' as *;
 @use 'tokens/motion' as *;
 
-/* Root layout */
+/* ========================= Root layout ========================= */
 .checklist-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  position: relative;
 }
 
-/* =========================
- * Header + tabs
- * ========================= */
-
-.checklist-header {
+/* ========================= Page Header ========================= */
+.checklist-page-header {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-
+  gap: 0.5rem;
   h1 {
     font-size: 1.5rem;
     font-weight: 600;
+    margin: 0;
   }
-
   p {
-    max-width: 48rem;
-  }
+    margin: 0;
+  } // Full width, no max-width
 }
 
-/* Segmented control: Daily / Weekly */
-.checklist-tabs {
+/* ========================= Two-column layout ========================= */
+.checklist-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1.5rem;
+  align-items: start;
+}
+.checklist-main-column {
+  min-width: 0;
+}
+.checklist-side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ========================= Card ========================= */
+.checklist-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.checklist-card {
+  overflow: hidden;
+  padding: 1.25rem;
+}
+
+/* Card header - 2×2 grid */
+.checklist-card-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.35rem 1rem;
+  margin-bottom: 0.75rem;
+  align-items: center;
+}
+.checklist-card-header__title {
+  grid-column: 1;
+  grid-row: 1;
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+.checklist-card-header__controls {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+.checklist-card-header__subtitle {
+  grid-column: 1;
+  grid-row: 2;
+}
+.checklist-reset-time {
+  font-size: 0.8rem;
+}
+.checklist-card-header__pinned {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Pinned status text */
+.pinned-status-text {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.15rem;
-  margin-top: 0.75rem;
-  margin-bottom: 0.25rem;
-
-  border-radius: 999px;
-  background: var(--surface-layer-2);
-  box-shadow:
-    var(--shadow-depth-1),
-    0 4px 12px rgba(0, 0, 0, 0.35);
-
-  width: fit-content;
-  max-width: 100%;
-  align-self: flex-start;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  i {
+    color: var(--color-accent-gold-soft);
+    font-size: 0.85em;
+  }
 }
+// REPLACE the .pinned-status-text--empty block with:
 
-/* Base pill button */
+.pinned-status-text--empty {
+  color: var(--color-text-muted);
+  white-space: normal;
+  text-align: left;
+  min-width: 220px;
+  max-width: 320px;
+  line-height: 1.35;
+  i {
+    color: var(--color-text-muted);
+  }
+}
+/* ========================= Tabs ========================= */
+.checklist-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
 .tab-pill {
-  @include pill.pill-base(0.25rem, 0.8rem, 0.8rem);
+  @include pill.pill-base(0.25rem, 0.7rem, 0.7rem);
   border: 1px solid transparent;
   background: transparent;
   color: var(--color-text-muted-strong);
+  font-size: 0.8rem;
   transition:
     background-color $motion-fast $motion-ease,
     border-color $motion-fast $motion-ease,
-    color $motion-fast $motion-ease,
-    transform 100ms $motion-ease;
-
+    color $motion-fast $motion-ease;
   &:hover {
     color: var(--color-text-primary);
     border-color: var(--color-btn-secondary-border);
     background: var(--surface-layer-2);
   }
-
   &:active {
     transform: translateY(1px);
   }
 }
-
-/* Active pill – echo nav/timer accent */
 .tab-pill--active {
-  padding: 0.25rem 1rem;
   background: rgba(56, 189, 248, 0.15);
   border-color: var(--color-accent-gold-soft);
   color: var(--color-text-primary);
@@ -87,180 +159,234 @@
     0 0 0 1px rgba(250, 204, 21, 0.15);
 }
 
-/* =========================
- * Grid: main card + ideas card
- * ========================= */
-
-.checklist-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
-  gap: 1.25rem;
-  align-items: flex-start;
-
-  @media (max-width: 960px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* Cards – retain structure */
-.checklist-card {
-  overflow: hidden;
-}
-
-.checklist-card--ideas {
-  align-self: stretch;
-}
-
-.checklist-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.checklist-card-header-main {
-  h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  .checklist-card-subtitle {
-    font-size: 0.85rem;
-    line-height: 1.4;
-  }
-}
-
-/* Reset button – pill similar to Timers action buttons */
-.reset-link {
-  margin-left: auto;
-  align-self: flex-start;
-  display: inline-flex;
-  justify-content: center;
-
-  @include pill.pill-outline(var(--color-btn-secondary-border), 2);
+/* ========================= Helper Box (side column) ========================= */
+.checklist-helper {
+  padding: 1rem;
   font-size: 0.8rem;
-  min-width: 23ch;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  // card-surface class handles bg/border via HTML; these are fallback overrides
+  background: var(--surface-layer-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
 
+  h4 {
+    margin: 0 0 0.6rem 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-accent-gold-soft);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.45;
+  }
+}
+.helper-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.helper-icon--diamond {
+  color: var(--color-accent-gold-soft);
+  font-size: 0.9rem;
+}
+.helper-icon--pin {
+  color: var(--color-accent-gold-soft);
+  font-size: 0.85rem;
+}
+.helper-icon--hide {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+/* ========================= View toggle & buttons ========================= */
+.checklist-view-toggle {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+}
+.checklist-view-toggle__btn {
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.15rem 0.75rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  cursor: pointer;
+  color: var(--color-text-muted-strong);
+  white-space: nowrap;
+  transition: all $motion-fast $motion-ease;
+}
+.checklist-view-toggle__btn--active {
+  background: rgba(148, 163, 184, 0.12);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) inset;
+  color: var(--color-text-primary);
+}
+
+.reset-link {
+  @include pill.pill-outline(var(--color-btn-secondary-border), 2);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.7rem;
+  white-space: nowrap;
+  i {
+    margin-right: 0.25rem;
+  }
   &:hover {
     color: var(--color-text-primary);
     border-color: var(--color-accent-gold-soft);
-    box-shadow:
-      0 0 8px rgba(56, 189, 248, 0.15),
-      0 0 0 1px rgba(250, 204, 21, 0.15);
     background: var(--surface-layer-3);
   }
-
   &:active {
     transform: translateY(1px);
   }
 }
-
-/* =========================
- * Checklist body / groups
- * ========================= */
-
-.checklist-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-}
-
-.checklist-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
+.reset-link--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+  &:hover {
+    background: var(--surface-layer-2);
+    border-color: var(--color-border-subtle);
+    color: var(--color-text-secondary);
   }
 }
 
+.btn-add-item {
+  @include pill.pill-base(0.25rem, 0.7rem, 0.7rem);
+  background: rgba(250, 204, 21, 0.15);
+  border: 1px solid var(--color-accent-gold-soft);
+  color: var(--color-accent-gold-highlight);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color $motion-fast $motion-ease,
+    border-color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease;
+  i {
+    margin-right: 0.25rem;
+    font-size: 0.85em;
+  }
+  &:hover {
+    background: rgba(250, 204, 21, 0.25);
+    border-color: var(--color-accent-gold-highlight);
+    box-shadow: var(--glow-gold-soft);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+}
+.btn-add-item--large {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+}
+
+/* ========================= Checklist Body / Groups ========================= */
+.checklist-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.checklist-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  > h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
 .checklist-group--optional {
   border-top: 1px solid var(--color-border-subtle);
-  padding-top: 1.5rem;
+  padding-top: 1.25rem;
 }
 
 .checklist-category {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-
+  gap: 0.5rem;
   h4 {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    text-transform: none;
     color: var(--color-text-muted-strong);
-    margin-bottom: 0.25rem;
+    margin: 0 0 0.15rem 0;
   }
-
   ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
-
   li {
     list-style: none;
   }
 }
 
-/* Checklist rows – similar to timers component */
+/* Task rows */
 .checklist-category li {
-  @include capsule.capsule(4, var(--radius-lg), 0.75rem, 1rem);
+  @include capsule.capsule(4, var(--radius-lg), 0.85rem, 1rem);
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  min-height: 2.75rem;
   transition:
     background-color $motion-fast $motion-ease,
     box-shadow $motion-fast $motion-ease;
-
   &:hover {
     background: var(--surface-layer-5);
     box-shadow: var(--shadow-depth-3);
   }
 }
-
-/* Toggle takes up flex space */
 .checklist-category li app-checklist-toggle {
   display: block;
   flex: 1;
   min-width: 0;
 }
-
-/* Remove extra styling from .checklist-toggle since it's on <li> now */
+.checklist-category li app-checklist-toggle .checklist-toggle--checked .checklist-toggle__diamond {
+  color: var(--color-accent-gold-soft);
+  border-color: var(--color-accent-gold-soft);
+}
 .checklist-category li app-checklist-toggle .checklist-toggle {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
+  gap: 0.5rem;
   padding: 0;
   background: transparent;
 }
-
-/* Shared text + tags */
 .checklist-item-label {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
 }
-
 .checklist-item-description {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   line-height: 1.4;
-}
-
-.checklist-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
+  display: block;
   margin-top: 0.1rem;
 }
+.checklist-tags {
+  display: none;
+}
 
-/* Icon actions (pin / hide) - now outside the label, inside <li> */
+/* Row actions */
 .checklist-category li .checklist-item-actions {
   display: inline-flex;
   align-items: center;
@@ -268,12 +394,13 @@
   margin-left: auto;
   flex-shrink: 0;
 }
-
 .checklist-item-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem 0.5rem;
+  padding: 0.4rem 0.55rem;
+  min-width: 2rem;
+  min-height: 2rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--color-border-subtle);
   background: var(--color-surface-subtle);
@@ -286,34 +413,24 @@
     border-color $motion-fast $motion-ease,
     color $motion-fast $motion-ease,
     box-shadow $motion-fast $motion-ease;
+  i {
+    font-size: 0.95em;
+  }
 }
-
-.checklist-item-action i {
-  font-size: 0.95em;
-}
-
-/* Subtle theming per action type */
 .checklist-item-action--pin {
   color: var(--color-accent-gold-soft);
 }
-
 .checklist-item-action--hide {
-  color: #94a3b8; /* Neutral slate color instead of red */
+  color: #94a3b8;
 }
-
-/* Active state: pinned item gets gold border */
 .checklist-item-action--pin[aria-pressed='true'] {
   border-color: var(--color-accent-gold-soft);
   background: rgba(250, 204, 21, 0.1);
 }
-
-/* Active state: hidden item gets slate/purple border */
 .checklist-item-action--hide[aria-pressed='true'] {
   border-color: #94a3b8;
   background: rgba(148, 163, 184, 0.15);
 }
-
-/* Hover / focus states */
 .checklist-item-action:hover,
 .checklist-item-action:focus-visible {
   background: var(--surface-layer-2);
@@ -321,167 +438,29 @@
   color: var(--color-text-primary);
   box-shadow: var(--shadow-depth-1);
 }
-
-/* Keep the colored border on hover for active states */
 .checklist-item-action--pin[aria-pressed='true']:hover {
   border-color: var(--color-accent-gold-soft);
   background: rgba(250, 204, 21, 0.15);
 }
-
 .checklist-item-action--hide[aria-pressed='true']:hover {
   border-color: #94a3b8;
   background: rgba(148, 163, 184, 0.2);
 }
-
-/* Mobile: keep icons tight and prevent weird wrapping */
-@media (max-width: 768px) {
-  .checklist-category li .checklist-item-actions {
-    gap: 0.35rem;
-  }
-
-  .checklist-item-action {
-    padding: 0.2rem 0.4rem;
-    font-size: 0.8rem;
-  }
+.checklist-item-action--edit {
+  color: var(--color-accent-teal);
 }
-
-.checklist-group--hidden {
-  border-top: 1px solid var(--color-border-subtle);
-  padding-top: 1.5rem;
-  opacity: 0.75;
-  transition: opacity $motion-fast $motion-ease;
-
-  &:hover {
-    opacity: 1;
-  }
-
-  .checklist-group-header {
-    margin-bottom: 0.75rem;
-
-    h3 {
-      margin-bottom: 0.25rem;
-    }
-
-    p {
-      font-size: 0.85rem;
-    }
-  }
+.checklist-item-action--edit:hover,
+.checklist-item-action--edit:focus-visible {
+  border-color: var(--color-accent-teal);
+  background: rgba(56, 189, 248, 0.1);
 }
-
-.checklist-tag {
-  font-size: 0.7rem;
-  padding: 0.12rem 0.45rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--color-btn-secondary-border);
-  background: var(--color-surface-chip);
-  text-transform: lowercase;
+.checklist-item-action--delete {
+  color: var(--color-accent-red-soft);
 }
-
-/* =========================
- * Ideas card
- * ========================= */
-
-.checklist-card-body--ideas {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.idea {
-  padding: 0.6rem 0.2rem;
-  border-bottom: 1px dashed rgba(148, 163, 184, 0.35);
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.idea h3 {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-
-  .idea-title {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .idea-category {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--color-text-muted-strong);
-  }
-}
-
-.idea-description {
-  font-size: 0.8rem;
-  line-height: 1.4;
-  margin-bottom: 0.25rem;
-}
-
-.idea-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-}
-
-/* Header actions alignment */
-.checklist-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-}
-
-.checklist-card-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-/* View toggle – keep local simple styling */
-.checklist-view-toggle {
-  display: inline-flex;
-  padding: 2px;
-  border-radius: 999px;
-  background: var(--color-surface-subtle);
-  border: 1px solid var(--color-border-subtle);
-}
-
-.checklist-view-toggle__btn {
-  border: 0;
-  background: transparent;
-  border-radius: 999px;
-  padding: 0.15rem 0.9rem;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  cursor: pointer;
-  color: var(--color-text-muted-strong);
-  white-space: nowrap;
-}
-
-.checklist-view-toggle__btn--active {
-  background: rgba(148, 163, 184, 0.12);
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) inset;
-  color: var(--color-text-primary);
-}
-
-/* Mobile */
-/* Mobile: stack idea title + category for consistent alignment */
-@media (max-width: 768px) {
-  .idea h3 {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .idea-category {
-    margin-top: 0.15rem;
-    align-self: flex-start;
-  }
+.checklist-item-action--delete:hover,
+.checklist-item-action--delete:focus-visible {
+  border-color: var(--color-accent-red-soft);
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* Completion counter */
@@ -490,63 +469,411 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.25rem 0.6rem;
+  min-height: 1.5rem;
   border-radius: var(--radius-pill);
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
   color: rgb(34, 197, 94);
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
-
   i {
     font-size: 0.9em;
   }
-
   .counter-value {
     font-variant-numeric: tabular-nums;
   }
 }
 
-/* Custom item action buttons (edit/delete) */
-.checklist-item-action--edit {
-  color: var(--color-accent-teal);
+/* ========================= Hidden Items ========================= */
+.checklist-group--hidden {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+.checklist-hidden-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--surface-layer-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition:
+    background-color $motion-fast $motion-ease,
+    border-color $motion-fast $motion-ease;
+  &:hover {
+    background: var(--surface-layer-3);
+    border-color: var(--color-btn-secondary-border);
+  }
+}
+.checklist-hidden-header__left {
+  flex: 1;
+  min-width: 0;
+  h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+  p {
+    margin: 0.15rem 0 0 0;
+    font-size: 0.75rem;
+  }
+}
+.checklist-hidden-header__caret {
+  color: var(--color-text-muted);
+  transition: transform $motion-fast $motion-ease;
+  i {
+    font-size: 0.85rem;
+  }
+}
+.checklist-hidden-header__caret--open {
+  transform: rotate(180deg);
+}
+.checklist-hidden-content {
+  margin-top: 0.75rem;
+  opacity: 0.75;
+  transition: opacity $motion-fast $motion-ease;
+  &:hover {
+    opacity: 1;
+  }
 }
 
-.checklist-item-action--edit:hover,
-.checklist-item-action--edit:focus-visible {
-  border-color: var(--color-accent-teal);
-  background: rgba(56, 189, 248, 0.1);
-  color: var(--color-accent-teal);
+/* ========================= Ideas Drawer ========================= */
+.ideas-drawer-trigger {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: var(--surface-layer-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-depth-3);
+  transition:
+    background-color $motion-fast $motion-ease,
+    color $motion-fast $motion-ease,
+    box-shadow $motion-fast $motion-ease,
+    transform $motion-fast $motion-ease;
+  &:hover {
+    background: var(--surface-layer-4);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-depth-4);
+    transform: translateY(-2px);
+  }
+  i {
+    font-size: 1rem;
+    color: var(--color-accent-gold-soft);
+  }
+}
+.ideas-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+}
+.ideas-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 360px;
+  z-index: 201;
+  background: var(--surface-layer-3);
+  border-left: 1px solid var(--color-border-subtle);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  transition: transform $motion-base $motion-ease;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ideas-drawer--open {
+  transform: translateX(0);
+}
+.ideas-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--surface-layer-3);
+  z-index: 1;
+  flex-shrink: 0;
+  h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+.ideas-drawer__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition:
+    background-color $motion-fast $motion-ease,
+    color $motion-fast $motion-ease,
+    border-color $motion-fast $motion-ease;
+  &:hover {
+    background: var(--surface-layer-4);
+    color: var(--color-text-primary);
+    border-color: var(--color-btn-secondary-border);
+  }
+}
+.ideas-drawer__intro {
+  padding: 0.75rem 1.25rem;
+  margin: 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+}
+.ideas-drawer__content {
+  padding: 0.75rem 1.25rem;
+  flex: 1;
+  overflow-y: auto;
+}
+.idea {
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.3);
+  &:last-child {
+    border-bottom: none;
+  }
+}
+.idea h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0 0 0.2rem 0;
+  .idea-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .idea-category {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-text-muted-strong);
+  }
+}
+.idea-description {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin: 0;
 }
 
-.checklist-item-action--delete {
-  color: var(--color-accent-red-soft);
-}
-
-.checklist-item-action--delete:hover,
-.checklist-item-action--delete:focus-visible {
-  border-color: var(--color-accent-red-soft);
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-accent-red-soft);
-}
-
-/* Empty state styling */
+/* Empty state */
 .checklist-empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 3rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   text-align: center;
-
   p {
     margin: 0;
-    font-size: 0.95rem;
-    max-width: 32rem;
+    font-size: 0.9rem;
+    max-width: 28rem;
+  }
+}
+
+/* ========================= Scroll lock for drawer ========================= */
+:global(body.ideas-drawer-open) {
+  overflow: hidden;
+}
+
+/* ========================= Mobile ========================= */
+@media (max-width: 768px) {
+  .checklist-layout {
+    grid-template-columns: 1fr;
+  }
+  .checklist-side-column {
+    order: -1;
+  }
+  .checklist-card-header {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 0.5rem;
+  }
+  .checklist-card-header__title {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .checklist-card-header__subtitle {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .checklist-card-header__controls {
+    grid-column: 1;
+    grid-row: 3;
+    justify-content: flex-start;
+  }
+  .checklist-card-header__pinned {
+    grid-column: 1;
+    grid-row: 4;
+    justify-content: flex-start;
+  }
+  .pinned-status-text--empty {
+    text-align: left;
+    max-width: none;
   }
 
-  .reset-link {
-    margin: 0;
+  .checklist-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0.5rem 0.25rem; // slight horizontal padding so edges breathe
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tab-pill {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .checklist-category li .checklist-item-actions {
+    gap: 0.35rem;
+  }
+  .checklist-item-action {
+    padding: 0.35rem 0.45rem;
+    min-width: 1.85rem;
+    min-height: 1.85rem;
+    font-size: 0.8rem;
+  }
+  .ideas-drawer {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 75vh;
+    border-left: none;
+    border-top: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    transform: translateY(100%);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+  }
+  .ideas-drawer--open {
+    transform: translateY(0);
+  }
+  .idea h3 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .checklist-helper {
+    font-size: 0.75rem;
+    h4 {
+      font-size: 0.78rem;
+    }
+  }
+  .checklist-hidden-header__left p {
+    display: none;
+  }
+}
+
+body.ideas-drawer-open {
+  overflow: hidden;
+}
+
+/* ========================= Guide link affordances ========================= */
+.guide-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color $motion-fast $motion-ease,
+    background-color $motion-fast $motion-ease;
+
+  i {
+    font-size: 0.85em;
+  }
+}
+
+.guide-link--compact {
+  padding: 0.15rem 0.35rem;
+  margin-left: 0.4rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-teal);
+  font-size: 0.8rem;
+  vertical-align: middle;
+
+  &:hover {
+    color: var(--color-text-primary);
+    background: rgba(56, 189, 248, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.guide-link--detailed {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-teal);
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  &:hover {
+    color: var(--color-text-primary);
+    background: rgba(56, 189, 248, 0.12);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  span {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+.guide-link-row {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+/* Mobile: hide text on compact guide link */
+@media (max-width: 480px) {
+  .guide-link--compact {
+    padding: 0.1rem 0.25rem;
+    margin-left: 0.25rem;
   }
 }

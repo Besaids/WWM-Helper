@@ -1,31 +1,27 @@
 <section class="home-page">
-  <!-- Hero + Logo + Upcoming Events (side-by-side) -->
-  <h1>Where Winds Meet Helper</h1>
-  <div class="home-hero-grid">
-    <!-- Hero Text -->
-    <section class="home-hero card-surface card-padding">
-      <div class="home-hero-text">
-        <h1>Where Winds Meet Helper</h1>
-        <p class="home-hero-subtitle text-muted-strong">
-          Lightweight companion for your WWM routine. Timers, checklists and guides in one place so
-          you can plan sessions without juggling spreadsheets or screenshots.
-        </p>
-      </div>
-    </section>
+  <!-- TOP LEFT: Hero Text + Icon -->
+  <header class="home-header">
+    <div class="home-hero">
+      <h1 class="home-hero__title">Where Winds Meet Helper</h1>
+      <p class="home-hero__subtitle text-muted-strong">
+        Keep your daily, weekly and seasonal tasks organised with live timers, guides and tools so
+        every login feels efficient.
+      </p>
+    </div>
 
-    <!-- Logo (hidden on mobile) -->
     <div class="home-logo">
       <img src="assets/portal/wwm-wheat-256.png" alt="Where Winds Meet" class="home-logo-img" />
     </div>
+  </header>
 
-    <!-- Upcoming Events (max 4) -->
+  <!-- RIGHT COLUMN: Timers + Resources -->
+  <aside class="home-sidebar">
+    <!-- Next Resets & Events -->
     <article class="home-card card-surface card-padding">
       <header class="home-card-header">
         <div>
-          <h2>Upcoming events</h2>
-          <p class="home-card-subtitle text-muted-strong">
-            Next timers and currently active windows.
-          </p>
+          <h2>Next resets & events</h2>
+          <p class="home-card-subtitle text-muted-strong">Closest timers and active windows.</p>
         </div>
         <a class="home-card-link" [routerLink]="['/timers']">View all</a>
       </header>
@@ -58,101 +54,22 @@
           </ul>
         } @else {
           <div class="home-empty-state text-muted-strong">
-            No upcoming timers. Visit the timers page to configure custom timers.
+            All timers shown in the strip above. Add more from the timers page.
           </div>
         }
       </div>
     </article>
-  </div>
 
-  <!-- Pinned Tasks (full width, 3 buckets) -->
-  @if (hasPinnedItems()) {
-    <section class="home-pinned-tasks card-surface card-padding">
-      <header class="home-card-header">
-        <div>
-          <h2>Pinned tasks</h2>
-          <p class="home-card-subtitle text-muted-strong">
-            Your priority checklist items for this cycle.
-          </p>
-        </div>
-        <a class="home-card-link" [routerLink]="['/checklist']" [queryParams]="{ tab: 'daily' }">
-          Open checklist
-        </a>
-      </header>
-
-      <div class="home-pinned-buckets">
-        @for (bucket of pinnedBuckets(); track bucket.id) {
-          <div class="home-pinned-bucket">
-            <h3 class="home-pinned-bucket-title">{{ bucket.label }}</h3>
-            <ul class="home-pinned-list">
-              @for (item of bucket.items; track item.id) {
-                <li class="home-pinned-item" [class.home-pinned-item--custom]="item.isCustom">
-                  <app-checklist-toggle
-                    [checked]="isChecked(item)"
-                    (checkedChange)="onToggleItem($event, item)"
-                  >
-                    <span class="checklist-item-label">{{ item.label }}</span>
-                  </app-checklist-toggle>
-                </li>
-              }
-            </ul>
-          </div>
-        }
-      </div>
-    </section>
-  }
-
-  <!-- Section cards -->
-  <section class="home-grid">
-    @for (section of sections; track section.id) {
-      <article class="home-card card-surface card-padding">
-        <header class="home-card-header">
-          <div>
-            <h2>{{ section.title }}</h2>
-            <p class="home-card-subtitle text-muted-strong">
-              {{ section.subtitle }}
-            </p>
-          </div>
-          <a
-            class="home-card-link"
-            [routerLink]="section.routerLink"
-            [queryParams]="section.id === 'checklist' ? { tab: 'daily' } : null"
-          >
-            {{ section.ctaLabel }}
-          </a>
-        </header>
-
-        <div class="home-card-body">
-          <ul class="home-list">
-            @for (item of section.items; track item.label) {
-              <li class="home-list-item">
-                <div class="home-list-main">
-                  <span class="home-list-label">{{ item.label }}</span>
-                </div>
-                @if (item.description) {
-                  <p class="home-list-description text-muted-strong">
-                    {{ item.description }}
-                  </p>
-                }
-              </li>
-            }
-          </ul>
-        </div>
-      </article>
-    }
-
-    <!-- Resources card -->
+    <!-- Resources -->
     <article class="home-card card-surface card-padding home-card--resources">
       <header class="home-card-header">
         <div>
           <h2>External resources</h2>
-          <p class="home-card-subtitle text-muted-strong">
-            Official and community links if you want to dig deeper outside this site.
-          </p>
+          <p class="home-card-subtitle text-muted-strong">Official and community links.</p>
         </div>
       </header>
 
-      <div class="home-card-body home-card-body--resources">
+      <div class="home-card-body">
         <ul class="home-resources">
           @for (link of resourceLinks; track link.href) {
             <li>
@@ -169,5 +86,64 @@
         </ul>
       </div>
     </article>
+  </aside>
+
+  <!-- BOTTOM LEFT: Pinned Checklist Items -->
+  <section class="home-pinned">
+    <header class="home-card-header">
+      <div>
+        <h2>Pinned checklist items</h2>
+        <p class="home-card-subtitle text-muted-strong">
+          Your priority tasks for this cycle. Pin items from the checklist page.
+        </p>
+      </div>
+      <a class="home-card-link" [routerLink]="['/checklist']" [queryParams]="{ tab: 'daily' }">
+        Open checklist
+      </a>
+    </header>
+
+    @if (hasPinnedItems()) {
+      <div class="home-pinned-buckets">
+        @for (bucket of pinnedBuckets(); track bucket.id) {
+          <div class="home-pinned-bucket">
+            <h3 class="home-pinned-bucket-title">{{ bucket.label }}</h3>
+            <ul class="home-pinned-list">
+              @for (item of bucket.items; track item.id) {
+                <li class="home-pinned-item" [class.home-pinned-item--custom]="item.isCustom">
+                  <app-checklist-toggle
+                    [checked]="isChecked(item)"
+                    (checkedChange)="onToggleItem($event, item)"
+                  >
+                    <span class="checklist-item-label">
+                      {{ item.label }}
+                      @if (item.route) {
+                        <button
+                          type="button"
+                          class="guide-link guide-link--compact"
+                          (click)="navigateToGuide(item); $event.stopPropagation()"
+                          [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                          aria-label="Open guide"
+                        >
+                          <i class="bi bi-book"></i>
+                        </button>
+                      }
+                    </span>
+                  </app-checklist-toggle>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="home-empty-state text-muted-strong">
+        <p>No pinned items yet or any pinned incomplete checklist items.</p>
+        <p>
+          Use the
+          <i class="bi bi-pin-angle"></i>
+          icon on the checklist page to pin tasks you want to track here.
+        </p>
+      </div>
+    }
   </section>
 </section>

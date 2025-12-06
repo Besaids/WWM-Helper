@@ -1,5 +1,5 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<header class="app-header">
+<header id="nav-header" class="app-header">
   <!-- Top row: logo + desktop nav + music icon + burger -->
   <div class="app-header-inner">
     <a class="brand" routerLink="/home">
@@ -10,9 +10,11 @@
       <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         Home
       </a>
-      <a routerLink="/timers" routerLinkActive="active">Timers</a>
       <a routerLink="/checklist" routerLinkActive="active">Checklist</a>
       <a routerLink="/guides" routerLinkActive="active">Guides</a>
+      <a routerLink="/timers" routerLinkActive="active">Timers</a>
+      <a routerLink="/tools" routerLinkActive="active">Tools</a>
+      <a routerLink="/map" routerLinkActive="active">Map</a>
     </nav>
 
     <button
@@ -50,9 +52,11 @@
     >
       Home
     </a>
-    <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()"> Timers </a>
     <a routerLink="/checklist" routerLinkActive="active" (click)="closeMenu()"> Checklist </a>
     <a routerLink="/guides" routerLinkActive="active" (click)="closeMenu()"> Guides </a>
+    <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()"> Timers </a>
+    <a routerLink="/tools" routerLinkActive="active" (click)="closeMenu()"> Tools </a>
+    <a routerLink="/map" routerLinkActive="active" (click)="closeMenu()">Map</a>
   </nav>
 
   <!-- Player row: fixed-height drawer under navbar -->

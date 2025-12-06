@@ -36,7 +36,7 @@ export function buildTimerChip(def: TimerDefinition, now: DateTime): TimerChip {
       label: isOpen ? `${def.label} (open)` : def.label,
       shortLabel: def.shortLabel,
       icon: def.icon,
-      remaining: isOpen ? `${remaining} left` : `in ${remaining}`,
+      remaining: `${remaining}`,
     };
   }
 

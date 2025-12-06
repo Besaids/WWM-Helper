@@ -6,8 +6,9 @@ import {
   OnDestroy,
   OnInit,
   signal,
+  computed,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FREEPLAY_IDEAS } from '../../configs';
 import { ChecklistStateService } from '../../services/checklist/checklist-state.service';
@@ -27,10 +28,17 @@ import { CustomChecklistModalComponent } from './custom-checklist-modal';
 type ChecklistViewMode = 'detailed' | 'compact';
 
 const CHECKLIST_VIEW_MODE_STORAGE_KEY = 'wwm-helper.checklist.view-mode';
+const HIDDEN_SECTION_COLLAPSED_KEY = 'wwm-helper.checklist.hidden-collapsed';
+const IDEAS_DRAWER_OPEN_KEY = 'wwm-helper.checklist.ideas-drawer-open';
 
 interface ChecklistCategoryGroup {
   category: string;
   items: ChecklistItem[];
+}
+
+interface PinnedProgress {
+  total: number;
+  completed: number;
 }
 
 @Component({
@@ -43,6 +51,7 @@ interface ChecklistCategoryGroup {
 })
 export class ChecklistComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly state = inject(ChecklistStateService);
   private readonly registry = inject(ChecklistRegistryService);
   private readonly customChecklistService = inject(CustomChecklistService);
@@ -58,10 +67,38 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   readonly isModalOpen = signal(false);
   readonly editingCustomItem = signal<ChecklistItem | null>(null);
 
+  // Ideas drawer state
+  readonly isIdeasDrawerOpen = signal(false);
+
+  // Hidden section collapsed state
+  readonly isHiddenCollapsed = signal(true);
+
   // Custom items
   readonly customItems$ = this.customChecklistService.customItems$;
 
   private subs = new Subscription();
+
+  // Signal to trigger pinned progress recalculation
+  private readonly pinnedProgressTrigger = signal(0);
+
+  // Computed pinned progress for active tab (reactive)
+  readonly pinnedProgress = computed<PinnedProgress>(() => {
+    // Subscribe to trigger for reactivity
+    this.pinnedProgressTrigger();
+
+    const tab = this.activeTab();
+    const allItems = this.registry.getItemsForType(tab);
+
+    // Get pinned items that are not hidden and not expired
+    const pinnedItems = allItems.filter(
+      (item) => !item.expired && this.state.isPinned(item) && !this.state.isHidden(item),
+    );
+
+    const total = pinnedItems.length;
+    const completed = pinnedItems.filter((item) => this.state.isChecked(item)).length;
+
+    return { total, completed };
+  });
 
   ngOnInit(): void {
     // Initial tab from query param
@@ -76,6 +113,18 @@ export class ChecklistComponent implements OnInit, OnDestroy {
       const stored = window.localStorage.getItem(CHECKLIST_VIEW_MODE_STORAGE_KEY);
       if (stored === 'detailed' || stored === 'compact') {
         this.viewMode.set(stored);
+      }
+
+      // Restore hidden section collapsed state
+      const hiddenCollapsed = window.localStorage.getItem(HIDDEN_SECTION_COLLAPSED_KEY);
+      if (hiddenCollapsed === 'false') {
+        this.isHiddenCollapsed.set(false);
+      }
+
+      // Restore ideas drawer state
+      const ideasOpen = window.localStorage.getItem(IDEAS_DRAWER_OPEN_KEY);
+      if (ideasOpen === 'true') {
+        this.isIdeasDrawerOpen.set(true);
       }
     } catch {
       // ignore – localStorage not available
@@ -92,6 +141,28 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  // --- Navigation helpers ---
+
+  /**
+   * Navigate to a guide route, optionally with a section fragment
+   */
+  navigateToGuide(item: ChecklistItem): void {
+    if (!item.route) return;
+
+    if (item.section) {
+      this.router.navigate([item.route], { fragment: item.section });
+    } else {
+      this.router.navigate([item.route]);
+    }
+  }
+
+  // --- Pinned progress recalculation ---
+
+  private recalcPinnedProgress(): void {
+    // Increment trigger to force computed signal re-evaluation
+    this.pinnedProgressTrigger.update((v) => v + 1);
   }
 
   // --- Tab handling ---
@@ -126,6 +197,50 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     return this.viewMode() === 'compact';
   }
 
+  // --- Ideas drawer ---
+
+  toggleIdeasDrawer(): void {
+    const newState = !this.isIdeasDrawerOpen();
+    this.isIdeasDrawerOpen.set(newState);
+
+    // Lock/unlock body scroll
+    if (newState) {
+      document.body.classList.add('ideas-drawer-open');
+    } else {
+      document.body.classList.remove('ideas-drawer-open');
+    }
+
+    document.body.classList.remove('ideas-drawer-open');
+
+    try {
+      window.localStorage.setItem(IDEAS_DRAWER_OPEN_KEY, String(newState));
+    } catch {
+      // ignore
+    }
+  }
+
+  closeIdeasDrawer(): void {
+    this.isIdeasDrawerOpen.set(false);
+    document.body.classList.remove('ideas-drawer-open');
+    try {
+      window.localStorage.setItem(IDEAS_DRAWER_OPEN_KEY, 'false');
+    } catch {
+      // ignore
+    }
+  }
+
+  // --- Hidden section collapse ---
+
+  toggleHiddenCollapsed(): void {
+    const newState = !this.isHiddenCollapsed();
+    this.isHiddenCollapsed.set(newState);
+    try {
+      window.localStorage.setItem(HIDDEN_SECTION_COLLAPSED_KEY, String(newState));
+    } catch {
+      // ignore
+    }
+  }
+
   // --- State proxy methods for template ---
 
   isChecked(item: ChecklistItem): boolean {
@@ -134,6 +249,7 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   onToggleItem(checked: boolean, item: ChecklistItem): void {
     this.state.toggle(item, checked);
+    this.recalcPinnedProgress();
   }
 
   isPinned(item: ChecklistItem): boolean {
@@ -146,6 +262,7 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   onTogglePinned(item: ChecklistItem): void {
     this.state.togglePinned(item);
+    this.recalcPinnedProgress();
   }
 
   onToggleHidden(item: ChecklistItem): void {
@@ -154,10 +271,12 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     if (this.state.isHidden(item) && this.state.isChecked(item)) {
       this.state.toggle(item, false);
     }
+    this.recalcPinnedProgress();
   }
 
   resetCurrentTab(): void {
     this.state.resetType(this.activeTab());
+    this.recalcPinnedProgress();
   }
 
   getCompletionCount(item: ChecklistItem): number {
@@ -196,6 +315,7 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     }
 
     this.closeModal();
+    this.recalcPinnedProgress();
   }
 
   // --- Custom item helpers ---
@@ -213,6 +333,7 @@ export class ChecklistComponent implements OnInit, OnDestroy {
       const deleted = this.customChecklistService.delete(itemId);
       if (deleted) {
         console.log('Custom checklist item deleted:', itemId);
+        this.recalcPinnedProgress();
       }
     }
   }

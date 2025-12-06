@@ -1,471 +1,526 @@
 <section class="timers-page">
-  <header class="timers-settings-header">
+  <!-- Page Header -->
+  <header class="timers-page-header">
     <h1>Timers</h1>
     <p class="text-muted-strong">
-      Toggle which timers appear in the strip at the top. Changes are saved in your browser.
+      Choose which timers appear in the strip at the top. Press Details on any timer to view
+      information.
     </p>
-    <button type="button" class="btn-secondary btn-create-timer" (click)="openCreateModal()">
-      <i class="bi bi-plus-lg"></i>
-      Create Custom Timer
-    </button>
   </header>
 
-  <!-- Add this after the header and before the main timers-settings article -->
-
-  @if (eventTimers$ | async; as eventTimers) {
-    @if (eventTimers.length > 0) {
-      <!-- =======================
-         Limited-Time Content
-         ======================= -->
-      <article class="event-timers card-surface card-padding">
-        <header class="event-timers-header">
-          <h2>Limited-Time Content</h2>
-          <p class="text-muted-strong">
-            Battle passes, seasons, gacha banners, and other time-limited content currently active.
-            These timers disappear automatically when expired.
-          </p>
-        </header>
-
-        <!-- Update the event timer card structure in timers.component.html -->
-
-        <div class="event-timers-grid">
-          @for (event of eventTimers; track event.id) {
-            @let isCustom = isCustomTimer(event.id);
-
-            <div
-              class="event-timer-card"
-              [class.event-timer-card--expired]="event.isExpired"
-              [class.event-timer-card--custom]="isCustom"
-              [attr.data-category]="event.category"
+  <!-- Two-column layout -->
+  <div class="timers-layout">
+    <!-- LEFT COLUMN: Main Timers List (~60%) -->
+    <div class="timers-main-column">
+      @if (timers$ | async; as timers) {
+        <article class="timers-settings card-surface card-padding">
+          <!-- Card header with Create button -->
+          <header class="timers-card-header">
+            <h2>All Timers</h2>
+            <button
+              type="button"
+              class="btn-secondary btn-create-timer"
+              (click)="openCreateModal()"
             >
-              <!-- Icon + Category Column -->
-              <div class="event-timer-card__icon-wrapper">
-                <div class="event-timer-card__icon">
-                  <i class="bi" [ngClass]="event.icon"></i>
-                </div>
-                <span class="event-timer-card__category">
-                  {{ getCategoryLabel(event.category) }}
-                </span>
-              </div>
+              <i class="bi bi-plus-lg"></i>
+              Create Custom Timer
+            </button>
+          </header>
 
-              <!-- Content Column (Label + Remaining) -->
-              <div class="event-timer-card__content">
-                <h3 class="event-timer-card__label">{{ event.label }}</h3>
+          @if (enabledIds$ | async; as enabledIds) {
+            <div class="timer-settings-list">
+              @for (t of timers; track t.id) {
+                @let details = getTimerDetails(t.id);
+                @let localTime = getLocalEndTime(t.remaining);
 
-                <span
-                  class="event-timer-card__remaining"
-                  [class.event-timer-card__remaining--expired]="event.isExpired"
-                >
-                  @if (event.isExpired) {
-                    <i class="bi bi-x-circle"></i>
-                    <span>Expired</span>
-                  } @else {
-                    <i class="bi bi-clock"></i>
-                    <span>{{ event.remaining }}</span>
-                  }
-                </span>
-              </div>
+                <div class="timer-settings-row" [attr.id]="'timer-' + t.id">
+                  <div class="timer-settings-row__header">
+                    <div class="timer-settings-row__main">
+                      <app-diamond-toggle
+                        [checked]="isEnabled(enabledIds, t.id)"
+                        (checkedChange)="onToggleTimer(t.id)"
+                      >
+                        <span class="timer-settings-row__label">
+                          {{ t.label }}
+                        </span>
+                      </app-diamond-toggle>
+                    </div>
 
-              <!-- Actions Column (only for custom timers) -->
-              @if (isCustom) {
-                <div class="event-timer-card__actions">
-                  <button
-                    type="button"
-                    class="btn-icon-sm btn-icon-teal"
-                    (click)="openEditModal(getCustomTimer(event.id)!)"
-                    title="Edit timer"
-                    aria-label="Edit timer"
-                  >
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn-icon-sm btn-icon-danger"
-                    (click)="deleteCustomTimer(event.id)"
-                    title="Delete timer"
-                    aria-label="Delete timer"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              }
-            </div>
-          }
-        </div>
-      </article>
-    }
-  }
+                    <div class="timer-settings-row__meta">
+                      <span class="timer-settings-row__countdown">
+                        {{ t.remaining }}
+                        @if (localTime) {
+                          <span class="timer-settings-row__local-time"
+                            >({{ localTime }} local)</span
+                          >
+                        }
+                      </span>
 
-  @if (timers$ | async; as timers) {
-    <!-- =======================
-         Timer visibility settings
-         ======================= -->
-    <article class="timers-settings card-surface card-padding">
-      @if (enabledIds$ | async; as enabledIds) {
-        <div class="timer-settings-list">
-          @for (t of timers; track t.id) {
-            @let details = getTimerDetails(t.id);
-
-            <div class="timer-settings-row" [attr.id]="'timer-' + t.id">
-              <div class="timer-settings-row__header">
-                <div class="timer-settings-row__main">
-                  <app-diamond-toggle
-                    [checked]="isEnabled(enabledIds, t.id)"
-                    (checkedChange)="onToggleTimer(t.id)"
-                  >
-                    <span class="timer-settings-row__label">
-                      {{ t.label }}
-                    </span>
-                  </app-diamond-toggle>
-                </div>
-
-                <div class="timer-settings-row__meta">
-                  <span class="timer-settings-row__countdown">
-                    {{ t.remaining }}
-                  </span>
-
-                  <button
-                    type="button"
-                    class="timer-settings-row__details-btn"
-                    [class.timer-settings-row__details-btn--open]="openTimerId === t.id"
-                    (click)="toggleInfo(t.id)"
-                  >
-                    <span class="timer-settings-row__details-btn-label">
-                      @if (openTimerId !== t.id) {
-                        Details
-                      } @else {
-                        Hide
-                      }
-                    </span>
-                    <span class="timer-settings-row__details-btn-caret" aria-hidden="true"></span>
-                  </button>
-                </div>
-              </div>
-
-              @if (openTimerId === t.id) {
-                <div class="timer-settings-row__details">
-                  @if (details) {
-                    <!-- Built-in timer details -->
-                    <!-- Summary (always shown when details are open) -->
-                    <p
-                      class="timer-settings-row__details-summary"
-                      [innerHTML]="details.summary"
-                    ></p>
-
-                    <!-- Show more/less button (only if timer has long details) -->
-                    @if (details.hasLongDetails) {
                       <button
                         type="button"
-                        class="timer-settings-row__details-toggle"
-                        [class.timer-settings-row__details-toggle--less]="longDetailsId === t.id"
-                        (click)="toggleLongDetails(t.id)"
+                        class="timer-settings-row__details-btn"
+                        [class.timer-settings-row__details-btn--open]="openTimerId === t.id"
+                        (click)="toggleInfo(t.id)"
                       >
-                        @if (longDetailsId === t.id) {
-                          <span>Show less</span>
-                        } @else {
-                          <span>Show more</span>
-                        }
+                        <span class="timer-settings-row__details-btn-label">
+                          @if (openTimerId !== t.id) {
+                            Details
+                          } @else {
+                            Hide
+                          }
+                        </span>
+                        <span
+                          class="timer-settings-row__details-btn-caret"
+                          aria-hidden="true"
+                        ></span>
                       </button>
-                    }
+                    </div>
+                  </div>
 
-                    <!-- Long details sections (when expanded) -->
-                    @if (longDetailsId === t.id && details.longDetailsSections) {
-                      <div class="timer-settings-row__details-body">
-                        @for (section of details.longDetailsSections; track section.heading) {
-                          <section class="timers-section">
-                            <h3>{{ section.heading }}</h3>
-                            @for (contentItem of section.content; track $index) {
-                              @if (contentItem.type === 'paragraph') {
-                                <p [innerHTML]="contentItem.text"></p>
-                              } @else if (contentItem.type === 'list') {
-                                <ul>
-                                  @for (item of contentItem.items; track $index) {
-                                    <li [innerHTML]="item"></li>
-                                  }
-                                </ul>
-                              }
-                            }
-                          </section>
+                  @if (openTimerId === t.id) {
+                    <div class="timer-settings-row__details">
+                      @if (details) {
+                        <!-- Why this matters (1-line summary) -->
+                        @let whyMatters = getWhyItMatters(t.id);
+                        @if (whyMatters) {
+                          <p class="timer-settings-row__why-matters">
+                            <strong>Why this matters:</strong> {{ whyMatters }}
+                          </p>
                         }
 
-                        <!-- Trade guide link (if applicable) -->
-                        @if (details.hasTradeGuideLink) {
-                          <div class="timer-details-footer">
-                            <a
-                              class="timer-details-link"
-                              routerLink="/guides/trading"
-                              [fragment]="
-                                t.id === 'trading-week-reset' ? 'resets' : 'timers-checklists'
-                              "
-                            >
-                              @if (t.id === 'trading-week-reset') {
-                                Open Trading / Commerce Guide (reset breakdown)
-                              } @else {
-                                Open Trading / Commerce Guide (timers & checklist loop)
-                              }
-                            </a>
-                          </div>
-                        }
-                      </div>
-                    }
+                        <!-- Summary (always shown when details are open) -->
+                        <p
+                          class="timer-settings-row__details-summary"
+                          [innerHTML]="details.summary"
+                        ></p>
 
-                    <!-- Guild config form (special case for guild timers) -->
-                    @if (details.hasGuildConfig && (guildConfigs$ | async); as guildConfigs) {
-                      @let current = getGuildConfig(guildConfigs, t.id);
-
-                      <div class="guild-timer-config">
-                        <h4>Schedule</h4>
-
-                        <!-- Timezone offset (in hours) -->
-                        <div class="guild-timer-field">
-                          <span>Event timezone (card)</span>
-                          <div class="guild-timer-field__tz">
-                            <span>UTC + </span>
-                            <select [attr.id]="'tz-hours-' + t.id" #tzHours>
-                              @for (o of guildUtcOffsets; track o) {
-                                <option
-                                  [value]="o"
-                                  [selected]="getGuildTimezoneHours(current) === o"
-                                >
-                                  {{ o }}
-                                </option>
-                              }
-                            </select>
-                          </div>
-                        </div>
-
-                        <!-- Slot 1 -->
-                        <div class="guild-timer-slot">
-                          <label>
-                            <span>Slot 1 weekday</span>
-                            <select [attr.id]="'day1-' + t.id" #day1>
-                              <option
-                                [value]="1"
-                                [selected]="(current?.slots?.[0]?.weekday ?? 1) === 1"
-                              >
-                                Monday
-                              </option>
-                              <option
-                                [value]="2"
-                                [selected]="(current?.slots?.[0]?.weekday ?? 1) === 2"
-                              >
-                                Tuesday
-                              </option>
-                              <option
-                                [value]="3"
-                                [selected]="(current?.slots?.[0]?.weekday ?? 1) === 3"
-                              >
-                                Wednesday
-                              </option>
-                              <option
-                                [value]="4"
-                                [selected]="(current?.slots?.[0]?.weekday ?? 1) === 4"
-                              >
-                                Thursday
-                              </option>
-                              <option
-                                [value]="5"
-                                [selected]="(current?.slots?.[0]?.weekday ?? 1) === 5"
-                              >
-                                Friday
-                              </option>
-                              <option
-                                [value]="6"
-                                [selected]="(current?.slots?.[0]?.weekday ?? 1) === 6"
-                              >
-                                Saturday
-                              </option>
-                              <option
-                                [value]="7"
-                                [selected]="(current?.slots?.[0]?.weekday ?? 1) === 7"
-                              >
-                                Sunday
-                              </option>
-                            </select>
-                          </label>
-
-                          <label class="guild-timer-slot__time">
-                            <span>Slot 1 hour</span>
-                            <select [attr.id]="'hour1-' + t.id" #hour1>
-                              @for (h of guildHourOptions; track h) {
-                                <option
-                                  [value]="h"
-                                  [selected]="(current?.slots?.[0]?.hour ?? 0) === h"
-                                >
-                                  {{ h < 10 ? '0' + h : h }}
-                                </option>
-                              }
-                            </select>
-                          </label>
-
-                          <label class="guild-timer-slot__time">
-                            <span>Slot 1 minute</span>
-                            <select [attr.id]="'minute1-' + t.id" #minute1>
-                              @for (m of guildMinuteOptions; track m) {
-                                <option
-                                  [value]="m"
-                                  [selected]="(current?.slots?.[0]?.minute ?? 0) === m"
-                                >
-                                  {{ m < 10 ? '0' + m : m }}
-                                </option>
-                              }
-                            </select>
-                          </label>
-                        </div>
-
-                        <!-- Slot 2 -->
-                        <div class="guild-timer-slot">
-                          <label>
-                            <span>Slot 2 weekday</span>
-                            <select [attr.id]="'day2-' + t.id" #day2>
-                              <option
-                                [value]="1"
-                                [selected]="(current?.slots?.[1]?.weekday ?? 1) === 1"
-                              >
-                                Monday
-                              </option>
-                              <option
-                                [value]="2"
-                                [selected]="(current?.slots?.[1]?.weekday ?? 1) === 2"
-                              >
-                                Tuesday
-                              </option>
-                              <option
-                                [value]="3"
-                                [selected]="(current?.slots?.[1]?.weekday ?? 1) === 3"
-                              >
-                                Wednesday
-                              </option>
-                              <option
-                                [value]="4"
-                                [selected]="(current?.slots?.[1]?.weekday ?? 1) === 4"
-                              >
-                                Thursday
-                              </option>
-                              <option
-                                [value]="5"
-                                [selected]="(current?.slots?.[1]?.weekday ?? 1) === 5"
-                              >
-                                Friday
-                              </option>
-                              <option
-                                [value]="6"
-                                [selected]="(current?.slots?.[1]?.weekday ?? 1) === 6"
-                              >
-                                Saturday
-                              </option>
-                              <option
-                                [value]="7"
-                                [selected]="(current?.slots?.[1]?.weekday ?? 1) === 7"
-                              >
-                                Sunday
-                              </option>
-                            </select>
-                          </label>
-
-                          <label class="guild-timer-slot__time">
-                            <span>Slot 2 hour</span>
-                            <select [attr.id]="'hour2-' + t.id" #hour2>
-                              @for (h of guildHourOptions; track h) {
-                                <option
-                                  [value]="h"
-                                  [selected]="(current?.slots?.[1]?.hour ?? 0) === h"
-                                >
-                                  {{ h < 10 ? '0' + h : h }}
-                                </option>
-                              }
-                            </select>
-                          </label>
-
-                          <label class="guild-timer-slot__time">
-                            <span>Slot 2 minute</span>
-                            <select [attr.id]="'minute2-' + t.id" #minute2>
-                              @for (m of guildMinuteOptions; track m) {
-                                <option
-                                  [value]="m"
-                                  [selected]="(current?.slots?.[1]?.minute ?? 0) === m"
-                                >
-                                  {{ m < 10 ? '0' + m : m }}
-                                </option>
-                              }
-                            </select>
-                          </label>
-                        </div>
-
-                        <!-- Save / Delete buttons -->
-                        <div class="guild-timer-actions">
+                        <!-- Show more/less button (only if timer has long details) -->
+                        @if (details.hasLongDetails) {
                           <button
                             type="button"
-                            class="btn-primary"
-                            (click)="
-                              onSaveGuildTimer(
-                                t.id,
-                                tzHours.value,
-                                day1.value,
-                                hour1.value,
-                                minute1.value,
-                                day2.value,
-                                hour2.value,
-                                minute2.value
-                              )
+                            class="timer-settings-row__details-toggle"
+                            [class.timer-settings-row__details-toggle--less]="
+                              longDetailsId === t.id
                             "
+                            (click)="toggleLongDetails(t.id)"
                           >
-                            Save schedule
+                            @if (longDetailsId === t.id) {
+                              <span>Show less</span>
+                            } @else {
+                              <span>Show more</span>
+                            }
                           </button>
+                        }
 
-                          @if (current) {
-                            <button
-                              type="button"
-                              class="btn btn-secondary"
-                              (click)="onDeleteGuildTimer(t.id)"
-                            >
-                              Clear schedule
-                            </button>
-                          }
+                        <!-- Long details sections (when expanded) -->
+                        @if (longDetailsId === t.id && details.longDetailsSections) {
+                          <div class="timer-settings-row__details-body">
+                            @for (section of details.longDetailsSections; track section.heading) {
+                              <section class="timers-section">
+                                <h3>{{ section.heading }}</h3>
+                                @for (contentItem of section.content; track $index) {
+                                  @if (contentItem.type === 'paragraph') {
+                                    <p [innerHTML]="contentItem.text"></p>
+                                  } @else if (contentItem.type === 'list') {
+                                    <ul>
+                                      @for (item of contentItem.items; track $index) {
+                                        <li [innerHTML]="item"></li>
+                                      }
+                                    </ul>
+                                  }
+                                }
+                              </section>
+                            }
+
+                            <!-- Trade guide link (if applicable) -->
+                            @if (details.hasTradeGuideLink) {
+                              <div class="timer-details-footer">
+                                <a
+                                  class="timer-details-link"
+                                  routerLink="/guides/trading"
+                                  [fragment]="
+                                    t.id === 'trading-week-reset' ? 'resets' : 'timers-checklists'
+                                  "
+                                >
+                                  @if (t.id === 'trading-week-reset') {
+                                    Open Trading / Commerce Guide (reset breakdown)
+                                  } @else {
+                                    Open Trading / Commerce Guide
+                                  }
+                                </a>
+                              </div>
+                            }
+                          </div>
+                        }
+
+                        <!-- Guild config form (special case for guild timers) -->
+                        @if (details.hasGuildConfig && (guildConfigs$ | async); as guildConfigs) {
+                          @let current = getGuildConfig(guildConfigs, t.id);
+
+                          <div class="guild-timer-config">
+                            <h4>Schedule</h4>
+
+                            <!-- Timezone offset (in hours) -->
+                            <div class="guild-timer-field">
+                              <span>Event timezone (card)</span>
+                              <div class="guild-timer-field__tz">
+                                <span>UTC + </span>
+                                <select [attr.id]="'tz-hours-' + t.id" #tzHours>
+                                  @for (o of guildUtcOffsets; track o) {
+                                    <option
+                                      [value]="o"
+                                      [selected]="getGuildTimezoneHours(current) === o"
+                                    >
+                                      {{ o >= 0 ? '+' : '' }}{{ o }}
+                                    </option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+
+                            <!-- Slot 1 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 1 weekday</span>
+                                <select [attr.id]="'day1-' + t.id" #day1>
+                                  <option
+                                    value="1"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    value="2"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    value="3"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    value="4"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    value="5"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    value="6"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    value="7"
+                                    [selected]="(current?.slots?.[0]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 hour</span>
+                                <select [attr.id]="'hour1-' + t.id" #hour1>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[0]?.hour ?? 20) === h"
+                                    >
+                                      {{ h.toString().padStart(2, '0') }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 1 minute</span>
+                                <select [attr.id]="'minute1-' + t.id" #minute1>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[0]?.minute ?? 0) === m"
+                                    >
+                                      {{ m.toString().padStart(2, '0') }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <!-- Slot 2 -->
+                            <div class="guild-timer-slot">
+                              <label>
+                                <span>Slot 2 weekday</span>
+                                <select [attr.id]="'day2-' + t.id" #day2>
+                                  <option
+                                    value="1"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 1"
+                                  >
+                                    Monday
+                                  </option>
+                                  <option
+                                    value="2"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 2"
+                                  >
+                                    Tuesday
+                                  </option>
+                                  <option
+                                    value="3"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 3"
+                                  >
+                                    Wednesday
+                                  </option>
+                                  <option
+                                    value="4"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 4"
+                                  >
+                                    Thursday
+                                  </option>
+                                  <option
+                                    value="5"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 5"
+                                  >
+                                    Friday
+                                  </option>
+                                  <option
+                                    value="6"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 6"
+                                  >
+                                    Saturday
+                                  </option>
+                                  <option
+                                    value="7"
+                                    [selected]="(current?.slots?.[1]?.weekday ?? 1) === 7"
+                                  >
+                                    Sunday
+                                  </option>
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 hour</span>
+                                <select [attr.id]="'hour2-' + t.id" #hour2>
+                                  @for (h of guildHourOptions; track h) {
+                                    <option
+                                      [value]="h"
+                                      [selected]="(current?.slots?.[1]?.hour ?? 20) === h"
+                                    >
+                                      {{ h.toString().padStart(2, '0') }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+
+                              <label class="guild-timer-slot__time">
+                                <span>Slot 2 minute</span>
+                                <select [attr.id]="'minute2-' + t.id" #minute2>
+                                  @for (m of guildMinuteOptions; track m) {
+                                    <option
+                                      [value]="m"
+                                      [selected]="(current?.slots?.[1]?.minute ?? 0) === m"
+                                    >
+                                      {{ m.toString().padStart(2, '0') }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            </div>
+
+                            <!-- Save / Delete buttons -->
+                            <div class="guild-timer-actions">
+                              <button
+                                type="button"
+                                class="btn-primary"
+                                (click)="
+                                  onSaveGuildTimer(
+                                    t.id,
+                                    tzHours.value,
+                                    day1.value,
+                                    hour1.value,
+                                    minute1.value,
+                                    day2.value,
+                                    hour2.value,
+                                    minute2.value
+                                  )
+                                "
+                              >
+                                Save schedule
+                              </button>
+
+                              @if (current) {
+                                <button
+                                  type="button"
+                                  class="btn-secondary btn-danger"
+                                  (click)="onDeleteGuildTimer(t.id)"
+                                >
+                                  Delete schedule
+                                </button>
+                              }
+                            </div>
+                          </div>
+                        }
+                      } @else if (isCustomTimer(t.id)) {
+                        <!-- Custom timer details (no built-in details config) -->
+                        @let customTimer = getCustomTimer(t.id);
+                        @let summary = getCustomTimerSummary(t.id);
+
+                        @if (summary) {
+                          <p class="timer-settings-row__details-summary">{{ summary }}</p>
+                        } @else {
+                          <p class="timer-settings-row__details-summary text-muted">
+                            No description provided for this custom timer.
+                          </p>
+                        }
+
+                        <!-- Custom timer actions -->
+                        <div class="custom-timer-actions">
+                          <button
+                            type="button"
+                            class="btn-secondary btn-sm"
+                            (click)="openEditModal(customTimer!)"
+                          >
+                            <i class="bi bi-pencil"></i>
+                            Edit Timer
+                          </button>
+                          <button
+                            type="button"
+                            class="btn-secondary btn-sm btn-danger"
+                            (click)="deleteCustomTimer(t.id)"
+                          >
+                            <i class="bi bi-trash"></i>
+                            Delete Timer
+                          </button>
                         </div>
-                      </div>
-                    }
-                  } @else if (isCustomTimer(t.id)) {
-                    <!-- Custom timer details (no built-in details config) -->
-                    @let customTimer = getCustomTimer(t.id);
-                    @let summary = getCustomTimerSummary(t.id);
-
-                    @if (summary) {
-                      <p class="timer-settings-row__details-summary">{{ summary }}</p>
-                    } @else {
-                      <p class="timer-settings-row__details-summary text-muted">
-                        No description provided for this custom timer.
-                      </p>
-                    }
-
-                    <!-- Custom timer actions -->
-                    <div class="custom-timer-actions">
-                      <button
-                        type="button"
-                        class="btn-secondary btn-sm"
-                        (click)="openEditModal(customTimer!)"
-                      >
-                        <i class="bi bi-pencil"></i>
-                        Edit Timer
-                      </button>
-                      <button
-                        type="button"
-                        class="btn-secondary btn-sm btn-danger"
-                        (click)="deleteCustomTimer(t.id)"
-                      >
-                        <i class="bi bi-trash"></i>
-                        Delete Timer
-                      </button>
+                      }
                     </div>
                   }
                 </div>
               }
             </div>
           }
-        </div>
+        </article>
       }
-    </article>
-  }
+    </div>
+
+    <!-- RIGHT COLUMN: Limited-Time Content + Helper (~40%) -->
+    <div class="timers-side-column">
+      <!-- Limited-Time Content -->
+      @if (eventTimers$ | async; as eventTimers) {
+        @if (eventTimers.length > 0) {
+          <article class="event-timers card-surface card-padding">
+            <header class="event-timers-header">
+              <h2>Limited-Time Content</h2>
+              <p class="text-muted-strong">
+                Battle passes, seasons, and other time-limited content.
+              </p>
+            </header>
+
+            <div class="event-timers-grid">
+              @for (event of eventTimers; track event.id) {
+                @let isCustom = isCustomTimer(event.id);
+                @let localTime = getLocalEndTime(event.remaining);
+
+                <div
+                  class="event-timer-card"
+                  [class.event-timer-card--expired]="event.isExpired"
+                  [class.event-timer-card--custom]="isCustom"
+                >
+                  <!-- Icon/Image -->
+                  <div class="event-timer-card__icon">
+                    @if (isCustom) {
+                      <i class="bi" [ngClass]="event.icon"></i>
+                    } @else if (event.image) {
+                      <img [src]="event.image" [alt]="event.label" />
+                    } @else {
+                      <i class="bi" [ngClass]="event.icon"></i>
+                    }
+                  </div>
+
+                  <!-- Content Column (Label + Remaining) -->
+                  <div class="event-timer-card__content">
+                    <h3 class="event-timer-card__label">{{ event.label }}</h3>
+
+                    <span
+                      class="event-timer-card__remaining"
+                      [class.event-timer-card__remaining--expired]="event.isExpired"
+                    >
+                      @if (event.isExpired) {
+                        <i class="bi bi-x-circle"></i>
+                        <span>Expired</span>
+                      } @else {
+                        <i class="bi bi-clock"></i>
+                        <span>
+                          {{ event.remaining }}
+                          @if (localTime) {
+                            <span class="event-timer-card__local-time"
+                              >({{ localTime }} local)</span
+                            >
+                          }
+                        </span>
+                      }
+                    </span>
+                  </div>
+
+                  <!-- Actions Column (only for custom timers) -->
+                  @if (isCustom) {
+                    <div class="event-timer-card__actions">
+                      <button
+                        type="button"
+                        class="btn-icon-sm btn-icon-teal"
+                        (click)="openEditModal(getCustomTimer(event.id)!)"
+                        title="Edit timer"
+                        aria-label="Edit timer"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-icon-sm btn-icon-danger"
+                        (click)="deleteCustomTimer(event.id)"
+                        title="Delete timer"
+                        aria-label="Delete timer"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </article>
+        }
+      }
+
+      <!-- Helper Box -->
+      <aside class="timers-helper card-surface card-padding">
+        <h3>How timers work</h3>
+        <ul class="timers-helper__list">
+          <li>
+            <i class="bi bi-toggle-on"></i>
+            Use the toggle icon to show/hide timers in the top strip.
+          </li>
+          <li>
+            <i class="bi bi-info-circle"></i>
+            Press Details to view information about a timer.
+          </li>
+          <li>
+            <i class="bi bi-hourglass-split"></i>
+            Limited-time events disappear automatically when expired.
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </div>
 </section>
 
 <!-- Custom Timer Modal -->

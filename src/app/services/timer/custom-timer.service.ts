@@ -64,6 +64,7 @@ export class CustomTimerService {
       label: this.sanitizeText(formData.label),
       shortLabel: this.sanitizeText(formData.shortLabel),
       icon: formData.icon,
+      image: '',
       summary: formData.summary ? this.sanitizeText(formData.summary) : undefined,
       createdAt: now,
       updatedAt: now,

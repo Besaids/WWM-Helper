@@ -181,9 +181,6 @@
               <header class="challenge-detail__header">
                 <h3>{{ path.pathName }}</h3>
                 <div class="challenge-detail__badges">
-                  <span class="badge-role" [ngClass]="getRoleBadgeClass(path.role)">
-                    {{ path.role }}
-                  </span>
                   <span class="badge-category">{{ path.category }}</span>
                 </div>
                 <p class="challenge-detail__weapons">
@@ -200,12 +197,6 @@
                     <header class="challenge-card__header">
                       <div class="challenge-card__header-left">
                         <span class="challenge-card__order">{{ challenge.order }}/5</span>
-                        <span
-                          class="challenge-card__category"
-                          [ngClass]="getCategoryInfo(challenge.category).cssClass"
-                        >
-                          {{ getCategoryInfo(challenge.category).label }}
-                        </span>
                       </div>
                       <button
                         type="button"

@@ -21,6 +21,7 @@ import { DiamondToggleComponent } from '../ui';
 import { RouterModule } from '@angular/router';
 import { TIMER_DETAILS_CONFIG } from '../../configs';
 import { CustomTimerModalComponent } from './custom-timer-modal';
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'app-timers',
@@ -306,5 +307,102 @@ export class TimersComponent {
   getCustomTimerSummary(timerId: string): string | null {
     const timer = this.getCustomTimer(timerId);
     return timer?.summary || null;
+  }
+
+  /**
+   * Get the local time when the timer ends/resets, formatted as HH:mm
+   * Rounds to nearest 30 minutes (XX:00 or XX:30)
+   * Returns null if the remaining time cannot be parsed
+   */
+  getLocalEndTime(remaining: string): string | null {
+    const seconds = this.parseRemainingToSeconds(remaining);
+    if (seconds === null || seconds <= 0) {
+      return null;
+    }
+
+    const endTime = DateTime.local().plus({ seconds });
+
+    // Round to nearest 30 minutes
+    const minute = endTime.minute;
+    let roundedMinute: number;
+    let hourAdjust = 0;
+
+    if (minute < 15) {
+      roundedMinute = 0;
+    } else if (minute < 45) {
+      roundedMinute = 30;
+    } else {
+      roundedMinute = 0;
+      hourAdjust = 1;
+    }
+
+    const roundedTime = endTime
+      .set({ minute: roundedMinute, second: 0, millisecond: 0 })
+      .plus({ hours: hourAdjust });
+    return roundedTime.toFormat('HH:mm');
+  }
+
+  /**
+   * Parse remaining time string like "4h 20m 5s" or "8w 5d" to total seconds
+   */
+  private parseRemainingToSeconds(remaining: string): number | null {
+    if (!remaining) return null;
+
+    const lower = remaining.toLowerCase().trim();
+
+    // Handle special states
+    if (lower === 'open' || lower.includes('(open)') || lower.includes('now')) {
+      return 0;
+    }
+
+    if (lower === 'not configured' || lower === 'expired') {
+      return null;
+    }
+
+    let totalSeconds = 0;
+
+    // Parse weeks
+    const weekMatch = /(\d+)\s*w/.exec(lower);
+    if (weekMatch) totalSeconds += Number(weekMatch[1]) * 7 * 86400;
+
+    // Parse days
+    const dayMatch = /(\d+)\s*d/.exec(lower);
+    if (dayMatch) totalSeconds += Number(dayMatch[1]) * 86400;
+
+    // Parse hours
+    const hourMatch = /(\d+)\s*h/.exec(lower);
+    if (hourMatch) totalSeconds += Number(hourMatch[1]) * 3600;
+
+    // Parse minutes
+    const minuteMatch = /(\d+)\s*m(?!s)/.exec(lower); // (?!s) to avoid matching 'ms'
+    if (minuteMatch) totalSeconds += Number(minuteMatch[1]) * 60;
+
+    // Parse seconds
+    const secondMatch = /(\d+)\s*s/.exec(lower);
+    if (secondMatch) totalSeconds += Number(secondMatch[1]);
+
+    return totalSeconds > 0 ? totalSeconds : null;
+  }
+
+  /**
+   * Get a "Why this matters" summary for a timer
+   * Returns null if no meaningful summary can be derived
+   */
+  getWhyItMatters(timerId: string): string | null {
+    const mattersMap: Record<string, string> = {
+      'daily-reset': 'Regain Stamina, refresh errands and reset daily activities.',
+      'weekly-reset': 'Raid lockouts, currency caps and weekly shop stock refresh.',
+      'arena-1v1': 'Ranked 1v1 PvP window for climbing the ladder.',
+      'trading-week-reset': 'Trade prices and commerce routes reset.',
+      'trade-price-check': 'Check current trade prices before they rotate.',
+      'mirage-boat': 'Limited-time event boat for exploration rewards.',
+      'fireworks-show': 'Participate in the fireworks event for rewards.',
+      'fireworks-festival': 'Festival activities and special rewards.',
+      'fireworks-bidding': 'Bid on exclusive items during the event.',
+      'guild-breaking-army': 'Guild group content for Treasure Tokens.',
+      'guild-test-your-skills': 'Guild competitive event for rewards.',
+    };
+
+    return mattersMap[timerId] || null;
   }
 }

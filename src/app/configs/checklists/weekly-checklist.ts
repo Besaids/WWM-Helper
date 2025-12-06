@@ -24,17 +24,6 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     expired: false,
   },
   {
-    id: 'weekly-sword-trial-echo-reward',
-    frequency: 'weekly',
-    importance: 'optional',
-    category: 'Group content',
-    label: 'Claim the Weekly Echo Reward from Sword Trial (multi-boss run).',
-    description:
-      'In Wandering Paths → Challenges → Sword Trial, do at least one dungeon with more than one boss and defeat the final boss to trigger the Weekly Echo Reward chest (up to 1 time per week). Usually happens naturally while you are running Sword Trials, but this keeps the weekly box from being forgotten.',
-    tags: ['combat', 'multiplayer', 'reward'],
-    expired: false,
-  },
-  {
     id: 'weekly-guild-heros-realm',
     frequency: 'weekly',
     importance: 'core',
@@ -66,6 +55,8 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
       'Use the Trading timers: buy this week’s goods after Friday 21:00 UTC, hold and sell across the week (Local peaks or good Remote buyers), then clear all stock before the next Trade Week reset.',
     tags: ['economy', 'solo', 'guild'],
     expired: false,
+    route: '/guides/trading',
+    section: 'top',
   },
   {
     id: 'weekly-cap-coin',
