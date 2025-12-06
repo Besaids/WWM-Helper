@@ -432,3 +432,28 @@ When you need many tooltips for game concepts, prefer seeding the registry from
 
 You can still override specific keys manually for special cases, but default to
 “manifest → registry → [appTooltip]” as the main flow.
+
+### 9.13 Tooltip registry organization patterns
+
+When registering tooltips in component constructors, use consistent namespacing:
+
+- **Game asset tooltips**: Use the manifest `id` directly (e.g. `currency.echo_jade`, `system.energy`)
+- **UI control tooltips**: Use `control.*` prefix (e.g. `control.pin`, `control.hide`, `control.reset`)
+- **Timer/checklist UI tooltips**: Use `timer-badge.*` or `timer-state.*` (e.g. `timer-badge.active`, `timer-state.warning`)
+- **Category/section tooltips**: Use the category/section name (e.g. `battle-pass`, `completion-count`)
+
+Components should register their own tooltips in the constructor to keep them self-contained. If tooltips are shared across multiple components, consider extracting them to a shared initialization function or service method.
+
+### 9.14 Conditional tooltip application patterns
+
+When tooltips should only appear in certain states (e.g. warning/urgent timer states), use `@if/@else` blocks to conditionally wrap elements:
+
+**Good:**
+```html
+@if (state.type === 'warning' || state.type === 'urgent') {
+  <span class="value" [appTooltip]="state.type === 'urgent' ? 'timer-state.urgent' : 'timer-state.warning'">
+    {{ value }}
+  </span>
+} @else {
+  <span class="value">{{ value }}</span>
+}
