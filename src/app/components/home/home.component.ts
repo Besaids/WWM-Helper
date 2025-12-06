@@ -11,6 +11,8 @@ import { ChecklistItem, TimerChip, CustomTimerDefinition, ChecklistFrequency } f
 import { ChecklistToggleComponent } from '../ui';
 import { DateTime } from 'luxon';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TooltipRegistryService } from '../../services';
+import { TooltipDirective } from '../../directives';
 
 interface TimerState {
   type: 'normal' | 'warning' | 'urgent' | 'active';
@@ -34,7 +36,7 @@ interface PinnedBucket {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, ChecklistToggleComponent],
+  imports: [CommonModule, RouterModule, ChecklistToggleComponent, TooltipDirective],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -46,6 +48,7 @@ export class HomeComponent {
   private readonly checklistRegistry = inject(ChecklistRegistryService);
   private readonly customChecklistService = inject(CustomChecklistService);
   private readonly router = inject(Router);
+  private readonly tooltipRegistry = inject(TooltipRegistryService);
 
   // Create a signal to trigger recomputation
   private readonly refreshTrigger = signal(0);
@@ -287,6 +290,33 @@ export class HomeComponent {
       href: 'https://mapgenie.io/where-winds-meet/maps/world',
     },
   ];
+
+  constructor() {
+    // Register tooltips for timer badges and state indicators
+    this.tooltipRegistry.registerAll({
+      'timer-badge.active': {
+        title: 'Active Timer',
+        description: 'This event or window is currently open and available.',
+        variant: 'controlHint',
+      },
+      'timer-badge.event': {
+        title: 'Custom Event',
+        description: 'This is a custom event timer you created.',
+        variant: 'controlHint',
+      },
+      'timer-state.warning': {
+        title: 'Starting Soon',
+        description:
+          'This timer will reset or become available within 30 minutes. The color shifts from yellow to red as time runs out.',
+        variant: 'controlHint',
+      },
+      'timer-state.urgent': {
+        title: 'Expiring Now',
+        description: 'This timer is expiring or starting within 10 minutes.',
+        variant: 'controlHint',
+      },
+    });
+  }
 
   private formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Expired';

@@ -42,13 +42,34 @@
                   <i class="home-timer-icon {{ timer.icon }}"></i>
                   <span class="home-timer-label">{{ timer.label }}</span>
                   @if (timer.isActive) {
-                    <span class="home-timer-badge home-timer-badge--active">Active</span>
+                    <span
+                      class="home-timer-badge home-timer-badge--active"
+                      [appTooltip]="'timer-badge.active'"
+                    >
+                      Active
+                    </span>
                   }
                   @if (timer.isEvent) {
-                    <span class="home-timer-badge home-timer-badge--event">Event</span>
+                    <span
+                      class="home-timer-badge home-timer-badge--event"
+                      [appTooltip]="'timer-badge.event'"
+                    >
+                      Event
+                    </span>
                   }
                 </div>
-                <span class="home-timer-countdown">{{ timer.remaining }}</span>
+                @if (timer.state.type === 'warning' || timer.state.type === 'urgent') {
+                  <span
+                    class="home-timer-countdown"
+                    [appTooltip]="
+                      timer.state.type === 'urgent' ? 'timer-state.urgent' : 'timer-state.warning'
+                    "
+                  >
+                    {{ timer.remaining }}
+                  </span>
+                } @else {
+                  <span class="home-timer-countdown">{{ timer.remaining }}</span>
+                }
               </li>
             }
           </ul>

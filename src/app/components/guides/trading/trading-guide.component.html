@@ -3,7 +3,8 @@
     <h1 class="guide-page__title">Trading / Commerce Guide</h1>
     <p class="guide-page__subtitle">
       How Trade Week works, how Local vs Remote prices behave, and how to use mansion slots and
-      guild techniques to farm Commerce Coins.
+      guild techniques to farm
+      <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>.
     </p>
 
     <nav class="guide-toc">
@@ -37,7 +38,8 @@
         Each Trade Week, the game picks <strong>three Trading Goods</strong>: one
         <strong>Local Fluctuation</strong> item and two <strong>Remote Fluctuation</strong> items.
         You buy them from normal shops on your own world, then sell them in your world or in other
-        players’ worlds for Commerce Coins.
+        players' worlds for
+        <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>.
       </p>
       <p>
         When a new Trade Week starts, the three goods rotate. Old-week goods are still items in your
@@ -50,13 +52,13 @@
       <ul>
         <li>
           <strong>Trade Week reset:</strong> Friday 21:00 UTC.<br />
-          The three Trading Goods rotate; the Price Bulletin changes and its “Time remaining” timer
+          The three Trading Goods rotate; the Price Bulletin changes and its "Time remaining" timer
           resets.
         </li>
         <li>
           <strong>Weekly reset:</strong> Sunday 21:00 UTC.<br />
           Treat this as the point where vendor purchase amounts have refreshed at least once. If you
-          sold early, you can usually buy another batch of this week’s goods.
+          sold early, you can usually buy another batch of this week's goods.
         </li>
       </ul>
       <p class="guide-note">
@@ -71,11 +73,11 @@
       <ul>
         <li>
           Talk to <strong>Zang Qiyue</strong> at the Trade Commission in Kaifeng and choose
-          <strong>“Price Fluctuations”</strong>, or
+          <strong>"Price Fluctuations"</strong>, or
         </li>
         <li>
           Open the Trade Commission UI and press
-          <strong>“Check Announcements”</strong>.
+          <strong>"Check Announcements"</strong>.
         </li>
       </ul>
 
@@ -86,7 +88,7 @@
         />
         <figcaption>
           Trade Commission in Kaifeng. Look for this icon on your city map; talking to Zang Qiyue
-          here lets you open the Price Bulletin and see this week’s Trading Goods and their Time
+          here lets you open the Price Bulletin and see this week's Trading Goods and their Time
           Remaining.
         </figcaption>
       </figure>
@@ -96,11 +98,11 @@
         <li>Which three items are Trading Goods.</li>
         <li>Which one is <strong>Local</strong> and which two are <strong>Remote</strong>.</li>
         <li>
-          A <strong>“Go to purchase”</strong> line for each item that tells you where to buy it on
+          A <strong>"Go to purchase"</strong> line for each item that tells you where to buy it on
           your world.
         </li>
         <li>
-          A “Time remaining” countdown to the next
+          A "Time remaining" countdown to the next
           <strong>Friday 21:00 UTC</strong> Trade Week reset.
         </li>
       </ul>
@@ -113,7 +115,7 @@
       />
       <figcaption>
         Price Bulletin in Kaifeng. One item will be marked Local Fluctuation, the other two Remote.
-        The “Go to purchase” line tells you where to buy it on your world.
+        The "Go to purchase" line tells you where to buy it on your world.
       </figcaption>
     </figure>
 
@@ -131,9 +133,9 @@
 
       <h3>Remote Fluctuation (2 items)</h3>
       <ul>
-        <li>On your world, the price is <strong>fixed</strong>; buy and sell don’t change.</li>
+        <li>On your world, the price is <strong>fixed</strong>; buy and sell don't change.</li>
         <li>
-          Other players’ worlds have different prices. You use
+          Other players' worlds have different prices. You use
           <strong>Remote Price</strong> / Co-op sale to find worlds with high prices and sell there.
         </li>
         <li>
@@ -150,7 +152,7 @@
       />
       <figcaption>
         Local Price view in the Trade Commission. Here the buy and sell price on your own world move
-        together; this is where you watch the Local Fluctuation item’s percentage to decide when to
+        together; this is where you watch the Local Fluctuation item's percentage to decide when to
         buy low and sell high.
       </figcaption>
     </figure>
@@ -160,10 +162,12 @@
 
       <h3>Slots &amp; the mansion</h3>
       <p>
-        Most players start with 20 bag slots. Renting the big mansion at Feng’s Tradehall
-        (10&nbsp;000 Commerce Coins/month) adds
-        <strong>+60 slots</strong>, giving an effective <strong>80-slot Trading inventory</strong>.
-        This is the practical minimum for serious Trading.
+        Most players start with 20 bag slots. Renting the big mansion at Feng's Tradehall
+        (10&nbsp;000
+        <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span
+        >/month) adds <strong>+60 slots</strong>, giving an effective
+        <strong>80-slot Trading inventory</strong>. This is the practical minimum for serious
+        Trading.
       </p>
       <p>
         There are three house options, but for Trading the mansion is the key one; the extra 60
@@ -190,7 +194,8 @@
         </li>
         <li>
           You now have a full bag optimised for profit; percentage gains apply to the base price, so
-          expensive items return more Coins per %.
+          expensive items return more
+          <span class="has-tooltip" [appTooltip]="'currency.coin'">Coins</span> per %.
         </li>
       </ol>
 
@@ -219,10 +224,11 @@
     <figure class="guide-figure">
       <img
         src="assets/guides/trading/trade-house-renting.png"
-        alt="House rental screen in Feng’s Tradehall showing the mansion option and its additional storage slots"
+        alt="House rental screen in Feng's Tradehall showing the mansion option and its additional storage slots"
       />
       <figcaption>
-        House renting at Feng’s Tradehall. The large mansion costs 10&nbsp;000 Commerce Coins per
+        House renting at Feng's Tradehall. The large mansion costs 10&nbsp;000
+        <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span> per
         month but provides a big boost to storage, effectively giving you an 80-slot Trading
         inventory and making the weekly Trading loop much more profitable.
       </figcaption>
@@ -236,21 +242,22 @@
       </p>
       <ul>
         <li>
-          <strong>Selling Bonus</strong> – “Exchange Trading Goods with guild members, profit +X%”
-          (Commerce Coins acquisition +X%).
+          <strong>Selling Bonus</strong> – "Exchange Trading Goods with guild members, profit +X%"
+          (<span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>
+          acquisition +X%).
         </li>
         <li>
-          <strong>Market Tax</strong> – “Exchange Trading Goods with guild members, tax rate −Y%”
+          <strong>Market Tax</strong> – "Exchange Trading Goods with guild members, tax rate −Y%"
           (Trading Goods transaction tax −Y%).
         </li>
       </ul>
       <p>
-        These only work when trading with <strong>guild members</strong>, including your guild’s
+        These only work when trading with <strong>guild members</strong>, including your guild's
         Trade NPC. They do not apply to random public players.
       </p>
       <p><strong>Sell priority if you have these:</strong></p>
       <ol>
-        <li>Guildmates’ worlds or your guild Trade NPC.</li>
+        <li>Guildmates' worlds or your guild Trade NPC.</li>
         <li>
           Random high-price buyers (Remote Price) only if they beat your guild-boosted value by a
           clear margin.
@@ -277,7 +284,7 @@
       <ul>
         <li>
           <strong>Trade Week Reset</strong> timer – Friday 21:00 UTC, when the three goods rotate
-          and you should clear last week’s stock.
+          and you should clear last week's stock.
         </li>
         <li>
           <strong>Trade Price Check</strong> timer – mid-week reminder to log in and check Local %
@@ -285,17 +292,17 @@
         </li>
         <li>
           Optional <strong>daily checklist</strong> items:
-          <em>“Trade – buy weekly goods (Fri→Sun)”</em> and
-          <em>“Trade – check prices and offload goods”</em>.
+          <em>"Trade – buy weekly goods (Fri→Sun)"</em> and
+          <em>"Trade – check prices and offload goods"</em>.
         </li>
         <li>
           An optional <strong>weekly checklist</strong> item:
-          <em>“Run your weekly Trading / Commerce loop”</em>.
+          <em>"Run your weekly Trading / Commerce loop"</em>.
         </li>
       </ul>
       <p>
-        Use timers for the <strong>“when”</strong> and the checklist for
-        <strong>“did I actually do it”</strong>.
+        Use timers for the <strong>"when"</strong> and the checklist for
+        <strong>"did I actually do it"</strong>.
       </p>
 
       <div class="guide-actions">
@@ -323,7 +330,7 @@
             target="_blank"
             rel="noopener"
           >
-            “Where Winds Meet – The Ultimate Guide (Part 4)” on r/WhereWindsMeet_
+            "Where Winds Meet – The Ultimate Guide (Part 4)" on r/WhereWindsMeet_
           </a>
           by
           <a

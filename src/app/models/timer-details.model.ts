@@ -1,22 +1,10 @@
 import { TimerDefinition } from './timer-definition.model';
 
-export interface TimerDetailsSection {
-  heading: string;
-  content: TimerDetailsSectionContent[];
-}
-
-export type TimerDetailsSectionContent =
-  | { type: 'paragraph'; text: string }
-  | { type: 'list'; items: string[] };
-
+/** Metadata for timer details - content is now in the template */
 export interface TimerDetails {
   id: string;
-  /** Short summary always shown when details drawer is open */
-  summary: string;
   /** Whether this timer has expandable "Show more" content */
   hasLongDetails: boolean;
-  /** Sections shown when "Show more" is toggled */
-  longDetailsSections?: TimerDetailsSection[];
   /** Special UI flags */
   hasGuildConfig?: boolean;
   hasTradeGuideLink?: boolean;

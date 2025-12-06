@@ -1,17 +1,31 @@
-import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
+// c:\Users\andcr\WWM-Helper\src\app\components\guides\chess-wins\chess-wins-guide.component.ts
+import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TooltipRegistryService } from '../../../services/tooltip/tooltip-registry.service';
+import { TooltipDirective } from '../../../directives/tooltip/tooltip.directive';
 
 @Component({
   standalone: true,
   selector: 'app-chess-wins-guide',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TooltipDirective],
   templateUrl: './chess-wins-guide.component.html',
   styleUrls: ['./chess-wins-guide.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChessWinsGuideComponent {
+  private readonly tooltipRegistry = inject(TooltipRegistryService);
+
   showScrollTop = false;
+
+  constructor() {
+    this.tooltipRegistry.register('currency.commerce_coin', {
+      imageUrl: 'assets/game/currency/currency-commerce-coin.png',
+      title: 'Commerce Coin',
+      description: 'Mini-game currency for wagers in Pitch Pot, cards, Mahjong, and street food.',
+      variant: 'inlineInfo',
+    });
+  }
 
   scrollTo(sectionId: string): void {
     const el = document.getElementById(sectionId);
