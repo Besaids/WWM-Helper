@@ -149,7 +149,7 @@
                               type="button"
                               class="guide-link guide-link--compact"
                               (click)="navigateToGuide(item); $event.stopPropagation()"
-                              [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                              [appTooltip]="'common.open_guide'"
                               aria-label="Open guide"
                             >
                               <i class="bi bi-book"></i>
@@ -183,7 +183,7 @@
                               type="button"
                               class="guide-link guide-link--compact"
                               (click)="navigateToGuide(item); $event.stopPropagation()"
-                              [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                              [appTooltip]="'common.open_guide'"
                               aria-label="Open guide"
                             >
                               <i class="bi bi-book"></i>
@@ -219,7 +219,7 @@
                             type="button"
                             class="guide-link guide-link--compact"
                             (click)="navigateToGuide(item); $event.stopPropagation()"
-                            [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                            [appTooltip]="'common.open_guide'"
                             aria-label="Open guide"
                           >
                             <i class="bi bi-book"></i>
@@ -255,7 +255,7 @@
                             type="button"
                             class="guide-link guide-link--compact"
                             (click)="navigateToGuide(item); $event.stopPropagation()"
-                            [attr.title]="'Open guide' + (item.section ? ' (go to section)' : '')"
+                            [appTooltip]="'common.open_guide'"
                             aria-label="Open guide"
                           >
                             <i class="bi bi-book"></i>

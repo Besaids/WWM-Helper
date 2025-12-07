@@ -22,6 +22,7 @@
   --radius-input: var(--radius-md); /* form inputs */
   --radius-button: var(--radius-pill); /* buttons */
   --radius-modal: var(--radius-xl); /* modal containers */
+  --radius-round: var(--radius-pill); /* fully rounded elements */
 }
 
 /* SCSS wrappers */
@@ -38,3 +39,4 @@ $radius-toggle: var(--radius-toggle);
 $radius-input: var(--radius-input);
 $radius-button: var(--radius-button);
 $radius-modal: var(--radius-modal);
+$radius-round: var(--radius-round);

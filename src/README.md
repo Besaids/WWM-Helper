@@ -20,12 +20,14 @@ src/styles/
   base/
     _globals.scss             # html/body, base typography, links
     _reset.scss               # box-sizing reset
+    _guides.scss            # base helpers for long-form guide pages
 
   components/
     _buttons.scss             # .btn-primary, .btn-secondary (global CTAs)
     _card.scss                # .card-surface, .card-padding
     _chip.scss                # .chip pills used in timer strip, timers, etc.
     _page.scss                # .page-shell / .page-section helpers
+    _tooltip.scss           # tooltip bubble shell for [appTooltip]
 
   mixins/
     _capsule.scss             # capsule($layer, $radius, $padding) – card/row surfaces
@@ -333,6 +335,32 @@ For visibility toggles or checkboxes with diamond indicators:
   // <div class="my-toggle"><div class="my-toggle__inner"></div></div>
 }
 ```
+
+### 4.5 Tooltip shell
+
+Tooltips use a dedicated SCSS partial at `src/styles/components/_tooltip.scss` plus component-level styles in
+`src/app/components/ui/tooltip/tooltip.component.scss`.
+
+- The visual shell (background, border, radius, shadow, padding) must be built from tokens:
+  - surfaces: `$surface-elevated`, `$surface-tooltip` (if defined)
+  - radius: `$radius-tooltip` or `$radius-card`
+  - shadow: `$shadow-tooltip` or `$shadow-popover`
+  - motion: `$transition-fast`, `$easing-standard`
+- Do not hardcode colors, box-shadows, or radii inside tooltip templates; always pull from tokens.
+- Layout variants (`image-only`, `image-title`, `title-description`, `full`) come from `TooltipLayoutMode`
+  in `tooltip.model.ts`; styles should respond via modifier classes rather than bespoke rules.
+- If you add new entries to `TooltipVariant`, keep `_tooltip.scss` as the single place for new
+  visual variants; components should only toggle classes.
+
+Tooltip content (icons, labels, descriptions) is driven by configuration, not SCSS:
+
+- `src/app/configs/tooltip/tooltip-defaults.config.ts` – static control hints and common tooltip keys
+- `src/app/configs/tooltip/game-assets.ts` – canonical asset metadata used to seed tooltips
+
+This README documents only the visual shell. For semantics and registry usage see:
+
+- `src/assets/README_game-assets.md`
+- `.github/copilot-instructions.md` (tooltip + game-asset sections)
 
 ---
 

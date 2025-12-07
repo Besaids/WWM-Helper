@@ -14,3 +14,12 @@
     border-left-color: $accent-gold-soft;
   }
 }
+
+a.guide-actions__btn {
+  text-decoration: none;
+}
+
+a.guide-actions__btn:hover,
+a.guide-actions__btn:focus {
+  text-decoration: none;
+}

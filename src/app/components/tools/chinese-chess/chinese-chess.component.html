@@ -1,3 +1,19 @@
+<!-- chinese-chess.component.html -->
 <main id="top" class="chess-container">
-  <iframe src="https://play.xiangqi.com/" title="Chinese Chess - Xiangqi" allowfullscreen></iframe>
+  <iframe [src]="chessUrlSafe" title="Chinese Chess - Xiangqi" allowfullscreen></iframe>
+
+  <a
+    [href]="chessUrlRaw"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="external-link-btn"
+    [appTooltip]="{
+      title: 'Open in New Tab',
+      description:
+        'Open the full Xiangqi.com website in a new tab if you encounter issues with the embedded version.',
+      variant: 'controlHint',
+    }"
+  >
+    <i class="bi bi-box-arrow-up-right"></i>
+  </a>
 </main>

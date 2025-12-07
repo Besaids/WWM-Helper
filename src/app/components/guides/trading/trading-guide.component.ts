@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TooltipRegistryService } from '../../../services/tooltip/tooltip-registry.service';
 import { TooltipDirective } from '../../../directives/tooltip/tooltip.directive';
+import { buildAssetTooltips } from '../../../configs';
 
 @Component({
   standalone: true,
@@ -19,21 +20,7 @@ export class TradingGuideComponent {
   showScrollTop = false;
 
   constructor() {
-    this.tooltipRegistry.registerAll({
-      'currency.commerce_coin': {
-        imageUrl: 'assets/game/currency/currency-commerce-coin.png',
-        title: 'Commerce Coin',
-        description: 'Mini-game currency for wagers in Pitch Pot, cards, Mahjong, and street food.',
-        variant: 'inlineInfo',
-      },
-      'currency.coin': {
-        imageUrl: 'assets/game/currency/currency-coin.png',
-        title: 'Coin',
-        description:
-          'Generic in-game money for merchants, fees, and basic services. Weekly cap: 175,000.',
-        variant: 'inlineInfo',
-      },
-    });
+    this.tooltipRegistry.registerAll(buildAssetTooltips());
   }
 
   scrollTo(sectionId: string): void {

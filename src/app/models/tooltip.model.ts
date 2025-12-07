@@ -6,6 +6,8 @@
 
 export type TooltipVariant = 'controlHint' | 'inlineInfo' | 'resourcePreview' | 'scheduledItem';
 
+export type TooltipConfigMap = Record<string, TooltipConfig>;
+
 export interface TooltipConfig {
   /** Small thumbnail or icon image */
   imageUrl?: string;
