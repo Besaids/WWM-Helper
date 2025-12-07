@@ -242,4 +242,45 @@ export class CustomTimerService {
       .replace(/'/g, '&#x27;')
       .replace(/\//g, '&#x2F;');
   }
+
+  /**
+   * Replace all custom timers (for import overwrite mode)
+   */
+  replaceAll(timers: CustomTimerDefinition[]): void {
+    // Ensure all timers have isCustom flag
+    const sanitized = timers.map((timer) => ({
+      ...timer,
+      isCustom: true as const,
+      label: this.sanitizeText(timer.label),
+      shortLabel: this.sanitizeText(timer.shortLabel),
+      summary: timer.summary ? this.sanitizeText(timer.summary) : undefined,
+    }));
+
+    this.customTimers.set(sanitized);
+    this.saveToStorage();
+  }
+
+  /**
+   * Merge timers from import (add mode)
+   * If a timer with the same ID exists, it will be replaced.
+   */
+  mergeTimers(timers: CustomTimerDefinition[]): void {
+    const current = this.customTimers();
+    const currentById = new Map(current.map((timer) => [timer.id, timer]));
+
+    // Add or replace timers from import
+    for (const timer of timers) {
+      const sanitized: CustomTimerDefinition = {
+        ...timer,
+        isCustom: true,
+        label: this.sanitizeText(timer.label),
+        shortLabel: this.sanitizeText(timer.shortLabel),
+        summary: timer.summary ? this.sanitizeText(timer.summary) : undefined,
+      };
+      currentById.set(timer.id, sanitized);
+    }
+
+    this.customTimers.set(Array.from(currentById.values()));
+    this.saveToStorage();
+  }
 }

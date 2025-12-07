@@ -152,4 +152,45 @@ export class CustomChecklistService {
         return 'Custom';
     }
   }
+
+  /**
+   * Replace all custom items (for import overwrite mode)
+   */
+  replaceAll(items: ChecklistItem[]): void {
+    // Ensure all items have isCustom flag and frequency set to 'custom'
+    const sanitized = items.map((item) => ({
+      ...item,
+      isCustom: true as const,
+      frequency: 'custom' as const,
+      label: this.sanitizeText(item.label),
+      description: item.description ? this.sanitizeText(item.description) : undefined,
+    }));
+
+    this.customItems.set(sanitized);
+    this.saveToStorage();
+  }
+
+  /**
+   * Merge items from import (add mode)
+   * If an item with the same ID exists, it will be replaced.
+   */
+  mergeItems(items: ChecklistItem[]): void {
+    const current = this.customItems();
+    const currentById = new Map(current.map((item) => [item.id, item]));
+
+    // Add or replace items from import
+    for (const item of items) {
+      const sanitized: ChecklistItem = {
+        ...item,
+        isCustom: true,
+        frequency: 'custom',
+        label: this.sanitizeText(item.label),
+        description: item.description ? this.sanitizeText(item.description) : undefined,
+      };
+      currentById.set(item.id, sanitized);
+    }
+
+    this.customItems.set(Array.from(currentById.values()));
+    this.saveToStorage();
+  }
 }

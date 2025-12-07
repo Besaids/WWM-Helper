@@ -32,6 +32,49 @@ export class ChecklistStateService {
     this.loadPrefs();
   }
 
+  /**
+   * Get a snapshot of current preferences (for export)
+   */
+  getPrefsSnapshot(): ChecklistPrefs {
+    return {
+      pinned: { ...this.pinned },
+      hidden: { ...this.hidden },
+      completionCounts: { ...this.completionCounts },
+      defaultPinsApplied: true,
+    };
+  }
+
+  /**
+   * Update preferences from an import
+   * @param partial The partial prefs to apply (pinned and/or hidden)
+   * @param mode 'merge' adds to existing, 'overwrite' replaces entirely
+   */
+  updatePrefsFromImport(
+    partial: { pinned?: Record<string, boolean>; hidden?: Record<string, boolean> },
+    mode: 'add' | 'overwrite',
+  ): void {
+    if (mode === 'overwrite') {
+      // Replace entirely with imported values (or empty if not provided)
+      if (partial.pinned !== undefined) {
+        this.pinned = { ...partial.pinned };
+      }
+      if (partial.hidden !== undefined) {
+        this.hidden = { ...partial.hidden };
+      }
+    } else {
+      // Merge: imported values take precedence
+      if (partial.pinned) {
+        this.pinned = { ...this.pinned, ...partial.pinned };
+      }
+      if (partial.hidden) {
+        this.hidden = { ...this.hidden, ...partial.hidden };
+      }
+    }
+
+    // Never touch completionCounts from import
+    this.savePrefs();
+  }
+
   // Public API
 
   isPinned(item: ChecklistItem): boolean {
@@ -100,14 +143,19 @@ export class ChecklistStateService {
    * Get completion count for an item (persists across same cycle)
    */
   getCompletionCount(item: ChecklistItem): number {
-    const counts = this.getCompletionCountsForType(item.frequency);
-    return counts[item.id] ?? 0;
+    return this.completionCounts[item.id] ?? 0;
   }
 
   /**
    * Increment completion count for an item
    */
   private incrementCompletionCount(item: ChecklistItem): void {
+    // Increment global persistent count
+    const currentGlobalCount = this.completionCounts[item.id] ?? 0;
+    this.completionCounts[item.id] = currentGlobalCount + 1;
+    this.savePrefs();
+
+    // Also update per-cycle count for potential future use
     const counts = this.getCompletionCountsForType(item.frequency);
     const currentCount = counts[item.id] ?? 0;
     counts[item.id] = currentCount + 1;
@@ -118,6 +166,12 @@ export class ChecklistStateService {
    * Decrement completion count for an item (min 0)
    */
   private decrementCompletionCount(item: ChecklistItem): void {
+    // Decrement global persistent count
+    const currentGlobalCount = this.completionCounts[item.id] ?? 0;
+    this.completionCounts[item.id] = Math.max(0, currentGlobalCount - 1);
+    this.savePrefs();
+
+    // Also update per-cycle count for potential future use
     const counts = this.getCompletionCountsForType(item.frequency);
     const currentCount = counts[item.id] ?? 0;
     counts[item.id] = Math.max(0, currentCount - 1);

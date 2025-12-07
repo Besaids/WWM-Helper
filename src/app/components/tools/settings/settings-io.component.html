@@ -1,0 +1,385 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<main class="settings-io-page">
+  <header class="settings-io-page__header">
+    <h1 class="settings-io-page__title">Settings Import / Export</h1>
+    <p class="settings-io-page__subtitle">
+      Back up your checklist and timer settings, or transfer them between browsers and devices. Your
+      data stays on your device – we never send it to any server.
+    </p>
+  </header>
+
+  <div class="settings-io-grid">
+    <!-- Export Card -->
+    <article
+      class="settings-io-card export-card card-surface"
+      [class.settings-io-card--highlight]="highlightSection() === 'checklists'"
+    >
+      <header class="settings-io-card__header">
+        <h2><i class="bi bi-box-arrow-up"></i> Export Settings</h2>
+        <p class="text-muted-strong">
+          Select which parts of your settings you'd like to export. The export will be shown as JSON
+          text that you can copy and save.
+        </p>
+      </header>
+
+      <div class="settings-io-card__body">
+        <!-- Checklist options -->
+        <fieldset class="scope-group">
+          <legend><i class="bi bi-check2-square"></i> Checklist Settings</legend>
+
+          <label class="scope-option">
+            <input
+              type="checkbox"
+              [checked]="exportOptions().checklistCustomItems"
+              (change)="updateExportOption('checklistCustomItems', $event)"
+            />
+            <span class="scope-option__content">
+              <strong>Custom checklist items</strong>
+              <span class="scope-option__desc">
+                Your personally created checklist tasks (not the built-in ones)
+              </span>
+            </span>
+          </label>
+
+          <label class="scope-option">
+            <input
+              type="checkbox"
+              [checked]="exportOptions().checklistPinsHidden"
+              (change)="updateExportOption('checklistPinsHidden', $event)"
+            />
+            <span class="scope-option__content">
+              <strong>Pinned &amp; hidden preferences</strong>
+              <span class="scope-option__desc">
+                Which tasks you've pinned to your home page or hidden from view
+              </span>
+            </span>
+          </label>
+        </fieldset>
+
+        <!-- Timer options -->
+        <fieldset class="scope-group">
+          <legend><i class="bi bi-clock"></i> Timer Settings</legend>
+
+          <label class="scope-option">
+            <input
+              type="checkbox"
+              [checked]="exportOptions().timerCustomTimers"
+              (change)="updateExportOption('timerCustomTimers', $event)"
+            />
+            <span class="scope-option__content">
+              <strong>Custom timers</strong>
+              <span class="scope-option__desc">
+                Timers you've created yourself (recurring and event-based)
+              </span>
+            </span>
+          </label>
+
+          <label class="scope-option">
+            <input
+              type="checkbox"
+              [checked]="exportOptions().timerEnabledIds"
+              (change)="updateExportOption('timerEnabledIds', $event)"
+            />
+            <span class="scope-option__content">
+              <strong>Enabled timer selection</strong>
+              <span class="scope-option__desc">
+                Which timers are turned on in your timer strip
+              </span>
+            </span>
+          </label>
+
+          <label class="scope-option">
+            <input
+              type="checkbox"
+              [checked]="exportOptions().timerGuildEvents"
+              (change)="updateExportOption('timerGuildEvents', $event)"
+            />
+            <span class="scope-option__content">
+              <strong>Guild event schedules</strong>
+              <span class="scope-option__desc">
+                Your configured times for Breaking Army and Test Your Skills
+              </span>
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="export-actions">
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="!hasExportSelection()"
+            (click)="generateExport()"
+          >
+            <i class="bi bi-file-earmark-code"></i> Generate Export
+          </button>
+        </div>
+
+        @if (exportGenerated() && exportJson()) {
+          <div class="export-output">
+            <label for="export-json" class="export-output__label">
+              Export JSON
+              <span class="text-muted-strong">(copy this and save it somewhere safe)</span>
+            </label>
+            <textarea
+              id="export-json"
+              class="export-output__textarea"
+              readonly
+              [value]="exportJson()"
+            ></textarea>
+            <button type="button" class="btn-secondary copy-btn" (click)="copyExportToClipboard()">
+              <i class="bi bi-clipboard"></i> Copy to Clipboard
+            </button>
+          </div>
+        }
+      </div>
+    </article>
+
+    <!-- Import Card -->
+    <article
+      class="settings-io-card import-card card-surface"
+      [class.settings-io-card--highlight]="highlightSection() === 'timers'"
+    >
+      <header class="settings-io-card__header">
+        <h2><i class="bi bi-box-arrow-in-down"></i> Import Settings</h2>
+        <p class="text-muted-strong">
+          Paste a previously exported JSON blob to restore your settings. Invalid data will be
+          rejected to keep your settings safe.
+        </p>
+      </header>
+
+      <div class="settings-io-card__body">
+        <!-- Import textarea -->
+        <div class="import-input">
+          <label for="import-json" class="import-input__label"> Paste your export JSON here </label>
+          <textarea
+            id="import-json"
+            class="import-input__textarea"
+            placeholder='{"version": 1, "source": "wwm-helper", ...}'
+            [value]="importText()"
+            (input)="onImportTextChange($any($event.target).value)"
+          ></textarea>
+        </div>
+
+        <!-- Validation feedback -->
+        @if (validationResult(); as result) {
+          <div class="validation-feedback" [class.validation-feedback--error]="!result.valid">
+            @if (!result.valid) {
+              <div class="validation-errors">
+                <h4><i class="bi bi-exclamation-triangle"></i> Validation Errors</h4>
+                <ul>
+                  @for (error of result.errors; track error) {
+                    <li>{{ error }}</li>
+                  }
+                </ul>
+              </div>
+            } @else {
+              <div class="validation-success">
+                <h4><i class="bi bi-check-circle"></i> Valid Export Detected</h4>
+                @if (result.summary; as summary) {
+                  <p class="validation-summary">This export contains:</p>
+                  <ul class="validation-summary__list">
+                    @if (summary.customChecklistItemCount > 0) {
+                      <li>{{ summary.customChecklistItemCount }} custom checklist item(s)</li>
+                    }
+                    @if (summary.pinnedCount > 0) {
+                      <li>{{ summary.pinnedCount }} pinned item(s)</li>
+                    }
+                    @if (summary.hiddenCount > 0) {
+                      <li>{{ summary.hiddenCount }} hidden item(s)</li>
+                    }
+                    @if (summary.customTimerCount > 0) {
+                      <li>{{ summary.customTimerCount }} custom timer(s)</li>
+                    }
+                    @if (summary.enabledTimerCount > 0) {
+                      <li>{{ summary.enabledTimerCount }} enabled timer ID(s)</li>
+                    }
+                    @if (summary.guildEventCount > 0) {
+                      <li>{{ summary.guildEventCount }} guild event config(s)</li>
+                    }
+                  </ul>
+                }
+              </div>
+
+              @if (result.warnings.length > 0) {
+                <div class="validation-warnings">
+                  <h4><i class="bi bi-info-circle"></i> Warnings</h4>
+                  <ul>
+                    @for (warning of result.warnings; track warning) {
+                      <li>{{ warning }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            }
+          </div>
+        }
+
+        <!-- Import options (only show when valid) -->
+        @if (validationResult()?.valid) {
+          <div class="import-options">
+            <!-- Scope selection -->
+            <fieldset class="scope-group">
+              <legend><i class="bi bi-funnel"></i> What to Import</legend>
+
+              @if (validationResult()?.summary?.customChecklistItemCount) {
+                <label class="scope-option">
+                  <input
+                    type="checkbox"
+                    [checked]="importOptions().scopes.checklistCustomItems"
+                    (change)="updateImportScope('checklistCustomItems', $event)"
+                  />
+                  <span class="scope-option__content">
+                    <strong>Custom checklist items</strong>
+                    <span class="scope-option__desc">
+                      {{ validationResult()?.summary?.customChecklistItemCount }} item(s) found
+                    </span>
+                  </span>
+                </label>
+              }
+
+              @if (
+                validationResult()?.summary?.pinnedCount || validationResult()?.summary?.hiddenCount
+              ) {
+                <label class="scope-option">
+                  <input
+                    type="checkbox"
+                    [checked]="importOptions().scopes.checklistPinsHidden"
+                    (change)="updateImportScope('checklistPinsHidden', $event)"
+                  />
+                  <span class="scope-option__content">
+                    <strong>Pinned &amp; hidden preferences</strong>
+                    <span class="scope-option__desc">
+                      {{ validationResult()?.summary?.pinnedCount }} pinned,
+                      {{ validationResult()?.summary?.hiddenCount }} hidden
+                    </span>
+                  </span>
+                </label>
+              }
+
+              @if (validationResult()?.summary?.customTimerCount) {
+                <label class="scope-option">
+                  <input
+                    type="checkbox"
+                    [checked]="importOptions().scopes.timerCustomTimers"
+                    (change)="updateImportScope('timerCustomTimers', $event)"
+                  />
+                  <span class="scope-option__content">
+                    <strong>Custom timers</strong>
+                    <span class="scope-option__desc">
+                      {{ validationResult()?.summary?.customTimerCount }} timer(s) found
+                    </span>
+                  </span>
+                </label>
+              }
+
+              @if (validationResult()?.summary?.enabledTimerCount) {
+                <label class="scope-option">
+                  <input
+                    type="checkbox"
+                    [checked]="importOptions().scopes.timerEnabledIds"
+                    (change)="updateImportScope('timerEnabledIds', $event)"
+                  />
+                  <span class="scope-option__content">
+                    <strong>Enabled timer selection</strong>
+                    <span class="scope-option__desc">
+                      {{ validationResult()?.summary?.enabledTimerCount }} timer ID(s) found
+                    </span>
+                  </span>
+                </label>
+              }
+
+              @if (validationResult()?.summary?.guildEventCount) {
+                <label class="scope-option">
+                  <input
+                    type="checkbox"
+                    [checked]="importOptions().scopes.timerGuildEvents"
+                    (change)="updateImportScope('timerGuildEvents', $event)"
+                  />
+                  <span class="scope-option__content">
+                    <strong>Guild event schedules</strong>
+                    <span class="scope-option__desc">
+                      {{ validationResult()?.summary?.guildEventCount }} config(s) found
+                    </span>
+                  </span>
+                </label>
+              }
+            </fieldset>
+
+            <!-- Import mode -->
+            <fieldset class="scope-group mode-group">
+              <legend><i class="bi bi-arrow-left-right"></i> How to Import</legend>
+
+              <label class="scope-option scope-option--radio">
+                <input
+                  type="radio"
+                  name="import-mode"
+                  value="add"
+                  [checked]="importOptions().mode === 'add'"
+                  (change)="setImportMode('add')"
+                />
+                <span class="scope-option__content">
+                  <strong>Add to my current settings</strong>
+                  <span class="scope-option__desc">
+                    New items will be added. Existing items with matching IDs will be updated with
+                    the imported version.
+                  </span>
+                </span>
+              </label>
+
+              <label class="scope-option scope-option--radio">
+                <input
+                  type="radio"
+                  name="import-mode"
+                  value="overwrite"
+                  [checked]="importOptions().mode === 'overwrite'"
+                  (change)="setImportMode('overwrite')"
+                />
+                <span class="scope-option__content">
+                  <strong>Overwrite my settings for the selected sections</strong>
+                  <span class="scope-option__desc">
+                    Your current settings for selected sections will be completely replaced with the
+                    imported data.
+                  </span>
+                </span>
+              </label>
+            </fieldset>
+
+            <div class="import-actions">
+              <button
+                type="button"
+                class="btn-primary"
+                [disabled]="!canImport()"
+                (click)="applyImport()"
+              >
+                <i class="bi bi-download"></i> Import Selected Settings
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </article>
+  </div>
+
+  <!-- Toast notification -->
+  @if (toast(); as t) {
+    <div
+      class="toast-notification"
+      [class.toast-notification--success]="t.type === 'success'"
+      [class.toast-notification--error]="t.type === 'error'"
+      [class.toast-notification--info]="t.type === 'info'"
+      (click)="dismissToast()"
+    >
+      <i
+        class="bi"
+        [class.bi-check-circle-fill]="t.type === 'success'"
+        [class.bi-exclamation-triangle-fill]="t.type === 'error'"
+        [class.bi-info-circle-fill]="t.type === 'info'"
+      ></i>
+      <span>{{ t.text }}</span>
+      <button type="button" class="toast-notification__close" aria-label="Dismiss">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  }
+</main>
