@@ -93,6 +93,8 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'Give/receive massages for Coins, character XP and Adventure Slips. A 10-day streak grants the “Bathrobe: Golden Threads” outfit. Missing a day resets the streak.',
     tags: ['leisure', 'social', 'economy', 'multiplayer', 'reward', 'cosmetics'],
     expired: false,
+    route: '/guides/multi-day-rewards',
+    section: 'top',
   },
   {
     id: 'daily-well-of-heaven-training',
@@ -104,6 +106,8 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'From Wandering Paths → Casual Co-op → Adventure, queue for “Well of Heaven Special Training” (Qinghe – West Heaven’s Pier). Completing it once per day grants +1 Constitution (up to +10 total) plus normal co-op rewards, helping you meet Constitution requirements on gear.',
     tags: ['adventure', 'progression', 'stats', 'multiplayer', 'reward'],
     expired: false,
+    route: '/guides/multi-day-rewards',
+    section: 'top',
   },
   {
     id: 'daily-gathering',
@@ -137,5 +141,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'At your character’s home, interact with the mirror once per day to unlock free hairstyles (two at a time, for a total of around 13). After about a week of daily visits you should have them all; once you’re done, you can hide this task.',
     tags: ['cosmetics', 'solo', 'reward'],
     expired: false,
+    route: '/guides/multi-day-rewards',
+    section: 'top',
   },
 ];
