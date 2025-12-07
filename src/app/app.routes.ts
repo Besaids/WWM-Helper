@@ -11,6 +11,7 @@ import {
   HomeComponent,
   TimersComponent,
   ChecklistComponent,
+  MultiDayRewardsGuideComponent,
 } from './components';
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'map', component: MapComponent },
   { path: 'guides', component: GuidesHubComponent },
   { path: 'guides/chess-wins', component: ChessWinsGuideComponent },
+  { path: 'guides/multi-day-rewards', component: MultiDayRewardsGuideComponent },
   { path: 'guides/trading', component: TradingGuideComponent },
   { path: 'guides/path-season', component: PathSeasonGuideComponent },
   { path: 'tools', component: ToolsHubComponent },

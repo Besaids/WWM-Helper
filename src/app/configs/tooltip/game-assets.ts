@@ -9,10 +9,10 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Co-op and online multiplayer currency used in the Social / Wandering Paths shop for cosmetics and housing-style rewards. Earned from Wandering Paths runs, co-op bounties, and other online activities; has a weekly cap.',
+      'Co-op and online multiplayer currency (also called Four Seas Letters) used in the Four Seas / Wandering Paths style shops for cosmetics and housing-style rewards. Earned from Wandering Paths runs, co-op bounties, and other online activities; has a weekly cap.',
     game_system_tags: ['currency', 'coop', 'social', 'cosmetics', 'weekly_cap', 'wandering_paths'],
     ui_usage_notes:
-      'Use whenever referencing co-op / Wandering Paths rewards, social shop cosmetics, or weekly multiplayer checklists.',
+      'Use whenever referencing co-op / Wandering Paths rewards, Four Seas shop cosmetics, or weekly multiplayer checklists.',
     width: 560,
     height: 480,
     aspect_ratio: '7:6',
@@ -41,7 +41,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Mini-game and street-vendor currency used for wagers in activities like Pitch Pot, cards, Mahjong, and for buying street food.',
+      'Mini-game and street-vendor currency used for wagers in activities like Pitch Pot, cards, Mahjong, and for buying street food. Also used for buying trade goods and items from commerce coin shop.',
     game_system_tags: ['currency', 'commerce', 'minigame', 'food'],
     ui_usage_notes:
       'Use when a guide or timer refers specifically to mini-game wagers or street food purchases instead of general merchants.',
@@ -57,7 +57,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Top-tier premium currency bought with real money. Used to buy Lingering Melodies, cash-shop bundles, cosmetics, and other high-end items.',
+      'Top-tier premium currency bought with real money. Used for Celestial Echo pulls and to purchase cash-shop bundles, cosmetics, and other high-end items.',
     game_system_tags: ['currency', 'premium', 'cash_shop', 'gacha'],
     ui_usage_notes:
       'Use for anything that clearly spends real-money premium currency; do not use for free-to-play only paths.',
@@ -73,10 +73,10 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'High-value earnable premium-like currency used at special merchants and systems. Commonly spent on Resonating Melodies, Inner Way materials, and other power-progression items.',
+      'High-value earnable premium-like currency used at special merchants and systems, especially the Activity shop. Commonly spent on Internal Arts, power-progression items, cosmetics, and gacha tickets such as Lingering and Resonating Melodies.',
     game_system_tags: ['currency', 'premium_like', 'inner_way', 'gacha', 'economy'],
     ui_usage_notes:
-      'Use when describing where to spend Echo Jade efficiently (Resonating Melodies, Inner Ways, etc.) or when labelling Echo Jade sinks in checklists.',
+      'Use when describing where to spend Echo Jade efficiently (Internal Arts, Activity shop, gacha tickets, etc.) or when labelling Echo Jade sinks in checklists.',
     width: 560,
     height: 480,
     aspect_ratio: '7:6',
@@ -137,7 +137,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Legendary-tier draw currency from Celestial Echo pulls. Used in the Draw Shop for top-end cosmetics, visual effects, and other rare items. Can often be exchanged into Sound Jade.',
+      'Legendary-tier draw currency from Celestial Echo pulls. Used in the Draw Shop for top-end cosmetics, visual effects, and other rare items. Can be exchanged into Sound Jade.',
     game_system_tags: ['currency', 'gacha', 'draw_shop', 'premium', 'legendary'],
     ui_usage_notes:
       'Use when explaining long-term premium progression, legendary skill effects, or apex draw-shop purchases.',
@@ -153,7 +153,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Social / co-op currency (also called Harmony Coins or Private Funds of the Ward) with a weekly cap. Earned from co-op play, online mode, partnerships, and quiz-style activities; spent in Brotherhood / Social shops on cosmetics and housing items.',
+      'Social / co-op currency (also called Private Funds of the Ward) with a weekly cap. Earned from co-op play, online mode, partnerships, and NPC quiz-style activities; spent in Brotherhood / Social shops on cosmetics and housing items.',
     game_system_tags: ['currency', 'coop', 'social', 'cosmetics', 'housing', 'weekly_cap'],
     ui_usage_notes:
       'Use on guides about partnerships, Brotherhood cosmetics, and co-op fashion or housing progression.',
@@ -169,10 +169,10 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Universal activity currency with a high weekly cap, earned from exploration, quests, enemies, chests, and activities. Spent in the Activity / Season shops on Internal Arts, gear, and cosmetics.',
+      'Universal activity currency with a high weekly cap, earned from exploration, quests, enemies, chests, and activities. Spent in the Activity shop on Internal Arts, gear, and cosmetics.',
     game_system_tags: ['currency', 'activity', 'season_shop', 'weekly_cap'],
     ui_usage_notes:
-      'Use for sections about Activity/Season Shop priorities, weekly caps, and general "play anything" income.',
+      'Use for sections about Activity shop priorities, weekly caps, and general “play anything” income.',
     width: 560,
     height: 480,
     aspect_ratio: '7:6',
@@ -217,10 +217,10 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Guild-exclusive currency earned from guild errands and activities. Spent in guild shops on visual cosmetics and other guild-flavored rewards.',
-    game_system_tags: ['currency', 'guild', 'cosmetics', 'social'],
+      'Guild currency obtained from Guild Events and capped weekly. Used in the Red Gold Boutique / guild shop to buy cosmetics, Mahjong chip bags, fireworks, and other guild-flavored items.',
+    game_system_tags: ['currency', 'guild', 'events', 'cosmetics', 'weekly_cap'],
     ui_usage_notes:
-      'Use when describing rewards that require being in a guild, especially Red Gold Boutique / guild cosmetic purchases.',
+      'Use when describing rewards that require guild participation (Guild Events, Red Gold Boutique purchases, or tracking the weekly Treasure Token cap).',
     width: 560,
     height: 480,
     aspect_ratio: '7:6',
@@ -249,10 +249,10 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'gacha-ticket-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Premium gacha ticket used for Celestial Echo draws (the premium banner). Commonly purchased with Echo Beads and sometimes obtained from passes or bundles.',
+      'Premium gacha ticket used for Celestial Echo draws (the premium banner). Typically purchased with Echo Jade from shops such as Meow Meow’s Shop, Zhao Feiyan’s Warehouse, and Ghostlight Market, and sometimes obtained from passes or bundles fed by Echo Bead top-ups.',
     game_system_tags: ['item', 'gacha_ticket', 'celestial_echo', 'premium'],
     ui_usage_notes:
-      'Use whenever a guide or checklist refers to Celestial Echo pulls, premium draws, or advises players how to spend real-money currency efficiently.',
+      'Use whenever a guide or checklist refers to Celestial Echo pulls, premium draws, or advises players how to turn premium currency (Echo Beads → Echo Jade) into banner pulls efficiently.',
     width: 560,
     height: 480,
     aspect_ratio: '7:6',
@@ -265,10 +265,10 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'gacha-ticket-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Standard gacha ticket used for Solemn Echo draws (the regular / free banner). Primarily bought with Echo Jade and earned via gameplay, events, and redemption codes.',
+      'Standard gacha ticket used for Solemn Echo draws (the regular / free banner). Purchased with Echo Jade and used for Solemn Echo pulls and long-term cosmetic or weapon unlocks.',
     game_system_tags: ['item', 'gacha_ticket', 'solemn_echo', 'free_to_play'],
     ui_usage_notes:
-      'Use for free or grindable gacha pulls and any advice about turning Echo Jade or codes into regular cosmetics, weapons, and other non-premium rewards.',
+      'Use for grindable / Echo-Jade-based gacha pulls and any advice about turning Echo Jade into regular cosmetics, weapons, and other non-premium draws.',
     width: 560,
     height: 480,
     aspect_ratio: '7:6',
@@ -747,7 +747,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'path-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Assassin-style martial path focused on high-speed melee burst, often pairing Infernal Twinblades and Mortal Rope Dart. Leans towards PvP-style aggressive gameplay.',
+      'Assassin-style melee DPS path focused on high-speed burst and mobility, often pairing Infernal Twinblades and Mortal Rope Dart. Leans towards PvP-style aggressive gameplay.',
     game_system_tags: ['path', 'martial', 'assassin', 'melee', 'pvp'],
     ui_usage_notes:
       'Use on guides about burst / assassin builds, especially when recommending Bamboocut – Wind for aggressive players.',
@@ -763,8 +763,8 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'path-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Mobile hybrid DPS path for Nameless Sword + Nameless Spear. Mixes melee combos and ranged attacks with strong repositioning and combo flow.',
-    game_system_tags: ['path', 'martial', 'melee', 'ranged', 'hybrid', 'dps'],
+      'Mobile melee DPS path for Nameless Sword + Nameless Spear. Emphasizes fluid combos, repositioning, and consistent damage with strong mobility tools.',
+    game_system_tags: ['path', 'martial', 'melee', 'hybrid', 'dps'],
     ui_usage_notes:
       'Use when talking about Bellstrike Splendor breakthrough, related tips, or path-progression advice for Nameless Sword builds.',
     width: 546,
@@ -811,7 +811,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'path-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Ranged crowd-control path using Vernal Umbrella + Inkwell Fan. Specializes in juggling humanoid enemies and controlling fights from a distance.',
+      'Ranged crowd-control DPS path using Vernal Umbrella + Inkwell Fan. Specializes in juggling humanoid enemies and controlling fights from a distance.',
     game_system_tags: ['path', 'martial', 'ranged', 'cc', 'control'],
     ui_usage_notes:
       'Use when describing CC-heavy ranged playstyles or stylish control builds for solo and group play.',
@@ -827,7 +827,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'path-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Tank-oriented path focusing on damage mitigation and control, commonly using Thundercry Blade with Stormbreaker Spear. Designed to absorb damage and hold aggro.',
+      'Tank-oriented path focusing on damage mitigation and control, commonly using Thundercry Blade with Stormbreaker Spear. Designed to absorb damage, hold aggro, and group enemies for AoE.',
     game_system_tags: ['path', 'martial', 'tank', 'defense', 'coop'],
     ui_usage_notes:
       'Use when explaining tank builds, group front-line roles, or Stonesplit – Might progression tips.',
@@ -843,7 +843,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'system-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Account-wide activity resource that gates certain high-value tasks (similar to stamina systems in other online games). Regenerates over time and is spent on repeatable, reward-heavy content.',
+      'Account-wide activity resource that gates certain high-value tasks (similar to stamina systems in other online games). Regenerates over time and is spent on repeatable, reward-heavy content such as Campaigns, Outposts, and Sword Trials.',
     game_system_tags: ['system', 'resource', 'daily', 'account_wide'],
     ui_usage_notes:
       'Use wherever the helper references daily/weekly energy spending priorities, capped-content planning, or reminders to avoid wasting Energy at cap.',
@@ -859,7 +859,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'system-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Crafting stamina used when forging gear, cooking, brewing medicine, and other production tasks. Each craft consumes Stamina, which replenishes once per day at the scheduled daily reset.',
+      'Crafting stamina used when forging gear, cooking, brewing medicine, construction, and other production tasks. Each craft consumes Stamina, which replenishes once per day at the scheduled daily reset.',
     game_system_tags: ['system', 'resource', 'daily', 'crafting', 'profession'],
     ui_usage_notes:
       'Use for anything that talks about crafting limits, daily Stamina refills, or optimizing forge / medicine / cooking batches. Do not use for movement or dodge stamina.',
@@ -875,7 +875,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'currency-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Sect reputation currency earned from completing Sect Commands (Jianghu Errands). Spent at sect shops on sect-specific cosmetics, materials, and rewards; capped weekly.',
+      'Sect reputation currency earned from completing Sect Commands (Jianghu Errands) and other daily sect activities. Spent at sect shops on sect-specific cosmetics, materials, and rewards; capped weekly.',
     game_system_tags: ['currency', 'sects', 'reputation', 'special', 'weekly_cap'],
     ui_usage_notes:
       'Use for any guide or checklist that references Sect Commands, sect reputation caps, or spending in sect shops.',
@@ -907,7 +907,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'system-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      'Crafting Stamina icon for forge, cooking, and medicine UIs. Represents the limited daily pool that refills at the daily reset.',
+      'Crafting Stamina icon for forge, cooking, medicine, manuals, and construction UIs. Represents the limited daily pool that refills at the daily reset.',
     game_system_tags: ['system', 'resource', 'daily', 'crafting', 'profession'],
     ui_usage_notes:
       'Use in tight layouts like checklists, tooltips, or inline text when referencing crafting Stamina costs or remaining daily Stamina.',

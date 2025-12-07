@@ -93,7 +93,9 @@ export type GameSystemTag =
   | 'photo'
   | 'settings'
   | 'shop'
-  | 'bleed';
+  | 'bleed'
+  | 'ghost_market'
+  | 'treasure_money';
 
 // Enforce the "7:6", "1:1" style strings
 export type AspectRatioString = `${number}:${number}`;
