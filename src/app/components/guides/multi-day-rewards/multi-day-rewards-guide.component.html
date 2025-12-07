@@ -1,0 +1,108 @@
+<main id="top" class="guide-page">
+  <header class="guide-page__header">
+    <h1 class="guide-page__title">Multi-Day One-Time Rewards</h1>
+    <p class="guide-page__subtitle">
+      This page collects activities that require multiple days of effort but yield
+      <strong>permanent rewards</strong> – cosmetics, stats, or other one-time unlocks. Most follow
+      a "do X once per day for Y days" pattern. Once you're done, you never need to repeat them!
+    </p>
+  </header>
+
+  <!-- Tab Strip -->
+  <nav class="activity-tabs" role="tablist" aria-label="Multi-day reward activities">
+    @for (activity of activities; track activity.id; let i = $index) {
+      <button
+        type="button"
+        role="tab"
+        class="activity-tab"
+        [class.activity-tab--active]="activeTabId() === activity.id"
+        [id]="'tab-' + activity.id"
+        [attr.aria-selected]="activeTabId() === activity.id"
+        [attr.aria-controls]="'panel-' + activity.id"
+        [tabindex]="activeTabId() === activity.id ? 0 : -1"
+        (click)="setActiveTab(activity.id)"
+        (keydown)="onTabKeydown($event, i)"
+      >
+        {{ activity.tabLabel }}
+      </button>
+    }
+  </nav>
+
+  <!-- Tab Content -->
+  <article id="activity-content" class="guide-article">
+    @if (activeActivity) {
+      <section
+        role="tabpanel"
+        [id]="'panel-' + activeActivity.id"
+        [attr.aria-labelledby]="'tab-' + activeActivity.id"
+      >
+        <!-- At a Glance Card -->
+        <div class="glance-card">
+          <h2 class="glance-card__title">{{ activeActivity.label }}</h2>
+          <dl class="glance-card__list">
+            <div class="glance-card__item">
+              <dt>Location</dt>
+              <dd>{{ activeActivity.location }}</dd>
+            </div>
+            @if (activeActivity.requirement) {
+              <div class="glance-card__item">
+                <dt>Requirement</dt>
+                <dd>{{ activeActivity.requirement }}</dd>
+              </div>
+            }
+            <div class="glance-card__item">
+              <dt>Reward</dt>
+              <dd>{{ activeActivity.rewardSummary }}</dd>
+            </div>
+            <div class="glance-card__item">
+              <dt>Time gate</dt>
+              <dd>
+                {{ activeActivity.daysRequired }}; {{ activeActivity.perDayLimit }};
+                {{ activeActivity.consecutive ? 'must be consecutive' : 'non-consecutive OK' }}
+              </dd>
+            </div>
+          </dl>
+
+          @if (activeActivity.checklistId) {
+            <p class="glance-card__checklist">
+              <i class="bi bi-check2-square"></i>
+              Related checklist item:
+              <a routerLink="/checklist" [fragment]="activeActivity.checklistId">
+                {{ activeActivity.checklistLabel }}
+              </a>
+            </p>
+          }
+        </div>
+
+        <!-- Step-by-Step Section -->
+        <h2 class="steps-heading">Step-by-Step Guide</h2>
+
+        @for (step of activeActivity.steps; track step.id) {
+          <section class="step-section" [id]="step.id">
+            <div class="step-content">
+              <h3 class="step-title">{{ step.title }}</h3>
+              <p class="step-body">{{ step.body }}</p>
+            </div>
+            <figure class="step-figure">
+              <img [src]="step.image" [alt]="step.alt" loading="lazy" />
+              @if (step.caption) {
+                <figcaption>{{ step.caption }}</figcaption>
+              }
+            </figure>
+          </section>
+        }
+      </section>
+    }
+  </article>
+
+  <!-- Scroll to top button -->
+  <button
+    type="button"
+    class="btn-primary scroll-top-btn"
+    [class.scroll-top-btn--visible]="showScrollTop"
+    (click)="scrollToTop()"
+    aria-label="Scroll to top"
+  >
+    <i class="bi bi-arrow-up"></i>
+  </button>
+</main>

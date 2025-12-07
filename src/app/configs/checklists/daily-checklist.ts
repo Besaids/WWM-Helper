@@ -87,7 +87,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     id: 'daily-baths',
     frequency: 'daily',
     importance: 'optional',
-    category: 'Streak & one-time rewards',
+    category: 'Multi-Day One-Time Rewards',
     label: 'Visit Springwave Pavilion baths (Kaifeng).',
     description:
       'Give/receive massages for Coins, character XP and Adventure Slips. A 10-day streak grants the “Bathrobe: Golden Threads” outfit. Missing a day resets the streak.',
@@ -98,7 +98,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     id: 'daily-well-of-heaven-training',
     frequency: 'daily',
     importance: 'optional',
-    category: 'Streak & one-time rewards',
+    category: 'Multi-Day One-Time Rewards',
     label: 'Well of Heaven Special Training (+1 Constitution).',
     description:
       'From Wandering Paths → Casual Co-op → Adventure, queue for “Well of Heaven Special Training” (Qinghe – West Heaven’s Pier). Completing it once per day grants +1 Constitution (up to +10 total) plus normal co-op rewards, helping you meet Constitution requirements on gear.',
@@ -131,7 +131,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     id: 'daily-home-hair-combing',
     frequency: 'daily',
     importance: 'optional',
-    category: 'Streak & one-time rewards',
+    category: 'Multi-Day One-Time Rewards',
     label: 'Comb hair at your home mirror (free hairstyles).',
     description:
       'At your character’s home, interact with the mirror once per day to unlock free hairstyles (two at a time, for a total of around 13). After about a week of daily visits you should have them all; once you’re done, you can hide this task.',
