@@ -9,7 +9,7 @@ import {
   signal,
   computed,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { buildAssetTooltips, FREEPLAY_IDEAS, STATIC_TOOLTIPS } from '../../configs';
 import { ChecklistStateService } from '../../services/checklist/checklist-state.service';
@@ -49,6 +49,7 @@ interface PinnedProgress {
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     ChecklistToggleComponent,
     CustomChecklistModalComponent,
     TooltipDirective,

@@ -9,6 +9,11 @@ import {
 
 export type GuildTimerId = 'guild-breaking-army' | 'guild-test-your-skills';
 
+export const VALID_GUILD_TIMER_IDS: GuildTimerId[] = [
+  'guild-breaking-army',
+  'guild-test-your-skills',
+];
+
 export interface GuildEventSlot {
   weekday: number; // 1–7 (Mon–Sun)
   hour: number; // local card time, 0–23
@@ -179,5 +184,49 @@ export class GuildEventTimersService {
       hour: utcHour,
       minute: utcMinute,
     };
+  }
+
+  /**
+   * Set configs from import
+   * @param configs The imported guild event configs
+   * @param mode 'add' merges with existing, 'overwrite' replaces entirely
+   */
+  setConfigsFromImport(
+    configs: Partial<Record<GuildTimerId, GuildEventConfig>>,
+    mode: 'add' | 'overwrite',
+  ): void {
+    let nextConfigs: Partial<Record<GuildTimerId, GuildEventConfig>>;
+
+    if (mode === 'overwrite') {
+      // Clear existing and use only imported configs
+      nextConfigs = {};
+      for (const id of VALID_GUILD_TIMER_IDS) {
+        if (configs[id]) {
+          nextConfigs[id] = {
+            ...configs[id],
+            slots: configs[id].slots.filter((s) => this.isValidSlot(s)),
+          };
+        }
+      }
+    } else {
+      // Add mode: merge with existing
+      nextConfigs = { ...this.state$.value.configs };
+      for (const [id, config] of Object.entries(configs) as [GuildTimerId, GuildEventConfig][]) {
+        if (config) {
+          nextConfigs[id] = {
+            ...config,
+            slots: config.slots.filter((s) => this.isValidSlot(s)),
+          };
+        }
+      }
+    }
+
+    const payload: GuildTimersStoragePayload = {
+      version: STORAGE_VERSION,
+      configs: nextConfigs,
+    };
+
+    this.state$.next(payload);
+    saveJsonToStorage(STORAGE_KEY, payload);
   }
 }

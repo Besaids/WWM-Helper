@@ -295,7 +295,7 @@ export class HomeComponent {
       href: 'https://map.17173.com/yysls',
     },
     {
-      label: 'Chinese Chess ',
+      label: 'Chinese Chess - Xiangqi',
       href: 'https://play.xiangqi.com/',
     },
   ];

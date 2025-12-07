@@ -57,6 +57,33 @@
   overflow: hidden;
   background: $bg-elevated;
   flex-shrink: 0;
+
+  // Icon-only variant (no image)
+  &--icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+      135deg,
+      rgba($accent-gold, 0.15),
+      rgba($accent-gold-highlight, 0.08)
+    );
+
+    i {
+      font-size: 2.5rem;
+      color: $accent-gold-dim;
+      transition: transform 220ms ease-out;
+    }
+
+    .tool-card:hover &,
+    .tool-card:focus-within &,
+    .guide-card:hover &,
+    .guide-card:focus-within & {
+      i {
+        transform: scale(1.1);
+      }
+    }
+  }
 }
 
 .tool-card__banner-img,

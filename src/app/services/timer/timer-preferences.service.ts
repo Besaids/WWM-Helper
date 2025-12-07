@@ -49,6 +49,28 @@ export class TimerPreferencesService {
     this.update(next);
   }
 
+  /**
+   * Get current enabled IDs as an array (for export)
+   */
+  getEnabledIdsSnapshot(): string[] {
+    return Array.from(this.enabledIds);
+  }
+
+  /**
+   * Set enabled IDs from import
+   * @param ids The imported timer IDs
+   * @param mode 'add' merges with existing, 'overwrite' replaces entirely
+   */
+  setEnabledIdsFromImport(ids: string[], mode: 'add' | 'overwrite'): void {
+    if (mode === 'overwrite') {
+      this.update(new Set(ids));
+    } else {
+      // Add mode: union of current and imported
+      const next = new Set([...this.enabledIds, ...ids]);
+      this.update(next);
+    }
+  }
+
   // ---- internals ----
 
   private loadInitialIds(): string[] {

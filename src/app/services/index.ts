@@ -6,3 +6,4 @@ export * from './privacy';
 export * from './reset';
 export * from './timer';
 export * from './tooltip';
+export * from './settings';

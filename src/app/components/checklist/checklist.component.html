@@ -3,7 +3,17 @@
 <section class="checklist-page">
   <!-- Page-level header (just title + intro) -->
   <header class="checklist-page-header">
-    <h1>Checklist</h1>
+    <div class="checklist-page-header__title-row">
+      <h1>Checklist</h1>
+      <a
+        class="settings-link"
+        routerLink="/tools/settings"
+        title="Import or export your checklist settings"
+      >
+        <i class="bi bi-arrow-left-right"></i>
+        <span>Import / Export</span>
+      </a>
+    </div>
     <p class="text-muted-strong">
       Track your daily, weekly, seasonal and custom tasks. Each checklist resets automatically based
       on its type so you always see what matters for this cycle.

@@ -12,6 +12,7 @@ import {
   TimersComponent,
   ChecklistComponent,
   MultiDayRewardsGuideComponent,
+  SettingsIoComponent,
 } from './components';
 
 export const routes: Routes = [
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'guides/path-season', component: PathSeasonGuideComponent },
   { path: 'tools', component: ToolsHubComponent },
   { path: 'tools/chinese-chess', component: ChineseChessComponent },
+  { path: 'tools/settings', component: SettingsIoComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: '**', redirectTo: 'home' },
 ];
