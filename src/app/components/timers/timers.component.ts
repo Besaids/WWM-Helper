@@ -20,7 +20,7 @@ import {
 } from '../../models';
 import { DiamondToggleComponent } from '../ui';
 import { RouterModule } from '@angular/router';
-import { TIMER_DETAILS_CONFIG } from '../../configs';
+import { buildAssetTooltips, STATIC_TOOLTIPS, TIMER_DETAILS_CONFIG } from '../../configs';
 import { CustomTimerModalComponent } from './custom-timer-modal';
 import { DateTime } from 'luxon';
 import { TooltipDirective } from '../../directives';
@@ -79,104 +79,8 @@ export class TimersComponent {
   // Update the constructor to add these new tooltips:
 
   constructor() {
-    // Register timer-specific tooltips that don't have game asset equivalents
-    this.tooltipRegistry.registerAll({
-      'timer.details-button': {
-        title: 'View timer details',
-        description: 'Show information about when and why this timer matters.',
-        variant: 'controlHint',
-      },
-      'timer.toggle': {
-        title: 'Show in timer strip',
-        description: 'Enable to display this timer in the strip at the top of the page.',
-        variant: 'controlHint',
-      },
-      // Game asset tooltips - System resources
-      'system.energy': {
-        imageUrl: 'assets/game/system/energy-small.png',
-        title: 'Energy',
-        description:
-          'Account-wide activity resource that regenerates over time and is spent on repeatable, reward-heavy content.',
-        variant: 'inlineInfo',
-      },
-      'system.stamina': {
-        imageUrl: 'assets/game/system/stamina-small.png',
-        title: 'Stamina',
-        description: 'Character resource for crafting, gathering, and other production activities.',
-        variant: 'inlineInfo',
-      },
-      // Game asset tooltips - Currencies
-      'currency.coin': {
-        imageUrl: 'assets/game/currency/currency-coin.png',
-        title: 'Coin',
-        description:
-          'Generic in-game money used for most merchant purchases, fees, and basic services.',
-        variant: 'inlineInfo',
-      },
-      'currency.commerce_coin': {
-        imageUrl: 'assets/game/currency/currency-commerce-coin.png',
-        title: 'Commerce Coin',
-        description:
-          'Mini-game and street-vendor currency used for wagers in activities like Pitch Pot, cards, Mahjong, and for buying street food.',
-        variant: 'inlineInfo',
-      },
-      'currency.fourfold_coin': {
-        imageUrl: 'assets/game/currency/currency-fourfold-coin.png',
-        title: 'Fourfold Coin',
-        description:
-          'Bounty-shop currency earned from NPC and player bounties. Has a weekly cap and is spent in the Bounty Shop.',
-        variant: 'inlineInfo',
-      },
-      'currency.harmony_charm': {
-        imageUrl: 'assets/game/currency/currency-harmony-charm.png',
-        title: 'Harmony Charm',
-        description:
-          'Social / co-op currency with a weekly cap. Earned from co-op play, partnerships, and quiz activities; spent in Brotherhood / Social shops.',
-        variant: 'inlineInfo',
-      },
-      'currency.treasure_token': {
-        imageUrl: 'assets/game/currency/currency-treasure-token.png',
-        title: 'Treasure Token',
-        description:
-          'Guild-exclusive currency earned from guild errands and activities. Spent in guild shops on visual cosmetics and other guild-flavored rewards.',
-        variant: 'inlineInfo',
-      },
-      'currency.jade_fish': {
-        imageUrl: 'assets/game/currency/currency-jade-fish.png',
-        title: 'Jade Fish',
-        description:
-          'Universal activity currency with a high weekly cap, earned from exploration, quests, enemies, chests, and activities. Spent in the Activity / Season shops.',
-        variant: 'inlineInfo',
-      },
-      'currency.reputation': {
-        imageUrl: 'assets/game/currency/currency-reputation.png',
-        title: 'Reputation',
-        description:
-          'Sect reputation currency earned from completing Sect Commands (Jianghu Errands). Spent at sect shops on sect-specific cosmetics, materials, and rewards; capped weekly.',
-        variant: 'inlineInfo',
-      },
-      // Game asset tooltips - Items
-      'items.lingering_melody': {
-        imageUrl: 'assets/game/items/item-common-lingering-melody.png',
-        title: 'Lingering Melody',
-        description:
-          'Premium gacha ticket used for Celestial Echo draws (the premium banner). Commonly purchased with Echo Beads and sometimes obtained from passes or bundles.',
-        variant: 'inlineInfo',
-      },
-      // Game asset tooltips - Navigation/Systems
-      'navigation.season': {
-        imageUrl: 'assets/game/navigation/menu-season-icon.png',
-        title: 'Season',
-        description: 'Seasonal activities, shops, and seasonal progression.',
-        variant: 'inlineInfo',
-      },
-      'navigation.battle_pass': {
-        imageUrl: 'assets/game/navigation/menu-battle-pass-icon.png',
-        title: 'Battle Pass',
-        description: 'Season pass / battle pass progression screen with rewards and challenges.',
-        variant: 'inlineInfo',
-      },
-    });
+    this.tooltipRegistry.registerAll(STATIC_TOOLTIPS);
+    this.tooltipRegistry.registerAll(buildAssetTooltips());
   }
 
   getChip(timers: readonly TimerChip[], id: string): TimerChip | undefined {

@@ -1,4 +1,9 @@
 @use 'tokens/radius' as *;
+@use 'tokens/colors' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/surfaces' as *;
+@use 'tokens/motion' as *;
+@use 'tokens/spacing' as *;
 
 .map-container {
   width: 100%;
@@ -6,6 +11,7 @@
   display: flex;
   border-radius: $radius-card;
   overflow: hidden;
+  position: relative;
 }
 
 .map-container iframe {
@@ -14,4 +20,157 @@
   height: 100%;
   border: none;
   display: block;
+}
+
+/* Centered toggle */
+.map-controls {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+.map-source-toggle {
+  display: flex;
+  background: $surface-layer-3;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-pill;
+  box-shadow: $shadow-depth-2;
+  overflow: hidden;
+}
+
+.map-source-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: $text-secondary;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color $motion-fast $motion-ease,
+    color $motion-fast $motion-ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: $surface-layer-4;
+    color: $text-primary;
+  }
+
+  &.active {
+    background: $accent-teal;
+    color: $btn-accent-text;
+
+    &:hover {
+      background: $accent-teal-active;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-teal;
+    outline-offset: -2px;
+  }
+}
+
+/* Top-right external link */
+/* Top-right external link */
+.external-link-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: $radius-pill;
+  background: $surface-layer-3;
+  color: $accent-teal;
+  border: 1px solid $border-subtle;
+  box-shadow: $shadow-depth-2;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color $motion-fast $motion-ease; // only color animates
+
+  i {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background: $surface-layer-3;
+    box-shadow: $shadow-depth-2;
+    transform: none;
+    color: $accent-teal-active;
+  }
+
+  &:active {
+    background: $surface-layer-3;
+    box-shadow: $shadow-depth-2;
+    transform: none;
+    color: $accent-teal-active;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-teal;
+    outline-offset: 2px;
+  }
+}
+
+.map-disclaimer {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: $surface-layer-3;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-pill;
+  box-shadow: $shadow-depth-2;
+  color: $text-secondary;
+  font-size: 0.8125rem;
+  max-width: calc(100% - 2rem);
+
+  i {
+    flex-shrink: 0;
+    color: $accent-gold-soft;
+    font-size: 1rem;
+  }
+
+  span {
+    line-height: 1.4;
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .map-controls {
+    top: 0.75rem;
+  }
+
+  .map-source-toggle {
+    flex-direction: column;
+  }
+
+  .map-source-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .map-disclaimer {
+    bottom: 0.75rem;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.875rem;
+    max-width: calc(100% - 1.5rem);
+
+    i {
+      font-size: 0.9rem;
+    }
+  }
 }

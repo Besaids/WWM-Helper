@@ -1,4 +1,9 @@
+// chinese-chess.component.scss
 @use 'tokens/radius' as *;
+@use 'tokens/colors' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/surfaces' as *;
+@use 'tokens/motion' as *;
 
 .chess-container {
   width: 100%;
@@ -6,6 +11,7 @@
   display: flex;
   border-radius: $radius-card;
   overflow: hidden;
+  position: relative;
 }
 
 .chess-container iframe {
@@ -14,4 +20,47 @@
   height: 100%;
   border: none;
   display: block;
+}
+
+.external-link-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: $radius-pill; // was $radius-round
+  background: $surface-layer-3;
+  color: $accent-teal;
+  border: 1px solid $border-subtle;
+  box-shadow: $shadow-depth-2;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color $motion-fast $motion-ease; // only color animates now
+
+  i {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    /* keep shape & surface identical */
+    background: $surface-layer-3;
+    box-shadow: $shadow-depth-2;
+    transform: none;
+    color: $accent-teal-active; // only this changes
+  }
+
+  &:active {
+    background: $surface-layer-3;
+    box-shadow: $shadow-depth-2;
+    transform: none;
+    color: $accent-teal-active;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-teal;
+    outline-offset: 2px;
+  }
 }

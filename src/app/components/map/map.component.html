@@ -1,7 +1,53 @@
+<!-- map.component.html -->
 <main id="top" class="map-container">
   <iframe
-    src="https://mapgenie.io/where-winds-meet/maps/world"
+    [src]="currentMapSafeUrl"
     title="Where Winds Meet Interactive Map"
     allowfullscreen
   ></iframe>
+
+  <!-- CENTERED TOGGLE -->
+  <div class="map-controls">
+    <div class="map-source-toggle">
+      @for (option of mapOptions; track option.id) {
+        <button
+          type="button"
+          class="map-source-btn"
+          [class.active]="selectedMap() === option.id"
+          (click)="selectMap(option.id)"
+          [appTooltip]="{
+            title: option.label,
+            description: option.disclaimer || 'Switch to ' + option.label + ' interactive map.',
+            variant: 'controlHint',
+          }"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- TOP-RIGHT LINK BUTTON -->
+  <a
+    [href]="currentMap.url"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="external-link-btn"
+    [appTooltip]="{
+      title: 'Open in New Tab',
+      description: currentMap.disclaimer
+        ? 'Open the full website in a new tab. ' + currentMap.disclaimer
+        : 'Open the full website in a new tab if you encounter issues with the embedded version.',
+      variant: 'controlHint',
+    }"
+  >
+    <i class="bi bi-box-arrow-up-right"></i>
+  </a>
+
+  @if (currentMap.disclaimer) {
+    <div class="map-disclaimer">
+      <i class="bi bi-info-circle"></i>
+      <span>{{ currentMap.disclaimer }}</span>
+    </div>
+  }
 </main>

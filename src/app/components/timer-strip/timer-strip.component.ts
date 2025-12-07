@@ -6,6 +6,7 @@ import { TimerService } from '../../services/timer/timer.service';
 import { TimerPreferencesService } from '../../services/timer/timer-preferences.service';
 import { TooltipRegistryService } from '../../services';
 import { TooltipDirective } from '../../directives';
+import { STATIC_TOOLTIPS } from '../../configs';
 
 interface TimerState {
   type: 'normal' | 'warning' | 'urgent' | 'active';
@@ -41,25 +42,7 @@ export class TimerStripComponent {
   );
 
   constructor() {
-    // Register tooltips for timer state indicators (reuse home definitions)
-    this.tooltipRegistry.registerAll({
-      'timer-badge.active': {
-        title: 'Active Timer',
-        description: 'This event or window is currently open and available.',
-        variant: 'controlHint',
-      },
-      'timer-state.warning': {
-        title: 'Starting Soon',
-        description:
-          'This timer will reset or become available within 30 minutes. The color shifts from yellow to red as time runs out.',
-        variant: 'controlHint',
-      },
-      'timer-state.urgent': {
-        title: 'Expiring Now',
-        description: 'This timer is expiring or starting within 10 minutes.',
-        variant: 'controlHint',
-      },
-    });
+    this.tooltipRegistry.registerAll(STATIC_TOOLTIPS);
   }
 
   /**

@@ -13,6 +13,7 @@ import { DateTime } from 'luxon';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TooltipRegistryService } from '../../services';
 import { TooltipDirective } from '../../directives';
+import { STATIC_TOOLTIPS } from '../../configs';
 
 interface TimerState {
   type: 'normal' | 'warning' | 'urgent' | 'active';
@@ -286,36 +287,21 @@ export class HomeComponent {
       href: 'https://www.wwmcombos.com/',
     },
     {
-      label: 'Map Genie',
+      label: 'WWM MapGenie Interactive Map',
       href: 'https://mapgenie.io/where-winds-meet/maps/world',
+    },
+    {
+      label: 'WWM Chinese Interactive Map',
+      href: 'https://map.17173.com/yysls',
+    },
+    {
+      label: 'Chinese Chess ',
+      href: 'https://play.xiangqi.com/',
     },
   ];
 
   constructor() {
-    // Register tooltips for timer badges and state indicators
-    this.tooltipRegistry.registerAll({
-      'timer-badge.active': {
-        title: 'Active Timer',
-        description: 'This event or window is currently open and available.',
-        variant: 'controlHint',
-      },
-      'timer-badge.event': {
-        title: 'Custom Event',
-        description: 'This is a custom event timer you created.',
-        variant: 'controlHint',
-      },
-      'timer-state.warning': {
-        title: 'Starting Soon',
-        description:
-          'This timer will reset or become available within 30 minutes. The color shifts from yellow to red as time runs out.',
-        variant: 'controlHint',
-      },
-      'timer-state.urgent': {
-        title: 'Expiring Now',
-        description: 'This timer is expiring or starting within 10 minutes.',
-        variant: 'controlHint',
-      },
-    });
+    this.tooltipRegistry.registerAll(STATIC_TOOLTIPS);
   }
 
   private formatDuration(seconds: number): string {
