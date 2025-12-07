@@ -184,3 +184,20 @@
     right: 1.25rem;
   }
 }
+
+.guide-banner {
+  width: 100%;
+  max-width: 70rem;
+  margin: 0 auto 1.25rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guide-banner__img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  box-shadow: $shadow-soft;
+}
