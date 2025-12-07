@@ -1,7 +1,7 @@
 import { TooltipVariant } from './tooltip.model';
 
 // High-level buckets for your assets
-export type GameAssetCategory = 'currency' | 'items' | 'navigation' | 'sect_paths' | 'system';
+export type GameAssetCategory = 'currency' | 'items' | 'navigation' | 'sect_paths' | 'system' | 'inner_way';
 
 // How the icon is used / drawn in UI
 export type GameAssetKind =
@@ -10,7 +10,8 @@ export type GameAssetKind =
   | 'nav-icon'
   | 'menu-nav-icon'
   | 'path-icon'
-  | 'system-icon';
+  | 'system-icon'
+  | 'inner-way-icon';
 
 // Tags used for filtering / grouping across systems
 export type GameSystemTag =
@@ -95,7 +96,39 @@ export type GameSystemTag =
   | 'shop'
   | 'bleed'
   | 'ghost_market'
-  | 'treasure_money';
+  | 'treasure_money'
+  | 'attack'
+  | 'bamboocut_wind'
+  | 'bellstrike_splendor'
+  | 'bellstrike_umbra'
+  | 'boss'
+  | 'buff'
+  | 'counter'
+  | 'cost_reduction'
+  | 'debuff'
+  | 'defense_shred'
+  | 'dewdrop'
+  | 'dual_weapon'
+  | 'dodge'
+  | 'endurance'
+  | 'execution'
+  | 'general'
+  | 'heal'
+  | 'martial_arts'
+  | 'movement'
+  | 'mystic_arts'
+  | 'poison'
+  | 'pursuit'
+  | 'recover'
+  | 'risk_reward'
+  | 'silkbind_deluge'
+  | 'silkbind_jade'
+  | 'stacking'
+  | 'stonesplit_might'
+  | 'vitality'
+  | 'damage_boost'
+  | 'deflect';
+
 
 // Enforce the "7:6", "1:1" style strings
 export type AspectRatioString = `${number}:${number}`;
