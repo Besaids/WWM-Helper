@@ -20,6 +20,9 @@ declare global {
 export class AnalyticsService {
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
+  private isTracking = false;
+  private consentGranted = false;
+
   private initialized = false;
 
   initialize(): void {
@@ -44,10 +47,6 @@ export class AnalyticsService {
     }
 
     this.loadGoogleAnalytics();
-    this.trackPageViews();
-
-    const initialPath = location.pathname + location.search + location.hash;
-    this.trackPageView(initialPath);
 
     this.initialized = true;
     console.info('[Analytics] Initialized with ID', environment.googleAnalyticsId);
@@ -92,15 +91,27 @@ export class AnalyticsService {
 
   grantConsent(): void {
     if (!window.gtag) {
-      console.warn('[Analytics] Cannot grant consent; gtag not loaded');
+      console.warn('[Analytics] Cannot grant consent; gtag not loaded yet');
       return;
     }
 
+    // Update GA consent mode
     window.gtag('consent', 'update', {
+      ad_storage: 'granted',
       analytics_storage: 'granted',
     });
 
+    const wasGranted = this.consentGranted;
+    this.consentGranted = true;
+
     console.info('[Analytics] Consent granted, tracking enabled');
+
+    // Start tracking only once, the first time consent becomes granted
+    if (!wasGranted) {
+      const initialPath = location.pathname + location.search + location.hash;
+      this.trackPageView(initialPath);
+      this.trackPageViews(); // will now actually attach the router listener
+    }
   }
 
   denyConsent(): void {
@@ -109,13 +120,21 @@ export class AnalyticsService {
     }
 
     window.gtag('consent', 'update', {
+      ad_storage: 'denied',
       analytics_storage: 'denied',
     });
 
-    console.info('[Analytics] Consent denied');
+    this.consentGranted = false;
+    console.info('[Analytics] Consent denied; tracking disabled');
   }
 
   private trackPageViews(): void {
+    if (!this.consentGranted || this.isTracking) {
+      return;
+    }
+
+    this.isTracking = true;
+
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
@@ -124,7 +143,7 @@ export class AnalyticsService {
   }
 
   trackPageView(url: string): void {
-    if (!environment.production || !window.gtag) {
+    if (!environment.production || !window.gtag || !this.consentGranted) {
       return;
     }
 
