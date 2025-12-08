@@ -1,4 +1,4 @@
-import { GameAssetDefinition } from "../../models";
+import { GameAssetDefinition } from '../../models';
 
 export const INNER_WAY_ASSETS: GameAssetDefinition[] = [
   {

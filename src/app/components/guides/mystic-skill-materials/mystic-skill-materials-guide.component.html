@@ -1,0 +1,387 @@
+<main id="top" class="guide-page mystic-skill-materials-guide">
+  <div class="guide-banner">
+    <img
+      class="guide-banner__img"
+      src="assets/banners/guides-mystic-skill-materials-banner.png"
+      alt="Mystic Skill Materials & Gathering banner"
+      loading="lazy"
+    />
+  </div>
+
+  <header class="guide-page__header">
+    <h1 class="guide-page__title">Mystic Skill Materials & Gathering</h1>
+    <p class="guide-page__subtitle">
+      Learn how to see which plant each mystic skill needs and how to farm those plants efficiently.
+      All mystic skill upgrades use
+      <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span> plus a specific
+      plant material, and this guide covers solo and online gathering strategies.
+    </p>
+
+    <nav class="guide-toc">
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('overview')">Overview</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('checking-materials')">
+        Checking Materials
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('solo-on-foot')">
+        Solo Gathering
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('spirited-courser')">
+        Spirited Courser
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('gathering-buffs')">
+        Gathering Buffs
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('planner-tool')">
+        Upgrade Planner
+      </button>
+    </nav>
+  </header>
+
+  <article class="guide-article">
+    <!-- Section 1: Overview -->
+    <section id="overview" class="guide-section">
+      <h2>What Mystic Skills Use</h2>
+      <p>
+        Mystic skills consume
+        <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span> (Lv.1–4) for
+        most upgrade ranks. Each mystic skill is also tied to one specific plant used for
+        breakthrough levels. For example,
+        <span class="has-tooltip" [appTooltip]="'items.jade_tower_peony'">Jade Tower Peony</span>
+        gathering can yield a rare drop called
+        <span class="has-tooltip" [appTooltip]="'items.jade_tower_pearl'">Jade Tower Pearl</span>,
+        which is then used in the upgrading process alongside
+        <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span>.
+      </p>
+      <p>
+        Plants can be gathered in two modes:
+        <span class="has-tooltip" [appTooltip]="'navigation.solo_mode'">Solo World</span> has long
+        respawn times but no competition, while
+        <span class="has-tooltip" [appTooltip]="'navigation.online_mode'">Online World</span>
+        offers shorter respawn timers but nodes are shared with other players.
+      </p>
+    </section>
+
+    <!-- Section 2: Checking Required Materials -->
+    <section id="checking-materials" class="guide-section">
+      <h2>Checking Required Materials</h2>
+      <p>
+        In the Mystic Skills menu, when you select a skill and view an upgrade, the panel shows the
+        required
+        <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span> level and
+        quantity, plus the specific plant name and icon. Each upgrade panel also includes a "Gather
+        &lt;plant name&gt;" button (for example, "Gather
+        <span class="has-tooltip" [appTooltip]="'items.jade_tower_peony'">Jade Tower Peony</span>").
+      </p>
+
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-check.png"
+          alt="Mystic skill upgrade panel showing Jade Tower Pearl and Ebon Iron requirements"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          The upgrade panel lists the plant (like
+          <span class="has-tooltip" [appTooltip]="'items.jade_tower_pearl'">Jade Tower Pearl</span>
+          /
+          <span class="has-tooltip" [appTooltip]="'items.jade_tower_peony'">Jade Tower Peony</span>)
+          and
+          <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span> requirements
+          for the selected mystic skill.
+        </figcaption>
+      </figure>
+
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-tracking.png"
+          alt="HUD marker tracking Jade Tower Peony after pressing Gather button"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          After pressing "Gather &lt;X&gt;", the game automatically tracks the nearest node of that
+          plant and adds a HUD marker.
+        </figcaption>
+      </figure>
+
+      <p>
+        Pressing the Gather button auto-tracks the nearest node and keeps updating the HUD marker as
+        you collect and exhaust nodes, making it easy to hop from node to node cluster without
+        manually searching the map.
+      </p>
+    </section>
+
+    <!-- Section 3: Solo Gathering on Foot -->
+    <section id="solo-on-foot" class="guide-section">
+      <h2>Solo Gathering on Foot (No Horse)</h2>
+      <p>
+        When gathering on foot, you must manually find and pick each plant. There is no auto-vacuum.
+        The basic loop is: use the tracked HUD marker from the Gather button to run to the nearest
+        node cluster and harvest all the plants from it. After harvesting, the marker automatically
+        jumps to the next nearest node cluster of that plant.
+      </p>
+
+      <h3>Using Wind Sense</h3>
+      <p>
+        <span class="has-tooltip" [appTooltip]="'mystic_skill.wind_sense'">Wind Sense</span> (key V)
+        is a visual aid only; it highlights nearby gatherable objects but does not collect them. Use
+        <span class="has-tooltip" [appTooltip]="'mystic_skill.wind_sense'">Wind Sense</span> when
+        you can't immediately identify the plants visually. It makes scanning the scene easier by
+        highlighting nodes, but you still need to walk up to each node and interact with it to
+        harvest.
+      </p>
+
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-tracking-no-horse.png"
+          alt="Wind Sense highlighting gatherable plants while running on foot"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          Wind Sense being used while running around helps visually locate plants when gathering on
+          foot.
+        </figcaption>
+      </figure>
+
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-tracking-next.png"
+          alt="HUD element pointing to the next tracked node after harvesting one"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          The HUD element automatically updates to the next nearest plant node cluster after you
+          harvest one.
+        </figcaption>
+      </figure>
+
+      <h3>Solo World Respawn Timers</h3>
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-cooldown.png"
+          alt="Map showing a previously harvested node with a 24-hour respawn timer"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          Harvested nodes in
+          <span class="has-tooltip" [appTooltip]="'navigation.solo_mode'">Solo World</span> have a
+          long respawn timer; treat them as roughly 24 hours after you start collecting them in that
+          instance.
+        </figcaption>
+      </figure>
+
+      <p>
+        In <span class="has-tooltip" [appTooltip]="'navigation.solo_mode'">Solo World</span>, once
+        you begin farming a specific plant, treat it as a once-per-day loop in that world. Find a
+        route that feels efficient for you instead of camping a single node, as the respawn times
+        are quite long.
+      </p>
+    </section>
+
+    <!-- Section 4: Spirited Courser Mount -->
+    <section id="spirited-courser" class="guide-section">
+      <h2>Speeding Up with Spirited Courser (Mount)</h2>
+      <p>
+        The mount <strong>Spirited Courser</strong> has a gather skill called
+        <strong>Petals Collection</strong> that collects all nearby gatherable nodes within a
+        radius. This skill has a short cooldown (10 seconds in the screenshot). This behavior is
+        specific to Spirited Courser and its Petals Collection skill—it does not work when gathering
+        on foot.
+      </p>
+      <p class="guide-note">
+        Spirited Courser can be purchased from the mount shop and costs
+        <span class="has-tooltip" [appTooltip]="'currency.echo_bead'">Echo Beads</span>. So overall
+        it has a real money cost to adquire this horse, it's just a ROI item.
+      </p>
+
+      <div class="comparison-box">
+        <div class="comparison-box__item">
+          <strong>On foot:</strong> You run to each plant and collect it individually.
+        </div>
+        <div class="comparison-box__item">
+          <strong>On Spirited Courser:</strong> Ride into the middle of the highlighted area, hit
+          the Petals Collection skill once (default key Z), and let the mount vacuum all plants
+          around you before moving on to the next tracked node. (sometimes you may need to use it
+          more than once depending on how sparsely located are the flowers in the cluster)
+        </div>
+      </div>
+
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-tracking-horse.png"
+          alt="Mount shop showing Spirited Courser and Petals Collection skill details"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          Spirited Courser actually works for any nearby resources so you'll actually be getting
+          more than just the flowers you're trying to target.
+        </figcaption>
+      </figure>
+
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-tracking-with-horse.png"
+          alt="Player on Spirited Courser using Petals Collection to gather plants"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          Pressing the mount gather key (Z) on Spirited Courser collects nearby resources
+          automatically.
+        </figcaption>
+      </figure>
+
+      <figure class="guide-figure">
+        <img
+          class="guide-figure__img"
+          src="assets/guides/mystic-skill-materials/mystic-skill-material-tracking-horse-efficiency.png"
+          alt="Efficient gathering pattern: ride to the center of node area and use Petals Collection"
+          loading="lazy"
+        />
+        <figcaption class="guide-figure__caption">
+          Efficient pattern with Spirited Courser / Petals Collection: ride to roughly the center of
+          the tracked node area, then press the Petals Collection skill to vacuum all nearby plants.
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- Section 5: Gathering Buff Food -->
+    <section id="gathering-buffs" class="guide-section">
+      <h2>Gathering Buff Food (Commerce Coins)</h2>
+      <p>
+        Two food items provide critical gathering buffs and cost
+        <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>:
+      </p>
+
+      <ul>
+        <li>
+          <span class="has-tooltip" [appTooltip]="'items.snail_meat'">Snail Meat</span> – 15%
+          critical gathering, 20-minute duration.
+        </li>
+        <li>
+          <span class="has-tooltip" [appTooltip]="'items.chicken_noodles'">Chicken Noodles</span>
+          – 20% critical gathering, 10-minute duration.
+        </li>
+      </ul>
+
+      <p>
+        "Critical gathering" means higher chances to get extra or rarer materials from each
+        harvested node.
+        <span class="has-tooltip" [appTooltip]="'items.snail_meat'">Snail Meat</span> offers a
+        slightly weaker buff but longer duration, making it good for long, relaxed plant loops.
+        <span class="has-tooltip" [appTooltip]="'items.chicken_noodles'">Chicken Noodles</span>
+        provides a stronger buff with a short duration, ideal for quick focused bursts when you just
+        need a few more plants.
+      </p>
+
+      <h3>Snail Meat (15% Critical Gathering, 20 min)</h3>
+      <div class="merchant-grid">
+        <figure class="guide-figure">
+          <img
+            class="guide-figure__img"
+            src="assets/guides/mystic-skill-materials/merchant-gathering-critical-15-shop-location.png"
+            alt="Map location for Snail Meat merchant"
+            loading="lazy"
+          />
+          <figcaption class="guide-figure__caption">
+            Merchant location for
+            <span class="has-tooltip" [appTooltip]="'items.snail_meat'">Snail Meat</span> (15%
+            critical gathering, 20 min) is in Harvestfall Village.
+          </figcaption>
+        </figure>
+
+        <figure class="guide-figure">
+          <img
+            class="guide-figure__img"
+            src="assets/guides/mystic-skill-materials/merchant-gathering-critical-15-shop-view.png"
+            alt="Snail Meat merchant in the world"
+            loading="lazy"
+          />
+          <figcaption class="guide-figure__caption">
+            The merchant selling
+            <span class="has-tooltip" [appTooltip]="'items.snail_meat'">Snail Meat</span>.
+          </figcaption>
+        </figure>
+
+        <figure class="guide-figure">
+          <img
+            class="guide-figure__img"
+            src="assets/guides/mystic-skill-materials/merchant-gathering-critical-15-shop.png"
+            alt="Shop window showing Snail Meat and Commerce Coin price"
+            loading="lazy"
+          />
+          <figcaption class="guide-figure__caption">
+            <span class="has-tooltip" [appTooltip]="'items.snail_meat'">Snail Meat</span> costs
+            <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>
+            and is optional but speeds up farming.
+          </figcaption>
+        </figure>
+      </div>
+
+      <h3>Chicken Noodles (20% Critical Gathering, 10 min)</h3>
+      <div class="merchant-grid">
+        <figure class="guide-figure">
+          <img
+            class="guide-figure__img"
+            src="assets/guides/mystic-skill-materials/merchant-gathering-critical-20-shop-location.png"
+            alt="Map location for Chicken Noodles merchant"
+            loading="lazy"
+          />
+          <figcaption class="guide-figure__caption">
+            Merchant location for
+            <span class="has-tooltip" [appTooltip]="'items.chicken_noodles'">Chicken Noodles</span>
+            (20% critical gathering, 10 min) is next to Mao Tianyou's Chess Game.
+          </figcaption>
+        </figure>
+
+        <figure class="guide-figure">
+          <img
+            class="guide-figure__img"
+            src="assets/guides/mystic-skill-materials/merchant-gathering-critical-20-shop-view.png"
+            alt="Chicken Noodles merchant in the world"
+            loading="lazy"
+          />
+          <figcaption class="guide-figure__caption">
+            The merchant selling
+            <span class="has-tooltip" [appTooltip]="'items.chicken_noodles'">Chicken Noodles</span>.
+          </figcaption>
+        </figure>
+
+        <figure class="guide-figure">
+          <img
+            class="guide-figure__img"
+            src="assets/guides/mystic-skill-materials/merchant-gathering-critical-20-shop.png"
+            alt="Shop window showing Chicken Noodles and Commerce Coin price"
+            loading="lazy"
+          />
+          <figcaption class="guide-figure__caption">
+            <span class="has-tooltip" [appTooltip]="'items.chicken_noodles'">Chicken Noodles</span>
+            costs
+            <span class="has-tooltip" [appTooltip]="'currency.commerce_coin'">Commerce Coins</span>
+            and provides a stronger but shorter gathering buff.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Section 6: CTA for Future Tool -->
+    <section id="planner-tool" class="guide-section cta-section">
+      <h2>Plan Your Mystic Skill Upgrades</h2>
+      <p>
+        Once you know how to gather materials efficiently, a future
+        <strong>Mystic Skill Upgrade Planner</strong> tool will help calculate how many plants and
+        how much <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span> you
+        need for each tier and breakthrough, making it easier to plan your farming routes and
+        prioritize upgrades.
+      </p>
+
+      <button type="button" class="btn-primary" routerLink="/tools/mystic-upgrade-planner">
+        Mystic Skill Upgrade Planner
+      </button>
+    </section>
+  </article>
+</main>

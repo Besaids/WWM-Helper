@@ -1,4 +1,4 @@
-import { GameAssetDefinition } from "../../models";
+import { GameAssetDefinition } from '../../models';
 
 export const GATHERING_ASSETS: GameAssetDefinition[] = [
   {

@@ -3,20 +3,27 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TooltipRegistryService } from '../../../services/tooltip/tooltip-registry.service';
 import { TooltipDirective } from '../../../directives/tooltip/tooltip.directive';
-import { buildAssetTooltips } from '../../../configs';
+import { getDefaultTooltips } from '../../../configs/tooltip/tooltip-defaults.config';
 
 @Component({
   standalone: true,
-  selector: 'app-guides-hub',
+  selector: 'app-mystic-skill-materials-guide',
   imports: [CommonModule, RouterModule, TooltipDirective],
-  templateUrl: './guides-hub.component.html',
-  styleUrls: ['./guides-hub.component.scss'],
+  templateUrl: './mystic-skill-materials-guide.component.html',
+  styleUrls: ['./mystic-skill-materials-guide.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GuidesHubComponent {
+export class MysticSkillMaterialsGuideComponent {
   private readonly tooltipRegistry = inject(TooltipRegistryService);
 
   constructor() {
-    this.tooltipRegistry.registerAll(buildAssetTooltips());
+    this.tooltipRegistry.registerAll(getDefaultTooltips());
+  }
+
+  scrollTo(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

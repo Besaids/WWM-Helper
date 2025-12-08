@@ -1,4 +1,4 @@
-import { GameAssetDefinition } from "../../models";
+import { GameAssetDefinition } from '../../models';
 
 export const CURRENCY_ASSETS: GameAssetDefinition[] = [
   {

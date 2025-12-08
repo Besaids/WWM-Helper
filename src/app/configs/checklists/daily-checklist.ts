@@ -119,6 +119,8 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
       'Some flowers have low drop-rate mats for Mystic Skills; farming slowly over time reduces grind later.',
     tags: ['exploration', 'solo'],
     expired: false,
+    route: '/guides/mystic-skill-materials',
+    section: 'top',
   },
   {
     id: 'daily-bounties',

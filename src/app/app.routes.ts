@@ -14,6 +14,8 @@ import {
   MultiDayRewardsGuideComponent,
   SettingsIoComponent,
   BossTalentsGuideComponent,
+  MysticSkillMaterialsGuideComponent,
+  MysticUpgradePlannerComponent,
 } from './components';
 
 export const routes: Routes = [
@@ -28,8 +30,10 @@ export const routes: Routes = [
   { path: 'guides/multi-day-rewards', component: MultiDayRewardsGuideComponent },
   { path: 'guides/trading', component: TradingGuideComponent },
   { path: 'guides/path-season', component: PathSeasonGuideComponent },
+  { path: 'guides/mystic-skill-materials', component: MysticSkillMaterialsGuideComponent },
   { path: 'tools', component: ToolsHubComponent },
   { path: 'tools/chinese-chess', component: ChineseChessComponent },
+  { path: 'tools/mystic-upgrade-planner', component: MysticUpgradePlannerComponent },
   { path: 'tools/settings', component: SettingsIoComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: '**', redirectTo: 'home' },

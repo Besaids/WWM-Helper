@@ -1,0 +1,79 @@
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/shadows' as *;
+
+/* ===========================
+   Mystic Skill Materials Guide
+   =========================== */
+
+.mystic-skill-materials-guide {
+  .comparison-box {
+    padding: 1rem;
+    margin: 1.5rem 0;
+    border-radius: $radius-md;
+    background: rgba(0, 255, 255, 0.04);
+    border: 1px solid rgba(0, 255, 255, 0.15);
+  }
+
+  .comparison-box__item {
+    padding: 0.75rem 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+      margin-bottom: 0.75rem;
+    }
+
+    strong {
+      color: $accent-teal;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  .merchant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    // override global guide-figure layout inside the grid
+    .guide-figure {
+      display: block;
+      position: static;
+    }
+
+    .guide-figure__img {
+      display: block;
+      width: 100%;
+      height: auto;
+      position: static;
+    }
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(0, 255, 255, 0.1);
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      max-width: 50rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-primary {
+      margin: 0 auto;
+    }
+  }
+}

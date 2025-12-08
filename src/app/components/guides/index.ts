@@ -4,3 +4,4 @@ export * from './path-season';
 export * from './trading';
 export * from './multi-day-rewards';
 export * from './boss-talents';
+export * from './mystic-skill-materials';

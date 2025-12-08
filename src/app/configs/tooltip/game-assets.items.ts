@@ -1,4 +1,4 @@
-import { GameAssetDefinition } from "../../models";
+import { GameAssetDefinition } from '../../models';
 
 export const ITEMS_ASSETS: GameAssetDefinition[] = [
   {
@@ -237,6 +237,38 @@ export const ITEMS_ASSETS: GameAssetDefinition[] = [
     game_system_tags: ['item', 'crafting', 'mystic_skill', 'breakthrough'],
     ui_usage_notes:
       'Use wherever you list shared metal costs for Mystic Skill breakthroughs, as the generic ore component alongside specific herb/pearl materials.',
+    width: 560,
+    height: 480,
+    aspect_ratio: '7:6',
+  },
+  {
+    id: 'items.snail_meat',
+    category: 'items',
+    file: 'assets/game/items/item-snail-meat.png',
+    label: 'Snail Meat',
+    kind: 'material-icon',
+    source: 'Where Winds Meet (in-game capture)',
+    description:
+      'Cooked snail dish bought from food vendors. When eaten, it gives a small boost to herb gathering efficiency by adding a chance to obtain extra plants for a short period.',
+    game_system_tags: ['item', 'food', 'crafting', 'profession', 'exploration'],
+    ui_usage_notes:
+      'Use for guides or checklists that mention cheap gathering buffs; note that it boosts extra herb harvest chance for a limited time and counts as a food effect.',
+    width: 560,
+    height: 480,
+    aspect_ratio: '7:6',
+  },
+  {
+    id: 'items.chicken_noodles',
+    category: 'items',
+    file: 'assets/game/items/item-chicken-noodles.png',
+    label: 'Chicken Noodles',
+    kind: 'material-icon',
+    source: 'Where Winds Meet (in-game capture)',
+    description:
+      'Hearty noodle dish sold by food vendors that temporarily increases herb gathering yield, giving a higher chance for extra harvests at the cost of a shorter duration.',
+    game_system_tags: ['item', 'food', 'crafting', 'profession', 'exploration'],
+    ui_usage_notes:
+      'Use wherever you discuss stronger but shorter gathering buffs; this food improves the odds of extra herb drops but still shares the single active food-effect limit.',
     width: 560,
     height: 480,
     aspect_ratio: '7:6',

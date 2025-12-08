@@ -7,3 +7,4 @@ export * from './reset';
 export * from './timer';
 export * from './tooltip';
 export * from './settings';
+export * from './mystic-skill-upgrade';

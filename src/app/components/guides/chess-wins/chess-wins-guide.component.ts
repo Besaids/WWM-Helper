@@ -1,4 +1,3 @@
-// c:\Users\andcr\WWM-Helper\src\app\components\guides\chess-wins\chess-wins-guide.component.ts
 import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';

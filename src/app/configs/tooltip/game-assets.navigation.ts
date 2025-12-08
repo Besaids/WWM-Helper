@@ -1,7 +1,7 @@
-import { GameAssetDefinition } from "../../models";
+import { GameAssetDefinition } from '../../models';
 
 export const NAVIGATION_ASSETS: GameAssetDefinition[] = [
-{
+  {
     id: 'navigation.battle_pass',
     category: 'navigation',
     file: 'assets/game/navigation/battle-pass-icon.png',
