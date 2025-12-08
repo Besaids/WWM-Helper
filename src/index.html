@@ -98,7 +98,9 @@
           window.gtag = gtag;
 
           gtag('js', new Date());
-          gtag('config', GA_MEASUREMENT_ID);
+          gtag('config', GA_MEASUREMENT_ID, {
+            cookie_domain: 'besaids.github.io',
+          });
         };
 
         // Check if user has already granted analytics consent
