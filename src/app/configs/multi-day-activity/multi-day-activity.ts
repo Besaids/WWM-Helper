@@ -212,7 +212,7 @@ export const MULTI_DAY_ACTIVITIES: MultiDayActivity[] = [
       },
     ],
   },
-   {
+  {
     id: 'well-of-heaven',
     label: 'Well of Heaven Special Training',
     tabLabel: 'Well of Heaven (+10 Constitution)',
@@ -270,7 +270,8 @@ export const MULTI_DAY_ACTIVITIES: MultiDayActivity[] = [
         body: 'At the end of the run, the result screen will show "Additional Rewards → Slogan Snatches 2 time(s)" when you successfully led two chants. This is what grants +1 Constitution for that day.',
         image: `${ASSETS_BASE}/well-of-heaven-special-training-slogan-snatches-reward.png`,
         alt: 'Completion screen showing Slogan Snatches 2 times under Additional Rewards',
-        caption: 'Confirm that Slogan Snatches shows 2 time(s) to lock in the daily +1 Constitution.',
+        caption:
+          'Confirm that Slogan Snatches shows 2 time(s) to lock in the daily +1 Constitution.',
       },
       {
         id: 'woh-completion',
@@ -278,7 +279,8 @@ export const MULTI_DAY_ACTIVITIES: MultiDayActivity[] = [
         body: 'Each day that you reach 2/2 Slogan Snatches you gain +1 Constitution, up to 10 times total. Days do not need to be consecutive; just repeat the activity on any 10 days, prioritising Solo World runs so you can reliably secure both Slogan Snatches. The Constitution shown here is always the misleading one-time reward that always shows at the end of the event.',
         image: `${ASSETS_BASE}/well-of-heaven-special-training-completion.png`,
         alt: 'Completion screen for Well of Heaven Special Training',
-        caption: 'Repeat on 10 separate days with 2/2 Slogan Snatches for the full +10 Constitution.',
+        caption:
+          'Repeat on 10 separate days with 2/2 Slogan Snatches for the full +10 Constitution.',
       },
     ],
   },

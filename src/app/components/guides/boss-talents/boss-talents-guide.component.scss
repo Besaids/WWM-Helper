@@ -1,0 +1,749 @@
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
+/* ===========================
+   Page Layout
+   =========================== */
+
+/* ===========================
+   Banner
+   =========================== */
+
+.guide-banner {
+  margin-bottom: 1.5rem;
+}
+
+/* ===========================
+   Header
+   =========================== */
+
+.guide-page__header {
+  margin-bottom: 1.5rem;
+}
+
+.guide-page__title {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+  color: $accent-gold-soft;
+}
+
+.guide-page__subtitle {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin-bottom: 0.75rem;
+}
+
+.current-season-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background: rgba(228, 184, 106, 0.1);
+  border: 1px solid rgba(228, 184, 106, 0.3);
+  color: $accent-gold-soft;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* ===========================
+   ToC Navigation
+   =========================== */
+
+.guide-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.guide-toc__chip {
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  background: rgba(0, 255, 255, 0.04);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(0, 255, 255, 0.35);
+    background: rgba(0, 255, 255, 0.07);
+  }
+}
+
+/* ===========================
+   Article Layout
+   =========================== */
+
+.guide-article {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.guide-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: $accent-gold-soft;
+}
+
+.guide-section h3 {
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: $text-primary;
+}
+
+.guide-section p,
+.guide-section li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.guide-section ul {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+/* ===========================
+   Info Box
+   =========================== */
+
+.info-box {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(66, 195, 198, 0.08);
+  border: 1px solid rgba(66, 195, 198, 0.25);
+  margin: 1rem 0;
+
+  i {
+    color: $accent-teal;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: $text-secondary;
+  }
+}
+
+/* ===========================
+   Track Legend
+   =========================== */
+
+.track-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+.track-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.track-offensive {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.track-defensive {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.track-strategic {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+/* ===========================
+   Meta Title Section
+   =========================== */
+
+.meta-title-section {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(228, 184, 106, 0.04);
+  border: 1px solid rgba(228, 184, 106, 0.15);
+}
+
+.meta-title-card {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 0.75rem;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.meta-title-card__image {
+  flex-shrink: 0;
+
+  img {
+    max-width: 16rem;
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.2rem 0.2rem;
+  }
+}
+
+.meta-title-card__content {
+  flex: 1;
+
+  h3 {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem;
+    color: $accent-gold-soft;
+  }
+
+  p {
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+    color: $text-secondary;
+  }
+}
+
+.meta-title-card__hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: $accent-gold-soft;
+
+  i {
+    color: $accent-gold;
+  }
+
+  @media (max-width: 640px) {
+    justify-content: center;
+  }
+}
+
+/* ===========================
+   Bosses Layout
+   =========================== */
+
+.bosses-layout {
+  display: grid;
+  grid-template-columns: 14rem 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================
+   Boss List (Sidebar)
+   =========================== */
+
+.boss-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  @media (max-width: 900px) {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    gap: 0.75rem;
+
+    /* Hide scrollbar but keep functionality */
+    scrollbar-width: thin;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+    }
+  }
+}
+
+.boss-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid $border-subtle;
+  background: rgba(15, 23, 42, 0.6);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+
+  &:hover {
+    border-color: $accent-teal;
+    background: rgba(0, 255, 255, 0.06);
+  }
+
+  &--active {
+    border-color: $accent-teal;
+    background: rgba(0, 255, 255, 0.1);
+  }
+
+  @media (max-width: 900px) {
+    flex-shrink: 0;
+    width: auto;
+    min-width: 10rem;
+  }
+}
+
+.boss-item__avatar {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid $border-medium;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.boss-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.boss-item__name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boss-item__title {
+  font-size: 0.75rem;
+  color: $text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===========================
+   Boss Detail Panel
+   =========================== */
+
+.boss-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.boss-detail__header {
+  display: flex;
+  flex-direction: column; // stack meta and banner
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-subtle;
+  gap: 0.5rem;
+
+  @media (max-width: 768px) {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.boss-detail__meta {
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    font-size: 1.4rem;
+    margin: 0 0 0.5rem;
+    color: $text-primary;
+  }
+}
+
+.boss-detail__title-image {
+  // same-height / flexible-width behaviour you liked
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0.25rem;
+
+  img {
+    height: 3.25rem; // tweak if needed
+    width: auto;
+    max-width: 100%;
+    border-radius: 0.5rem;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.2rem 0.2rem;
+  }
+
+  @media (max-width: 768px) {
+    align-self: center;
+    max-width: 20rem;
+
+    img {
+      height: auto;
+      width: 100%;
+    }
+  }
+}
+
+.boss-detail__hero-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: $accent-gold-soft;
+  margin-bottom: 0.5rem;
+
+  i {
+    color: $accent-gold;
+  }
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.boss-detail__content-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: $text-secondary;
+  margin: 0.5rem 0 0;
+
+  i {
+    color: $text-muted;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  @media (max-width: 768px) {
+    justify-content: center;
+    text-align: left;
+  }
+}
+
+/* ===========================
+   Tracks Grid
+   =========================== */
+
+.tracks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.track-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid $border-subtle;
+
+  &.track-offensive {
+    border-left: 3px solid rgba(239, 68, 68, 0.5);
+  }
+
+  &.track-defensive {
+    border-left: 3px solid rgba(59, 130, 246, 0.5);
+  }
+
+  &.track-strategic {
+    border-left: 3px solid rgba(34, 197, 94, 0.5);
+  }
+}
+
+.track-card__header {
+  margin-bottom: 0.75rem;
+}
+
+.track-card__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-primary;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  .track-offensive & i {
+    color: #fca5a5;
+  }
+
+  .track-defensive & i {
+    color: #93c5fd;
+  }
+
+  .track-strategic & i {
+    color: #86efac;
+  }
+}
+
+/* ===========================
+   Tiers Table
+   =========================== */
+
+.tiers-table {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 0.85rem;
+}
+
+.tiers-table__header {
+  display: grid;
+  grid-template-columns: 3rem 1fr 1fr 4.5rem;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+  color: $text-muted-strong;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.tiers-table__row {
+  display: grid;
+  grid-template-columns: 3rem 1fr 1fr 4.5rem;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid $border-subtle;
+  align-items: start;
+
+  &:first-of-type {
+    border-top: none;
+  }
+
+  &--incomplete {
+    opacity: 0.7;
+
+    .col-requirement {
+      font-style: italic;
+      color: $text-muted;
+    }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+
+    .col-tier {
+      font-weight: 600;
+      color: $accent-teal;
+
+      &::before {
+        content: 'Tier ';
+      }
+    }
+
+    .col-requirement::before {
+      content: 'Requirement: ';
+      font-weight: 600;
+      color: $text-muted-strong;
+    }
+
+    .col-reward::before {
+      content: 'Reward: ';
+      font-weight: 600;
+      color: $text-muted-strong;
+    }
+
+    .col-unlock::before {
+      content: 'Unlock: ';
+      font-weight: 600;
+      color: $text-muted-strong;
+    }
+  }
+}
+
+.col-tier {
+  font-weight: 600;
+  color: $accent-teal;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    text-align: left;
+  }
+}
+
+.col-requirement {
+  color: $text-primary;
+  line-height: 1.5;
+}
+
+.col-reward {
+  color: $accent-gold-soft;
+  line-height: 1.5;
+}
+
+.col-unlock {
+  color: $text-secondary;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    text-align: left;
+  }
+}
+
+.tier-note {
+  display: block;
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+/* ===========================
+   Track Tips
+   =========================== */
+
+.track-tips {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(251, 191, 36, 0.06);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    margin: 0 0 0.5rem;
+    color: #fcd34d;
+
+    i {
+      font-size: 0.9rem;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    font-size: 0.8rem;
+    color: $text-secondary;
+    line-height: 1.5;
+
+    & + li {
+      margin-top: 0.35rem;
+    }
+  }
+}
+
+/* ===========================
+   Sources / Meta Section
+   =========================== */
+
+.guide-section--meta {
+  margin-top: 2rem;
+  opacity: 0.9;
+}
+
+.credits-line {
+  font-size: 0.95rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.guide-note {
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid rgba(255, 255, 255, 0.18);
+  color: $text-secondary;
+}
+
+/* ===========================
+   Scroll to Top Button
+   =========================== */
+
+.scroll-top-btn {
+  position: fixed;
+  right: clamp(1.25rem, 4vw, 2.5rem);
+  bottom: 1.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+
+  &--visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}

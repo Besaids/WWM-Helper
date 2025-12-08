@@ -13,6 +13,7 @@ import {
   ChecklistComponent,
   MultiDayRewardsGuideComponent,
   SettingsIoComponent,
+  BossTalentsGuideComponent,
 } from './components';
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'checklist', component: ChecklistComponent },
   { path: 'map', component: MapComponent },
   { path: 'guides', component: GuidesHubComponent },
+  { path: 'guides/boss-talents', component: BossTalentsGuideComponent },
   { path: 'guides/chess-wins', component: ChessWinsGuideComponent },
   { path: 'guides/multi-day-rewards', component: MultiDayRewardsGuideComponent },
   { path: 'guides/trading', component: TradingGuideComponent },

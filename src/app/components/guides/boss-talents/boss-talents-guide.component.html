@@ -1,0 +1,236 @@
+<main class="guide-page boss-talents-guide">
+  <div class="guide-banner">
+    <img
+      class="guide-banner__img"
+      src="assets/banners/guide-boss-talents-banner.png"
+      alt="Boss Talents banner"
+      loading="lazy"
+    />
+  </div>
+
+  <header class="guide-page__header">
+    <h1 class="guide-page__title">Blade Out – Boss Talents</h1>
+    <p class="guide-page__subtitle">
+      Complete talent challenges in <strong>Sword Trial</strong> and <strong>Hero's Realm</strong>
+      to unlock permanent bonuses against raid bosses and earn exclusive hero titles.
+    </p>
+
+    <div class="current-season-badge">
+      <i class="bi bi-trophy-fill"></i>
+      <span>Current Season: {{ season.name }}</span>
+    </div>
+
+    <nav class="guide-toc">
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('overview')">Overview</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('meta-title')">
+        Meta Title
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('bosses')">
+        Boss Challenges
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('sources')">
+        Sources &amp; Credits
+      </button>
+    </nav>
+  </header>
+
+  <article class="guide-article">
+    <!-- Overview Section -->
+    <section id="overview" class="guide-section">
+      <h2>How Boss Talents Work</h2>
+      <p>
+        Boss Talents are seasonal challenges found under <strong>Talents → Boss</strong> in the game
+        menu. They provide permanent stat bonuses that apply only in
+        <strong>Sword Trial</strong> and <strong>Hero's Realm</strong> content.
+      </p>
+
+      <div class="info-box">
+        <i class="bi bi-info-circle-fill"></i>
+        <p>{{ season.disclaimer }}</p>
+      </div>
+
+      <h3>Track Types</h3>
+      <ul class="track-legend">
+        <li>
+          <span class="track-badge track-offensive">
+            <i class="bi bi-lightning-charge-fill"></i> Offensive
+          </span>
+          – Increases your damage vs the boss, usually during its Exhausted state.
+        </li>
+        <li>
+          <span class="track-badge track-defensive">
+            <i class="bi bi-shield-fill"></i> Defensive
+          </span>
+          – Reduces damage from key boss mechanics or improves survivability.
+        </li>
+        <li>
+          <span class="track-badge track-strategic">
+            <i class="bi bi-bullseye"></i> Strategic
+          </span>
+          – Generic damage/healing bonuses or challenge-mode clear counts.
+        </li>
+      </ul>
+
+      <h3>Unlocking Hero Titles</h3>
+      <p>
+        Each boss has an associated <strong>hero title</strong> that is unlocked by completing all
+        tiers of both the <strong>Offensive</strong> and <strong>Defensive</strong> tracks. The
+        Strategic track is optional for title unlocks but still provides useful bonuses and other
+        rewards.
+      </p>
+    </section>
+
+    <!-- Meta Title Section -->
+    <section id="meta-title" class="guide-section meta-title-section">
+      <h2>Season Meta Title</h2>
+
+      <div class="meta-title-card">
+        <div class="meta-title-card__image">
+          <img [src]="season.metaTitleSrc" [alt]="season.metaTitleName" loading="lazy" />
+        </div>
+        <div class="meta-title-card__content">
+          <h3>{{ season.metaTitleName }}</h3>
+          <p>{{ season.metaTitleNote }}</p>
+          <p class="meta-title-card__hint">
+            <i class="bi bi-star-fill"></i>
+            Complete all 7 boss hero titles to unlock this animated season title.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Boss Challenges Section -->
+    <section id="bosses" class="guide-section bosses-section">
+      <h2>Boss Challenges</h2>
+
+      <div class="bosses-layout">
+        <!-- Left: Boss Selector -->
+        <aside class="boss-list">
+          @for (boss of sortedBosses(); track trackByBossId($index, boss)) {
+            <button
+              type="button"
+              class="boss-item"
+              [class.boss-item--active]="selectedBossId() === boss.id"
+              (click)="selectBoss(boss.id)"
+            >
+              <div class="boss-item__avatar">
+                <img [src]="boss.avatarSrc" [alt]="boss.name + ' avatar'" loading="lazy" />
+              </div>
+              <div class="boss-item__info">
+                <span class="boss-item__name">{{ boss.name }}</span>
+                <span class="boss-item__title">{{ boss.heroTitleName }}</span>
+              </div>
+            </button>
+          }
+        </aside>
+
+        <!-- Right: Boss Detail Panel -->
+        <div class="boss-detail">
+          @if (selectedBoss(); as boss) {
+            <header class="boss-detail__header">
+              <div class="boss-detail__title-image">
+                <img [src]="boss.titleSrc" [alt]="boss.heroTitleName + ' title'" loading="lazy" />
+              </div>
+              <div class="boss-detail__meta">
+                <h3>{{ boss.name }}</h3>
+                <span class="boss-detail__hero-title">
+                  <i class="bi bi-award-fill"></i>
+                  {{ boss.heroTitleName }}
+                </span>
+                <p class="boss-detail__content-summary">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  {{ boss.contentSummary }}
+                </p>
+              </div>
+            </header>
+
+            <!-- Tracks -->
+            <div class="tracks-grid">
+              @for (track of boss.tracks; track trackByTrackType($index, track)) {
+                <article class="track-card" [ngClass]="getTrackClass(track.type)">
+                  <header class="track-card__header">
+                    <span class="track-card__label">
+                      <i class="bi" [ngClass]="getTrackIcon(track.type)"></i>
+                      {{ track.label }}
+                    </span>
+                  </header>
+
+                  <!-- Tiers Table -->
+                  <div class="tiers-table">
+                    <div class="tiers-table__header">
+                      <span class="col-tier">Tier</span>
+                      <span class="col-requirement">Requirement</span>
+                      <span class="col-reward">Reward</span>
+                      <span class="col-unlock">Unlock</span>
+                    </div>
+                    @for (tier of track.tiers; track trackByTier($index, tier)) {
+                      <div
+                        class="tiers-table__row"
+                        [class.tiers-table__row--incomplete]="isRequirementIncomplete(tier)"
+                      >
+                        <span class="col-tier">{{ tier.tier }}</span>
+                        <span class="col-requirement">
+                          {{ getRequirementDisplay(tier, track) }}
+                          @if (tier.notes && !tier.notes.startsWith('TODO')) {
+                            <span class="tier-note">{{ tier.notes }}</span>
+                          }
+                        </span>
+                        <span class="col-reward">{{ tier.reward }}</span>
+                        <span class="col-unlock">{{ formatUnlockLevel(tier.unlockLevel) }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Tips -->
+                  @if (track.tips && track.tips.length > 0) {
+                    <div class="track-tips">
+                      <h4>
+                        <i class="bi bi-lightbulb-fill"></i>
+                        Tips
+                      </h4>
+                      <ul>
+                        @for (tip of track.tips; track $index) {
+                          <li>{{ tip }}</li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Sources Section -->
+    <section id="sources" class="guide-section guide-section--meta">
+      <h2>Sources &amp; Credits</h2>
+      <p>
+        This Boss Talents guide is based on
+        <strong>player research, in-game testing, and community documentation</strong>. Data was
+        compiled thanks to:
+      </p>
+      <p class="credits-line">
+        <strong>{{ season.credits }}</strong> and other community contributors.
+      </p>
+
+      <p class="guide-note">
+        Some tier requirements (especially for Twin Lions and Ghost Master) are still being
+        documented as players progress. Entries marked "Data pending..." will be updated as more
+        information becomes available. As with all seasonal content in Where Winds Meet, challenge
+        requirements may change with future patches.
+      </p>
+    </section>
+  </article>
+
+  <button
+    type="button"
+    class="btn-primary scroll-top-btn"
+    (click)="scrollToTop()"
+    [class.scroll-top-btn--visible]="showScrollTop()"
+    aria-label="Back to top"
+  >
+    <i class="bi bi-chevron-up" aria-hidden="true"></i>
+  </button>
+</main>

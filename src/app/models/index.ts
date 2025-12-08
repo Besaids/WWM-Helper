@@ -8,3 +8,4 @@ export * from './timer-details.model';
 export * from './tooltip.model';
 export * from './game-assets.model';
 export * from './settings-io.model';
+export * from './boss-talents.model';
