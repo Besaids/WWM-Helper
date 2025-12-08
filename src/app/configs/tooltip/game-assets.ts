@@ -915,7 +915,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     height: 200,
     aspect_ratio: '1:1',
   },
-    // INNER WAY ICONS
+  // INNER WAY ICONS
   {
     id: 'inner_way.sword_morph',
     category: 'inner_way',
@@ -925,7 +925,13 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     source: 'Where Winds Meet (in-game capture)',
     description:
       'Bellstrike – Splendor Inner Way that upgrades Nameless Sword’s Charged Skill Vagrant Sword, firing extra sword energy when charged with a Qi shield and allowing you to spend extra Endurance to boost its damage.',
-    game_system_tags: ['inner_way', 'bellstrike_splendor', 'attack', 'martial_arts', 'damage_boost'],
+    game_system_tags: [
+      'inner_way',
+      'bellstrike_splendor',
+      'attack',
+      'martial_arts',
+      'damage_boost',
+    ],
     ui_usage_notes:
       'Use on guides or builds focused on Nameless Sword charged attacks and Bellstrike – Splendor burst setups.',
     width: 520,
@@ -1197,7 +1203,14 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     source: 'Where Winds Meet (in-game capture)',
     description:
       'Bellstrike – Umbra Legendary Inner Way for Strategic Sword that adds a timing-based follow-up attack after Martial, Special, or Charged Skills; consuming Bleed stacks for a large burst when fully stacked.',
-    game_system_tags: ['inner_way', 'bellstrike_umbra', 'attack', 'martial_arts', 'pursuit', 'bleed'],
+    game_system_tags: [
+      'inner_way',
+      'bellstrike_umbra',
+      'attack',
+      'martial_arts',
+      'pursuit',
+      'bleed',
+    ],
     ui_usage_notes:
       'Use when highlighting high-skill Bellstrike combos or Ghostlight Market Unknown Old Book farming routes.',
     width: 520,
@@ -1220,7 +1233,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     height: 800,
     aspect_ratio: '13:20',
   },
-    {
+  {
     id: 'inner_way.flying_gourds',
     category: 'inner_way',
     file: 'assets/game/inner-ways/inner-way-flying-gourds.png',
@@ -1292,7 +1305,7 @@ export const GAME_ASSETS: GameAssetDefinition[] = [
     kind: 'inner-way-icon',
     source: 'Where Winds Meet (in-game capture)',
     description:
-      "General Inner Way focused on assassin Mystic Arts, extending the ambush range of Touch of Death so you can open from farther away.",
+      'General Inner Way focused on assassin Mystic Arts, extending the ambush range of Touch of Death so you can open from farther away.',
     game_system_tags: ['inner_way', 'assassin', 'dps'],
     ui_usage_notes:
       'Use when covering stealth/assassin Mystic Art setups or long-range ambush openers in build guides.',

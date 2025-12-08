@@ -1,7 +1,13 @@
 import { TooltipVariant } from './tooltip.model';
 
 // High-level buckets for your assets
-export type GameAssetCategory = 'currency' | 'items' | 'navigation' | 'sect_paths' | 'system' | 'inner_way';
+export type GameAssetCategory =
+  | 'currency'
+  | 'items'
+  | 'navigation'
+  | 'sect_paths'
+  | 'system'
+  | 'inner_way';
 
 // How the icon is used / drawn in UI
 export type GameAssetKind =
@@ -128,7 +134,6 @@ export type GameSystemTag =
   | 'vitality'
   | 'damage_boost'
   | 'deflect';
-
 
 // Enforce the "7:6", "1:1" style strings
 export type AspectRatioString = `${number}:${number}`;
