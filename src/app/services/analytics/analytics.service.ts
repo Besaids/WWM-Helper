@@ -3,6 +3,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 type GtagArguments = [string, ...unknown[]];
@@ -14,136 +15,74 @@ declare global {
   }
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AnalyticsService {
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
-  private isTracking = false;
-  private consentGranted = false;
 
   private initialized = false;
+  private consentGranted = false;
+  private pageViewSub: Subscription | null = null;
 
   initialize(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      console.info('[Analytics] Not running in browser; skipping');
-      return;
-    }
-
-    if (!environment.production) {
-      console.info('[Analytics] Not production build; skipping');
-      return;
-    }
-
-    if (!environment.googleAnalyticsId) {
-      console.warn('[Analytics] No GA ID configured; skipping');
+    if (!this.isEnabled()) {
+      console.info('[Analytics] Disabled (non-browser, non-prod, or no ID)');
       return;
     }
 
     if (this.initialized) {
-      console.info('[Analytics] Already initialized; skipping');
       return;
     }
-
-    this.loadGoogleAnalytics();
 
     this.initialized = true;
-    console.info('[Analytics] Initialized with ID', environment.googleAnalyticsId);
+    console.info('[Analytics] Initialized (router wiring ready)');
+    // We *only* wire router here; page_view events are gated by consentGranted.
+    this.setupRouterTracking();
   }
 
-  private loadGoogleAnalytics(): void {
-    const id = environment.googleAnalyticsId!;
-
-    // Initialize dataLayer and gtag stub
-    window.dataLayer = window.dataLayer ?? [];
-    window.gtag = function (...args: GtagArguments) {
-      window.dataLayer!.push(args);
-    };
-
-    // Set consent defaults FIRST
-    window.gtag('consent', 'default', {
-      ad_storage: 'denied',
-      analytics_storage: 'denied',
-      functionality_storage: 'denied',
-      personalization_storage: 'denied',
-      security_storage: 'granted',
-      wait_for_update: 500,
-    });
-
-    // Initialize with current timestamp
-    window.gtag('js', new Date());
-
-    // Configure GA4
-    window.gtag('config', id, {
-      send_page_view: false,
-      cookie_domain: 'besaids.github.io',
-    });
-
-    // Load the actual gtag script (will process the dataLayer)
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-    document.head.appendChild(script);
-
-    console.info('[Analytics] Initialized, script loading');
-  }
-
+  /** Called when the user accepts analytics in the cookie banner */
   grantConsent(): void {
-    if (!window.gtag) {
-      console.warn('[Analytics] Cannot grant consent; gtag not loaded yet');
+    if (!this.isEnabled() || !window.gtag) {
+      console.warn('[Analytics] Cannot grant consent; gtag not available');
       return;
     }
 
-    // Update GA consent mode
+    const wasGranted = this.consentGranted;
+    this.consentGranted = true;
+
     window.gtag('consent', 'update', {
       ad_storage: 'granted',
       analytics_storage: 'granted',
     });
 
-    const wasGranted = this.consentGranted;
-    this.consentGranted = true;
+    console.info('[Analytics] Consent granted');
 
-    console.info('[Analytics] Consent granted, tracking enabled');
-
-    // Start tracking only once, the first time consent becomes granted
+    // First time we switch to granted → send an initial page_view
     if (!wasGranted) {
-      const initialPath = location.pathname + location.search + location.hash;
-      this.trackPageView(initialPath);
-      this.trackPageViews(); // will now actually attach the router listener
+      const url = location.pathname + location.search + location.hash;
+      this.trackPageView(url);
     }
   }
 
+  /** Called when the user rejects analytics (or resets to denied) */
   denyConsent(): void {
-    if (!window.gtag) {
+    if (!this.isEnabled() || !window.gtag) {
       return;
     }
+
+    this.consentGranted = false;
 
     window.gtag('consent', 'update', {
       ad_storage: 'denied',
       analytics_storage: 'denied',
     });
 
-    this.consentGranted = false;
-    console.info('[Analytics] Consent denied; tracking disabled');
+    console.info('[Analytics] Consent denied');
   }
 
-  private trackPageViews(): void {
-    if (!this.consentGranted || this.isTracking) {
-      return;
-    }
-
-    this.isTracking = true;
-
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        this.trackPageView(event.urlAfterRedirects);
-      });
-  }
-
+  /** Manual page_view trigger (used internally + can be used for virtual pages) */
   trackPageView(url: string): void {
-    if (!environment.production || !window.gtag || !this.consentGranted) {
+    if (!this.isEnabled() || !window.gtag || !this.consentGranted) {
       return;
     }
 
@@ -154,11 +93,34 @@ export class AnalyticsService {
     });
   }
 
+  /** Generic event tracking helper */
   trackEvent(eventName: string, eventParams?: Record<string, unknown>): void {
-    if (!environment.production || !window.gtag) {
+    if (!this.isEnabled() || !window.gtag || !this.consentGranted) {
       return;
     }
 
     window.gtag('event', eventName, eventParams ?? {});
+  }
+
+  // ---- internals ----
+
+  private setupRouterTracking(): void {
+    if (this.pageViewSub) {
+      return;
+    }
+
+    this.pageViewSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        this.trackPageView(e.urlAfterRedirects);
+      });
+  }
+
+  private isEnabled(): boolean {
+    return (
+      isPlatformBrowser(this.platformId) &&
+      environment.production &&
+      !!environment.googleAnalyticsId
+    );
   }
 }

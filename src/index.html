@@ -64,10 +64,50 @@
       name="twitter:image"
       content="https://besaids.github.io/WWM-Helper/assets/portal/wwm-logo.png"
     />
-
     <!-- Icons -->
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="assets/portal/wwm-logo.png" />
+
+    <!-- Google Analytics (GA4) with Consent Mode v2 -->
+    <script>
+      (function () {
+        var GA_ID = 'G-VTMKXJ3JCQ';
+        var PROD_HOST = 'besaids.github.io';
+
+        // Do not load GA on localhost or non-prod hosts
+        if (location.hostname !== PROD_HOST) {
+          return;
+        }
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          window.dataLayer.push(arguments);
+        }
+        window.gtag = gtag;
+
+        // Default: everything denied except security (GDPR-style)
+        gtag('consent', 'default', {
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+          functionality_storage: 'denied',
+          personalization_storage: 'denied',
+          security_storage: 'granted',
+        });
+
+        // Basic GA bootstrap, but no automatic page_view
+        gtag('js', new Date());
+        gtag('config', GA_ID, {
+          send_page_view: false,
+          cookie_domain: PROD_HOST,
+        });
+
+        // Load GA library
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(script);
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>
