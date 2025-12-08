@@ -1,4 +1,3 @@
-// c:\Users\andcr\WWM-Helper\src\app\components\guides\hub\guides-hub.component.ts
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';

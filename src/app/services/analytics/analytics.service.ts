@@ -78,6 +78,7 @@ export class AnalyticsService {
     // Configure GA4
     window.gtag('config', id, {
       send_page_view: false,
+      cookie_domain: 'besaids.github.io',
     });
 
     // Load the actual gtag script (will process the dataLayer)

@@ -1,0 +1,767 @@
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
+/* ===========================
+   Mystic Skill Upgrade Planner
+   =========================== */
+
+.planner-page {
+  padding: 1.5rem var(--spacing-outer-x, 1.5rem) 2rem;
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+/* Header */
+.planner-header {
+  margin-bottom: 1.5rem;
+
+  &__title {
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__subtitle {
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+}
+
+/* Summary Card */
+.summary-card {
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: $shadow-soft;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__target {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    background: $surface-subtle;
+    padding: 0.25rem 0.75rem;
+    border-radius: $radius-pill;
+  }
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__note {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: $accent-teal;
+    }
+  }
+}
+
+.summary-iron {
+  &__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+.iron-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border: 1px solid $border-subtle;
+
+  &__level {
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+
+  &__count {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $accent-gold;
+  }
+}
+
+.summary-herbs {
+  &__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+.herb-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border: 1px solid $border-subtle;
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  &__name {
+    font-size: 0.85rem;
+  }
+
+  &__count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $accent-gold;
+  }
+}
+
+/* Main Layout */
+.planner-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(400px, 1.5fr);
+  gap: 1.5rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Catalogue */
+.catalogue {
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+
+  &__header {
+    padding: 1rem;
+    border-bottom: 1px solid $border-subtle;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  &__filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.filter-chip {
+  padding: 0.2rem 0.65rem;
+  border-radius: $radius-pill;
+  border: 1px solid $border-medium;
+  background: transparent;
+  color: $text-secondary;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: $accent-teal;
+    color: $text-primary;
+  }
+
+  &--active {
+    border-color: $accent-teal;
+    background: rgba(66, 195, 198, 0.15);
+    color: $accent-teal;
+  }
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: $text-secondary;
+  cursor: pointer;
+
+  input {
+    accent-color: $accent-teal;
+  }
+}
+
+.filter-search {
+  padding: 0.4rem 0.75rem;
+  border-radius: $radius-sm;
+  border: 1px solid $border-medium;
+  background: $bg-soft;
+  color: $text-primary;
+  font-size: 0.85rem;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent-teal;
+  }
+}
+
+/* Skill List */
+.skill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.skill-item {
+  display: grid;
+  grid-template-columns: 48px 1fr auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid $border-subtle;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  &--selected {
+    background: rgba(66, 195, 198, 0.1);
+    border-left: 3px solid $accent-teal;
+  }
+
+  &--disabled {
+    opacity: 0.6;
+  }
+
+  &__icon-wrap {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: $radius-sm;
+  }
+
+  &__icon-placeholder {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $surface-subtle;
+    border-radius: $radius-sm;
+    color: $text-muted;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+
+  &__progress {
+    display: flex;
+    align-items: center;
+  }
+
+  &__include {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: $text-secondary;
+    cursor: pointer;
+
+    input {
+      accent-color: $accent-teal;
+    }
+  }
+
+  &__badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: $radius-pill;
+    background: $surface-subtle;
+    color: $text-muted;
+
+    &--static {
+      background: rgba(100, 100, 100, 0.3);
+    }
+  }
+}
+
+.include-label {
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+/* Tier Indicator (compact for list) */
+.tier-indicator {
+  display: flex;
+  gap: 2px;
+}
+
+.tier-block {
+  width: 16px;
+  height: 8px;
+  background: $surface-subtle;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+
+  &--filled {
+    background: $accent-gold;
+  }
+
+  &--current {
+    background: $surface-subtle;
+    border: 1px solid $accent-gold;
+  }
+}
+
+.rank-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: $accent-gold;
+  transition: width 0.2s ease;
+}
+
+/* Detail Panel */
+.detail-panel {
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  padding: 1.25rem 1.25rem 0.25rem; // less bottom padding
+  box-shadow: $shadow-soft;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-subtle;
+
+  &__icon {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    border-radius: $radius-sm;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+
+  &__meta {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-header {
+    gap: 0.75rem;
+
+    &__icon {
+      width: 64px;
+      height: 64px;
+    }
+
+    &__title {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+/* Progress Inputs */
+.progress-inputs,
+.target-inputs {
+  margin-bottom: 1.25rem;
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $accent-gold-soft;
+  }
+
+  &__row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+.progress-inputs__scope {
+  color: $text-secondary;
+  font-size: 0.85rem;
+
+  &__scope {
+    margin: 0 0 0.75rem;
+    opacity: 0.75;
+  }
+  strong {
+    color: $text-primary;
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__label {
+    font-size: 0.8rem;
+    color: $text-secondary;
+  }
+
+  &__select {
+    padding: 0.4rem 0.75rem;
+    border-radius: $radius-sm;
+    border: 1px solid $border-medium;
+    background: $bg-soft;
+    color: $text-primary;
+    font-size: 0.9rem;
+    min-width: 80px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: $accent-teal;
+    }
+  }
+}
+
+/* Progress Visual */
+.progress-visual {
+  margin-top: 1rem;
+
+  &__tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.progress-tier {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border: 1px solid transparent;
+
+  &--current {
+    border-color: $accent-gold;
+    background: rgba(228, 184, 106, 0.08);
+  }
+
+  &--filled {
+    background: rgba(228, 184, 106, 0.15);
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: $text-secondary;
+    min-width: 50px;
+  }
+
+  &__ranks {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+  }
+}
+
+.progress-rank {
+  flex: 1;
+  height: 8px;
+  background: $surface-card;
+  border-radius: 2px;
+  transition: background 0.15s ease;
+
+  &--filled {
+    background: $accent-gold;
+  }
+
+  &--current {
+    background: $accent-teal;
+    box-shadow: $glow-teal-soft;
+  }
+}
+
+/* Steps Section */
+.steps-section {
+  margin-bottom: 1.25rem;
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $accent-gold-soft;
+  }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+.steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.step-item {
+  padding: 0.65rem 0.75rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border-left: 3px solid $accent-teal;
+
+  &__label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  &__materials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+}
+
+.material-tag {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: $radius-pill;
+
+  &--iron {
+    background: rgba(100, 100, 100, 0.3);
+    color: $text-secondary;
+  }
+
+  &--herb {
+    background: rgba(66, 195, 198, 0.15);
+    color: $accent-teal;
+  }
+}
+
+/* Skill Totals */
+.skill-totals {
+  padding-top: 1rem;
+  border-top: 1px solid $border-subtle;
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: $accent-gold-soft;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 500px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.totals-group {
+  h4 {
+    font-size: 0.8rem;
+    color: $text-muted;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+}
+
+.totals-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.totals-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  font-size: 0.85rem;
+
+  &__label {
+    color: $text-secondary;
+  }
+
+  &__value {
+    font-weight: 600;
+    color: $accent-gold;
+  }
+
+  &--empty {
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+/* Not Upgradeable / No Selection */
+.not-upgradeable,
+.no-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: $text-muted;
+
+  i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  &__hint {
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
+}
+
+/* Footer */
+.planner-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Tooltip helper */
+.has-tooltip {
+  cursor: help;
+  border-bottom: 1px dashed $accent-teal;
+}
+
+.skill-totals {
+  &__hint {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+}
+
+.totals-item__note {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}

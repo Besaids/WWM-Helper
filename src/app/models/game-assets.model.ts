@@ -7,7 +7,9 @@ export type GameAssetCategory =
   | 'navigation'
   | 'sect_paths'
   | 'system'
-  | 'inner_way';
+  | 'inner_way'
+  | 'mystic_skill'
+  | 'gathering';
 
 // How the icon is used / drawn in UI
 export type GameAssetKind =
@@ -17,10 +19,22 @@ export type GameAssetKind =
   | 'menu-nav-icon'
   | 'path-icon'
   | 'system-icon'
-  | 'inner-way-icon';
+  | 'inner-way-icon'
+  | 'mystic-skill-icon'
+  | 'material-icon'
+  | 'gathering-node-icon';
 
 // Tags used for filtering / grouping across systems
 export type GameSystemTag =
+  | 'gathering'
+  | 'shield'
+  | 'slow'
+  | 'dash'
+  | 'flight'
+  | 'dive'
+  | 'wall_run'
+  | 'lightness_skill'
+  | 'aoe'
   | 'currency'
   | 'coop'
   | 'social'
@@ -133,7 +147,9 @@ export type GameSystemTag =
   | 'stonesplit_might'
   | 'vitality'
   | 'damage_boost'
-  | 'deflect';
+  | 'deflect'
+  | 'mystic_skill'
+  | 'breakthrough';
 
 // Enforce the "7:6", "1:1" style strings
 export type AspectRatioString = `${number}:${number}`;

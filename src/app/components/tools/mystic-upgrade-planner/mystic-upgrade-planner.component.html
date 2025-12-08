@@ -1,0 +1,462 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<main id="top" class="planner-page">
+  <header class="planner-header">
+    <h1 class="planner-header__title">Mystic Skill Upgrade Planner</h1>
+    <p class="planner-header__subtitle">
+      Calculate <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span> and
+      breakthrough herb costs for upgrading your mystic skills from their current tier to a target.
+    </p>
+  </header>
+
+  <!-- Global Summary Card -->
+  <section class="summary-card">
+    <header class="summary-card__header">
+      <h2 class="summary-card__title">Total Materials Needed</h2>
+      <span class="summary-card__target">
+        Totals to reach Tier {{ targetTier() }}, Rank {{ targetRank() }} for all included skills.
+      </span>
+    </header>
+
+    <div class="summary-card__body">
+      <!-- Ebon Iron by level -->
+      <div class="summary-iron">
+        <h3 class="summary-iron__label">
+          <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span>
+        </h3>
+        <div class="summary-iron__grid">
+          @for (lvl of ironLevels; track lvl) {
+            <div class="iron-item">
+              <span class="iron-item__level">Lv.{{ lvl }}</span>
+              <span class="iron-item__count">
+                {{ globalSummary().ebonIron[lvl] }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Herbs by type -->
+      <div class="summary-herbs">
+        <h3 class="summary-herbs__label">Breakthrough Materials</h3>
+        @if (herbEntries().length === 0) {
+          <p class="summary-herbs__empty">No herb costs (all skills at or above target).</p>
+        } @else {
+          <div class="summary-herbs__grid">
+            @for (entry of herbEntries(); track entry.itemId) {
+              <div class="herb-item">
+                @if (entry.iconUrl) {
+                  <img
+                    class="herb-item__icon"
+                    [src]="entry.iconUrl"
+                    [alt]="entry.label"
+                    loading="lazy"
+                  />
+                }
+                <span class="herb-item__name has-tooltip" [appTooltip]="entry.itemId">
+                  {{ entry.label }}
+                </span>
+                <span class="herb-item__count">× {{ entry.count }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <p class="summary-card__note">
+      <i class="bi bi-info-circle"></i>
+      Higher-level Ebon Iron can substitute lower levels in-game. These are nominal requirements.
+    </p>
+  </section>
+
+  <!-- Main content: catalogue + detail -->
+  <div class="planner-layout">
+    <!-- Catalogue (master list) -->
+    <section class="catalogue">
+      <header class="catalogue__header">
+        <h2 class="catalogue__title">Mystic Skills</h2>
+
+        <!-- Filters -->
+        <div class="catalogue__filters">
+          <div class="filter-chips">
+            <button
+              type="button"
+              class="filter-chip"
+              [class.filter-chip--active]="categoryFilter() === 'all'"
+              (click)="categoryFilter.set('all')"
+            >
+              All
+            </button>
+            <button
+              type="button"
+              class="filter-chip"
+              [class.filter-chip--active]="categoryFilter() === 'offensive'"
+              (click)="categoryFilter.set('offensive')"
+            >
+              Offensive
+            </button>
+            <button
+              type="button"
+              class="filter-chip"
+              [class.filter-chip--active]="categoryFilter() === 'general'"
+              (click)="categoryFilter.set('general')"
+            >
+              General
+            </button>
+            <button
+              type="button"
+              class="filter-chip"
+              [class.filter-chip--active]="categoryFilter() === 'movement'"
+              (click)="categoryFilter.set('movement')"
+            >
+              Movement
+            </button>
+          </div>
+
+          <label class="filter-toggle">
+            <input
+              type="checkbox"
+              [checked]="upgradeableOnly()"
+              (change)="upgradeableOnly.set(!upgradeableOnly())"
+            />
+            <span>Upgradeable only</span>
+          </label>
+
+          <input
+            type="text"
+            class="filter-search"
+            placeholder="Search skills..."
+            [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)"
+          />
+        </div>
+      </header>
+
+      <ul class="skill-list">
+        @for (skill of filteredSkills(); track skill.config.id) {
+          @let progress = progressMap()[skill.config.id];
+          <li
+            class="skill-item"
+            [class.skill-item--selected]="isSelected(skill.config.id)"
+            [class.skill-item--disabled]="!skill.config.upgradeable"
+            (click)="selectSkill(skill.config.id)"
+          >
+            <div class="skill-item__icon-wrap">
+              @if (skill.iconUrl) {
+                <img
+                  class="skill-item__icon has-tooltip"
+                  [src]="skill.iconUrl"
+                  [alt]="skill.label"
+                  loading="lazy"
+                  [appTooltip]="skill.config.id"
+                />
+              } @else {
+                <div class="skill-item__icon-placeholder">
+                  <i class="bi bi-question-circle"></i>
+                </div>
+              }
+            </div>
+
+            <div class="skill-item__info">
+              <span class="skill-item__name">{{ skill.label }}</span>
+              <span class="skill-item__meta">
+                {{ skill.categoryLabel }} · {{ skill.roleLabel }}
+              </span>
+            </div>
+
+            <!-- Progress indicator -->
+            <div class="skill-item__progress">
+              <div class="tier-indicator">
+                @for (t of tiers(); track t) {
+                  <div
+                    class="tier-block"
+                    [class.tier-block--filled]="t < progress.tier"
+                    [class.tier-block--current]="t === progress.tier"
+                  >
+                    @if (t === progress.tier) {
+                      <div
+                        class="rank-bar"
+                        [style.width.%]="((progress.rank + 1) / 10) * 100"
+                      ></div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Include checkbox -->
+            @if (skill.config.upgradeable) {
+              <label class="skill-item__include" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="progress.included"
+                  (change)="toggleIncluded(skill.config.id, $event)"
+                />
+                <span class="include-label">Include</span>
+              </label>
+            } @else {
+              <span class="skill-item__badge skill-item__badge--static">Static</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Detail panel -->
+    <section class="detail-panel">
+      @if (selectedSkill(); as skill) {
+        <header class="detail-header">
+          @if (skill.iconUrl) {
+            <img
+              class="detail-header__icon has-tooltip"
+              [src]="skill.iconUrl"
+              [alt]="skill.label"
+              loading="lazy"
+              [appTooltip]="skill.config.id"
+            />
+          }
+          <div class="detail-header__info">
+            <h2 class="detail-header__title">{{ skill.label }}</h2>
+            <p class="detail-header__meta">
+              {{ skill.categoryLabel }} · {{ skill.roleLabel }}
+              @if (skill.herbLabel) {
+                ·
+                <span class="has-tooltip" [appTooltip]="skill.config.materialItemId!">
+                  {{ skill.herbLabel }}
+                </span>
+              }
+            </p>
+          </div>
+        </header>
+
+        @if (skill.config.upgradeable) {
+          @let progress = selectedProgress()!;
+          @let plan = selectedPlan()!;
+
+          <!-- Current Progress Inputs -->
+          <div class="progress-inputs">
+            <h3 class="progress-inputs__title">Current Progress</h3>
+            <p class="progress-inputs__scope">
+              From Tier <strong>{{ progress.tier }}</strong
+              >, Rank <strong>{{ progress.rank }}</strong> to Tier
+              <strong>{{ targetTier() }}</strong
+              >, Rank <strong>{{ targetRank() }}</strong
+              >.
+            </p>
+            <div class="progress-inputs__row">
+              <label class="input-group">
+                <span class="input-group__label">Tier</span>
+                <select
+                  class="input-group__select"
+                  [ngModel]="progress.tier"
+                  (ngModelChange)="updateCurrentTier(skill.config.id, $event)"
+                >
+                  @for (t of tiers(); track t) {
+                    <option [value]="t">{{ t }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="input-group">
+                <span class="input-group__label">Rank</span>
+                <select
+                  class="input-group__select"
+                  [ngModel]="progress.rank"
+                  (ngModelChange)="updateCurrentRank(skill.config.id, $event)"
+                >
+                  @for (r of ranks; track r) {
+                    <option [value]="r">{{ r }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+
+            <!-- Visual progress -->
+            <div class="progress-visual">
+              <div class="progress-visual__tiers">
+                @for (t of tiers(); track t) {
+                  <div
+                    class="progress-tier"
+                    [class.progress-tier--filled]="t < progress.tier"
+                    [class.progress-tier--current]="t === progress.tier"
+                  >
+                    <span class="progress-tier__label">Tier {{ t }}</span>
+                    <div class="progress-tier__ranks">
+                      @for (r of ranks; track r) {
+                        <div
+                          class="progress-rank"
+                          [class.progress-rank--filled]="
+                            t < progress.tier || (t === progress.tier && r <= progress.rank)
+                          "
+                          [class.progress-rank--current]="
+                            t === progress.tier && r === progress.rank
+                          "
+                        ></div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Target -->
+          <div class="target-inputs">
+            <h3 class="target-inputs__title">Target</h3>
+            <div class="target-inputs__row">
+              <label class="input-group">
+                <span class="input-group__label">Tier</span>
+                <select
+                  class="input-group__select"
+                  [ngModel]="targetTier()"
+                  (ngModelChange)="setTargetTier($event)"
+                >
+                  @for (t of tiers(); track t) {
+                    <option [value]="t">{{ t }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="input-group">
+                <span class="input-group__label">Rank</span>
+                <select
+                  class="input-group__select"
+                  [ngModel]="targetRank()"
+                  (ngModelChange)="setTargetRank($event)"
+                >
+                  @for (r of ranks; track r) {
+                    <option [value]="r">{{ r }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <!-- Steps breakdown -->
+          <div class="steps-section">
+            <h3 class="steps-section__title">Upgrade Steps</h3>
+
+            @if (plan.steps.length === 0) {
+              <p class="steps-section__empty">Already at or above target.</p>
+            } @else {
+              <ol class="steps-list">
+                @for (step of plan.steps; track $index) {
+                  <li class="step-item">
+                    <span class="step-item__label">{{ step.label }}</span>
+                    <div class="step-item__materials">
+                      @for (lvl of ironLevels; track lvl) {
+                        @if (step.materials.ebonIron[lvl] > 0) {
+                          <span class="material-tag material-tag--iron">
+                            Ebon Iron Lv.{{ lvl }}:
+                            <strong>{{ step.materials.ebonIron[lvl] }}</strong>
+                          </span>
+                        }
+                      }
+
+                      @if (step.materials.herbs > 0 && skill.herbLabel) {
+                        <span
+                          class="material-tag material-tag--herb has-tooltip"
+                          [appTooltip]="skill.config.materialItemId!"
+                        >
+                          {{ skill.herbLabel }}: <strong>{{ step.materials.herbs }}</strong>
+                        </span>
+                      }
+                    </div>
+                  </li>
+                }
+              </ol>
+            }
+          </div>
+
+          <!-- Per-skill totals -->
+          <div class="skill-totals">
+            <h3 class="skill-totals__title">Skill Totals</h3>
+            <p class="totals-item__note">
+              Breakdown by
+              <span class="has-tooltip" [appTooltip]="'items.ebon_iron'">Ebon Iron</span> level for
+              <strong>this skill only</strong>, from your current Tier/Rank to the target. Each line
+              shows how many materials you’d spend using that level (or higher).
+            </p>
+            <div class="skill-totals__grid">
+              <div class="totals-group">
+                <h4>Ebon Iron</h4>
+                <div class="totals-items">
+                  <div class="totals-items">
+                    @for (lvl of ironLevels; track lvl) {
+                      @if (plan.total.ebonIron[lvl] > 0) {
+                        <span class="totals-item">
+                          <span class="totals-item__label">Lv.{{ lvl }} (or higher)</span>
+                          <span class="totals-item__value">{{ plan.total.ebonIron[lvl] }}</span>
+                        </span>
+                      }
+                    }
+                  </div>
+                  @if (
+                    plan.total.ebonIron[1] === 0 &&
+                    plan.total.ebonIron[2] === 0 &&
+                    plan.total.ebonIron[3] === 0 &&
+                    plan.total.ebonIron[4] === 0
+                  ) {
+                    <span class="totals-item--empty">None</span>
+                  } @else {
+                    <p class="totals-item__note">
+                      Total material across any Ebon Iron level:
+                      <strong>{{
+                        plan.total.ebonIron[1] +
+                          plan.total.ebonIron[2] +
+                          plan.total.ebonIron[3] +
+                          plan.total.ebonIron[4]
+                      }}</strong>
+                    </p>
+                  }
+                </div>
+              </div>
+
+              @if (skill.herbLabel) {
+                <div class="totals-group">
+                  <h4>Breakthrough Material</h4>
+                  <div class="totals-items">
+                    <span
+                      class="totals-item has-tooltip"
+                      [appTooltip]="skill.config.materialItemId!"
+                    >
+                      <span class="totals-item__label">{{ skill.herbLabel }}</span>
+                      <span class="totals-item__value">{{ plan.total.herbs }}</span>
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        } @else {
+          <!-- Non-upgradeable skill -->
+          <div class="not-upgradeable">
+            <i class="bi bi-slash-circle"></i>
+            <p>
+              <strong>{{ skill.label }}</strong> does not use plant-based upgrades and is not part
+              of this calculator.
+            </p>
+            <p class="not-upgradeable__hint">
+              This skill may upgrade via other means (talents, quests, or other systems).
+            </p>
+          </div>
+        }
+      } @else {
+        <!-- No selection -->
+        <div class="no-selection">
+          <i class="bi bi-hand-index"></i>
+          <p>Select a mystic skill from the list to view its upgrade details.</p>
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Actions -->
+  <footer class="planner-footer">
+    <button type="button" class="btn-secondary" (click)="resetProgress()">
+      <i class="bi bi-arrow-counterclockwise"></i>
+      Reset All Progress
+    </button>
+  </footer>
+</main>
