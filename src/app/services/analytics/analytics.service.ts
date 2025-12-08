@@ -107,11 +107,10 @@ export class AnalyticsService {
     console.info('[Analytics] Consent granted, tracking enabled');
 
     // Start tracking only once, the first time consent becomes granted
-    if (!wasGranted && !this.isTracking) {
+    if (!wasGranted) {
       const initialPath = location.pathname + location.search + location.hash;
       this.trackPageView(initialPath);
-      this.trackPageViews();
-      this.isTracking = true;
+      this.trackPageViews(); // will now actually attach the router listener
     }
   }
 
@@ -133,6 +132,7 @@ export class AnalyticsService {
     if (!this.consentGranted || this.isTracking) {
       return;
     }
+
     this.isTracking = true;
 
     this.router.events
