@@ -7,7 +7,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import {
   getDefaultTooltips,
   ITEMS_ASSETS,
@@ -21,6 +20,7 @@ import {
 import { TooltipDirective } from '../../../directives';
 import { MysticUpgradePlannerService, TooltipRegistryService } from '../../../services';
 import { GlobalMaterialSummary, SkillUpgradePlan } from '../../../models';
+import { FormsModule } from '@angular/forms';
 
 // Human-readable labels for materials
 const HERB_LABELS: Record<MysticBreakthroughItemId, string> = {

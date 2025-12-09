@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TooltipRegistryService } from '../../../services/tooltip/tooltip-registry.service';
@@ -16,8 +16,24 @@ import { getDefaultTooltips } from '../../../configs/tooltip/tooltip-defaults.co
 export class MysticSkillMaterialsGuideComponent {
   private readonly tooltipRegistry = inject(TooltipRegistryService);
 
+  // Scroll-to-top visibility
+  readonly showScrollTop = signal(false);
+
   constructor() {
     this.tooltipRegistry.registerAll(getDefaultTooltips());
+  }
+
+  // ---------------------------------------------------------------------------
+  // Scroll Handling
+  // ---------------------------------------------------------------------------
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.showScrollTop.set(window.scrollY > 400);
   }
 
   scrollTo(sectionId: string): void {

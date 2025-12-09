@@ -1,0 +1,532 @@
+<main id="top" class="guide-page mystic-metrics-guide">
+  <!-- Banner -->
+  <div class="guide-banner">
+    <img
+      class="guide-banner__img"
+      src="assets/banners/guide-mystic-metrics-banner.png"
+      alt="Guide Mystic Metrics Banner"
+      loading="lazy"
+    />
+  </div>
+
+  <!-- Header -->
+  <header class="guide-page__header">
+    <h1 class="guide-page__title">Mystic Skill Damage Metrics</h1>
+    <p class="guide-page__subtitle">
+      Interactive charts comparing
+      <span class="has-tooltip" [appTooltip]="'mystic-metrics.dps'">DPS</span>,
+      <span class="has-tooltip" [appTooltip]="'mystic-metrics.dpv'">Damage per Vitality</span>, and
+      <span class="has-tooltip" [appTooltip]="'mystic-metrics.score'">Mystic Score</span>
+      across all tested mystic skills and combos.
+    </p>
+
+    <nav class="guide-toc">
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('selection')">
+        Selection
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('burst-chart')">
+        Burst / Time
+      </button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('efficiency-chart')">
+        Efficiency
+      </button>
+      @if (comparisonData().length > 0) {
+        <button type="button" class="guide-toc__chip" (click)="scrollTo('comparison-chart')">
+          T2→T3 Comparison
+        </button>
+      }
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('pinned')">Pinned</button>
+      <button type="button" class="guide-toc__chip" (click)="scrollTo('sources')">Sources</button>
+    </nav>
+  </header>
+
+  <article class="guide-article">
+    <!-- Selection Panel -->
+    <section id="selection" class="guide-section selection-section">
+      <h2>Filter & Select Mystics</h2>
+
+      <!-- Tier Filter -->
+      <div class="filter-row">
+        <span class="filter-label">Tiers:</span>
+        <div class="tier-chips">
+          @for (tier of availableTiers(); track tier) {
+            <button
+              type="button"
+              class="tier-chip"
+              [class.tier-chip--active]="isTierActive(tier)"
+              [class]="getTierColorClass(tier)"
+              (click)="toggleTier(tier)"
+            >
+              T{{ tier }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Kind Filter -->
+      <div class="filter-row">
+        <span class="filter-label">Kind:</span>
+        <div class="kind-chips">
+          <button
+            type="button"
+            class="kind-chip"
+            [class.kind-chip--active]="kindFilter() === 'all'"
+            (click)="kindFilter.set('all')"
+          >
+            All
+          </button>
+          <button
+            type="button"
+            class="kind-chip"
+            [class.kind-chip--active]="kindFilter() === 'single'"
+            (click)="kindFilter.set('single')"
+          >
+            Single
+          </button>
+          <button
+            type="button"
+            class="kind-chip"
+            [class.kind-chip--active]="kindFilter() === 'combo'"
+            (click)="kindFilter.set('combo')"
+          >
+            Combo
+          </button>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="filter-row">
+        <span class="filter-label">Search:</span>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Filter by name..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+        />
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="preset-row">
+        <span class="filter-label">Presets:</span>
+        <div class="preset-buttons">
+          <button type="button" class="preset-btn" (click)="selectRecommendedT3()">
+            <i class="bi bi-star-fill"></i> Top 5 T3
+          </button>
+          <button type="button" class="preset-btn" (click)="selectAllSingle()">All Single</button>
+          <button type="button" class="preset-btn" (click)="selectAllCombo()">All Combos</button>
+          <button type="button" class="preset-btn" (click)="selectAll()">Select All</button>
+          <button type="button" class="preset-btn preset-btn--danger" (click)="clearAll()">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Usage List -->
+      <div class="usage-list-container">
+        <div class="usage-list-header">
+          <span class="col-check"></span>
+          <button type="button" class="col-name col-sortable" (click)="toggleSort('label')">
+            Skill / Combo
+            @if (sortBy() === 'label') {
+              <i
+                class="bi"
+                [class.bi-chevron-up]="sortDir() === 'asc'"
+                [class.bi-chevron-down]="sortDir() === 'desc'"
+              ></i>
+            }
+          </button>
+          <button type="button" class="col-kind col-sortable" (click)="toggleSort('kind')">
+            Kind
+            @if (sortBy() === 'kind') {
+              <i
+                class="bi"
+                [class.bi-chevron-up]="sortDir() === 'asc'"
+                [class.bi-chevron-down]="sortDir() === 'desc'"
+              ></i>
+            }
+          </button>
+          <button
+            type="button"
+            class="col-stat col-sortable"
+            [appTooltip]="'mystic-metrics.dps'"
+            (click)="toggleSort('dps')"
+          >
+            DPS
+            @if (sortBy() === 'dps') {
+              <i
+                class="bi"
+                [class.bi-chevron-up]="sortDir() === 'asc'"
+                [class.bi-chevron-down]="sortDir() === 'desc'"
+              ></i>
+            }
+          </button>
+          <button
+            type="button"
+            class="col-stat col-sortable"
+            [appTooltip]="'mystic-metrics.dpv'"
+            (click)="toggleSort('dpv')"
+          >
+            DpV
+            @if (sortBy() === 'dpv') {
+              <i
+                class="bi"
+                [class.bi-chevron-up]="sortDir() === 'asc'"
+                [class.bi-chevron-down]="sortDir() === 'desc'"
+              ></i>
+            }
+          </button>
+          <button
+            type="button"
+            class="col-stat col-sortable"
+            [appTooltip]="'mystic-metrics.score'"
+            (click)="toggleSort('score')"
+          >
+            Score
+            @if (sortBy() === 'score') {
+              <i
+                class="bi"
+                [class.bi-chevron-up]="sortDir() === 'asc'"
+                [class.bi-chevron-down]="sortDir() === 'desc'"
+              ></i>
+            }
+          </button>
+        </div>
+        <div class="usage-list">
+          @for (usage of sortedUsages(); track usage.id) {
+            @let stats = getUsageT3Stats(usage);
+            <button
+              type="button"
+              class="usage-row"
+              [class.usage-row--selected]="isUsageSelected(usage.id)"
+              (click)="toggleUsage(usage.id)"
+            >
+              <span class="col-check">
+                <i
+                  class="bi"
+                  [class.bi-check-square-fill]="isUsageSelected(usage.id)"
+                  [class.bi-square]="!isUsageSelected(usage.id)"
+                ></i>
+              </span>
+              <span class="col-name">
+                @for (tooltipId of usage.tooltipIds; track tooltipId; let i = $index) {
+                  @let asset = getAssetForTooltipId(tooltipId);
+                  @if (asset) {
+                    <div class="skill-icon-wrap">
+                      <img
+                        class="skill-icon"
+                        [src]="asset.file"
+                        [alt]="asset.label"
+                        [appTooltip]="tooltipId"
+                      />
+                    </div>
+                  }
+                }
+                <span class="usage-label">{{ usage.label }}</span>
+              </span>
+              <span class="col-kind">
+                <span class="kind-badge" [class.kind-badge--combo]="usage.kind === 'combo'">
+                  {{ usage.kind }}
+                </span>
+              </span>
+              @if (stats) {
+                <span class="col-stat">{{ stats.dps }}</span>
+                <span class="col-stat">{{ stats.dpv }}</span>
+                <span class="col-stat">{{ stats.score }}</span>
+              } @else {
+                <span class="col-stat">—</span>
+                <span class="col-stat">—</span>
+                <span class="col-stat">—</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Chart Controls Row -->
+    <div class="chart-controls">
+      <div class="control-group">
+        <span class="control-label">Highlight:</span>
+        <select class="control-select" [ngModel]="topN()" (ngModelChange)="topN.set($event)">
+          <option [ngValue]="5">Top 5</option>
+          <option [ngValue]="10">Top 10</option>
+          <option [ngValue]="'all'">All</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Mobile Tabs -->
+    <div class="mobile-tabs">
+      <button
+        type="button"
+        class="mobile-tab"
+        [class.mobile-tab--active]="mobileActiveTab() === 'burst'"
+        (click)="mobileActiveTab.set('burst')"
+      >
+        <i class="bi bi-lightning-charge"></i> Burst / Time
+      </button>
+      <button
+        type="button"
+        class="mobile-tab"
+        [class.mobile-tab--active]="mobileActiveTab() === 'efficiency'"
+        (click)="mobileActiveTab.set('efficiency')"
+      >
+        <i class="bi bi-droplet-half"></i> Efficiency
+      </button>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      <!-- Burst / Time Chart -->
+      <section
+        id="burst-chart"
+        class="chart-card"
+        [class.chart-card--hidden-mobile]="mobileActiveTab() !== 'burst'"
+      >
+        <div class="chart-card__header">
+          <h3><i class="bi bi-lightning-charge-fill"></i> Burst / Time Analysis</h3>
+          <div class="chart-card__controls">
+            <span class="control-label">Y-Axis:</span>
+            <select
+              class="control-select"
+              [ngModel]="burstYAxis()"
+              (ngModelChange)="burstYAxis.set($event)"
+            >
+              <option value="dps">DPS</option>
+              <option value="damage">Total Damage</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          <div
+            echarts
+            [options]="burstChartOption()"
+            class="chart-container"
+            (chartClick)="onChartClick($event)"
+          ></div>
+        </div>
+        <div class="chart-card__legend">
+          <p>
+            X-axis: Animation time. Y-axis:
+            {{ burstYAxis() === 'dps' ? 'DPS (damage per second)' : 'Total Damage' }}. Use the
+            slider under the chart to zoom into a smaller time window.
+            <strong>Click any point to pin/unpin it.</strong>
+          </p>
+        </div>
+      </section>
+
+      <!-- Efficiency / Vitality Chart -->
+      <section
+        id="efficiency-chart"
+        class="chart-card"
+        [class.chart-card--hidden-mobile]="mobileActiveTab() !== 'efficiency'"
+      >
+        <div class="chart-card__header">
+          <h3><i class="bi bi-droplet-half"></i> Efficiency / Vitality Analysis</h3>
+          <div class="chart-card__controls">
+            <span class="control-label">Highlight by:</span>
+            <select
+              class="control-select"
+              [ngModel]="efficiencyHighlight()"
+              (ngModelChange)="efficiencyHighlight.set($event)"
+            >
+              <option value="dpv">Damage per Vitality</option>
+              <option value="score">Mystic Score</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          <div
+            echarts
+            [options]="efficiencyChartOption()"
+            class="chart-container"
+            (chartClick)="onChartClick($event)"
+          ></div>
+        </div>
+        <div class="chart-card__legend">
+          <p>
+            X-axis: Vitality cost. Y-axis: Damage per Vitality. Bubble size: Total damage. Use the
+            slider under the chart to zoom into a smaller vitality window.
+            <strong>Click any point to pin/unpin it.</strong>
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- T2→T3 Comparison Chart -->
+    @if (comparisonData().length > 0) {
+      <section id="comparison-chart" class="guide-section comparison-section">
+        <div class="comparison-header">
+          <h2>T2 → T3 Comparison</h2>
+          <div class="comparison-controls">
+            <div class="control-group">
+              <span class="control-label">Compare by:</span>
+              <select
+                class="control-select"
+                [ngModel]="comparisonMetric()"
+                (ngModelChange)="comparisonMetric.set($event)"
+              >
+                <option value="dpv">Damage per Vitality</option>
+                <option value="dps">DPS</option>
+                <option value="damage">Total Damage</option>
+                <option value="score">Mystic Score</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <span class="control-label">Mode:</span>
+              <select
+                class="control-select"
+                [ngModel]="comparisonMode()"
+                (ngModelChange)="comparisonMode.set($event)"
+              >
+                <option value="absolute">Absolute</option>
+                <option value="percent">Percent Gain</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <p class="section-desc">
+          @if (comparisonMode() === 'absolute') {
+            Side-by-side T2 vs T3
+            {{
+              comparisonMetric() === 'dpv'
+                ? 'damage per vitality'
+                : comparisonMetric() === 'dps'
+                  ? 'DPS'
+                  : comparisonMetric() === 'damage'
+                    ? 'total damage'
+                    : 'mystic score'
+            }}.
+          } @else {
+            Percent improvement from T2 to T3 for
+            {{
+              comparisonMetric() === 'dpv'
+                ? 'damage per vitality'
+                : comparisonMetric() === 'dps'
+                  ? 'DPS'
+                  : comparisonMetric() === 'damage'
+                    ? 'total damage'
+                    : 'mystic score'
+            }}.
+          }
+          Only usages with both tiers selected are shown.
+        </p>
+        <div class="comparison-chart-container">
+          <div echarts [options]="comparisonChartOption()" class="comparison-chart"></div>
+        </div>
+      </section>
+    }
+
+    <!-- Pinned Panel -->
+    <section id="pinned" class="guide-section pinned-section">
+      <div class="pinned-header">
+        <h2><i class="bi bi-pin-angle-fill"></i> Pinned Mystics</h2>
+        @if (pinnedDataPoints().length > 0) {
+          <button type="button" class="unpin-all-btn" (click)="unpinAll()">
+            <i class="bi bi-x-lg"></i> Clear All
+          </button>
+        }
+      </div>
+
+      @if (pinnedDataPoints().length === 0) {
+        <div class="pinned-empty">
+          <i class="bi bi-pin"></i>
+          <p>Click any point in the charts above to pin it here for quick reference.</p>
+        </div>
+      } @else {
+        <div class="pinned-grid">
+          @for (point of pinnedDataPoints(); track point.usageId + ':' + point.tier) {
+            <article class="pinned-card" [class]="getTierColorClass(point.tier)">
+              <div class="pinned-card__header">
+                <div class="pinned-card__icons">
+                  @for (tooltipId of point.tooltipIds; track tooltipId) {
+                    @let asset = getAssetForTooltipId(tooltipId);
+                    @if (asset) {
+                      <div class="pinned-icon-wrap" [appTooltip]="tooltipId">
+                        <img class="pinned-icon" [src]="asset.file" [alt]="asset.label" />
+                      </div>
+                    }
+                  }
+                </div>
+                <button
+                  type="button"
+                  class="pinned-card__unpin"
+                  (click)="togglePin(point.usageId, point.tier)"
+                  title="Unpin"
+                >
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+              <div class="pinned-card__body">
+                <h4 [appTooltip]="{ title: point.label, variant: 'inlineInfo' }">
+                  {{ point.label }}
+                </h4>
+                <span class="tier-badge">T{{ point.tier }}</span>
+              </div>
+              <div class="pinned-card__stats">
+                <div class="stat-row">
+                  <span class="stat-label">DPS</span>
+                  <span class="stat-value">{{ formatNumber(point.dps) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">DpV</span>
+                  <span class="stat-value">{{ formatNumber(point.dpv) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Score</span>
+                  <span class="stat-value">{{ formatNumber(point.mysticScore) }}</span>
+                </div>
+                <div class="stat-row stat-row--secondary">
+                  <span class="stat-label">Damage</span>
+                  <span class="stat-value">{{ formatNumber(point.avgDamage) }}</span>
+                </div>
+                <div class="stat-row stat-row--secondary">
+                  <span class="stat-label">Vitality</span>
+                  <span class="stat-value">{{ point.effectiveVitality }}</span>
+                </div>
+                @if (point.animTimeSeconds !== null) {
+                  <div class="stat-row stat-row--secondary">
+                    <span class="stat-label">Anim</span>
+                    <span class="stat-value">{{ formatNumber(point.animTimeSeconds, 2) }}s</span>
+                  </div>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Sources / Attribution -->
+    <section id="sources" class="guide-section guide-section--meta">
+      <h2>Sources & Attribution</h2>
+      <div class="attribution-card">
+        <i class="bi bi-youtube"></i>
+        <div class="attribution-content">
+          <p>
+            Damage data based on T2/T3 Void King tests by
+            <a href="https://www.youtube.com/@MidirSkry" target="_blank" rel="noopener noreferrer">
+              MidirSkry </a
+            >.
+          </p>
+          <p class="attribution-note">
+            Test methodology: single-target DPS checks against Void King in Sword Trial. Values may
+            vary based on gear, Inner Ways, and fight context.
+          </p>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <!-- Scroll to Top -->
+  <button
+    type="button"
+    class="btn-primary scroll-top-btn"
+    [class.scroll-top-btn--visible]="showScrollTop()"
+    (click)="scrollToTop()"
+    aria-label="Scroll to top"
+  >
+    <i class="bi bi-chevron-up"></i>
+  </button>
+</main>

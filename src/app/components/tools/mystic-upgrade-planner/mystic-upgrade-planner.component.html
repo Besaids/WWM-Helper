@@ -208,13 +208,15 @@
       @if (selectedSkill(); as skill) {
         <header class="detail-header">
           @if (skill.iconUrl) {
-            <img
-              class="detail-header__icon has-tooltip"
-              [src]="skill.iconUrl"
-              [alt]="skill.label"
-              loading="lazy"
-              [appTooltip]="skill.config.id"
-            />
+            <div class="detail-header__icon-wrap">
+              <img
+                class="detail-header__icon has-tooltip"
+                [src]="skill.iconUrl"
+                [alt]="skill.label"
+                loading="lazy"
+                [appTooltip]="skill.config.id"
+              />
+            </div>
           }
           <div class="detail-header__info">
             <h2 class="detail-header__title">{{ skill.label }}</h2>

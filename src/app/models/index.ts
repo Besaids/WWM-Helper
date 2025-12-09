@@ -10,3 +10,4 @@ export * from './game-assets.model';
 export * from './settings-io.model';
 export * from './boss-talents.model';
 export * from './mystic-skill-upgrade';
+export * from './mystic-metrics.model';
