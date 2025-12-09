@@ -384,4 +384,15 @@
       </button>
     </section>
   </article>
+
+  <!-- Scroll to Top -->
+  <button
+    type="button"
+    class="btn-primary scroll-top-btn"
+    [class.scroll-top-btn--visible]="showScrollTop()"
+    (click)="scrollToTop()"
+    aria-label="Scroll to top"
+  >
+    <i class="bi bi-chevron-up"></i>
+  </button>
 </main>

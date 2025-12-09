@@ -1,0 +1,945 @@
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
+/* ===========================
+   Tier Color Utilities
+   =========================== */
+
+.tier-2 {
+  --tier-color: rgba(147, 197, 253, 0.85);
+  --tier-color-soft: rgba(147, 197, 253, 0.2);
+  --tier-border: rgba(147, 197, 253, 0.4);
+}
+
+.tier-3 {
+  --tier-color: rgba(253, 224, 71, 0.85);
+  --tier-color-soft: rgba(253, 224, 71, 0.2);
+  --tier-border: rgba(253, 224, 71, 0.4);
+}
+
+.tier-4 {
+  --tier-color: rgba(248, 113, 113, 0.85);
+  --tier-color-soft: rgba(248, 113, 113, 0.2);
+  --tier-border: rgba(248, 113, 113, 0.4);
+}
+
+/* ===========================
+   Banner
+   =========================== */
+
+.guide-banner__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  height: 10rem;
+  background: linear-gradient(135deg, rgba(66, 195, 198, 0.15) 0%, rgba(228, 184, 106, 0.1) 100%);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(66, 195, 198, 0.2);
+  font-size: 1.5rem;
+  color: $accent-teal;
+  font-weight: 600;
+
+  i {
+    font-size: 2rem;
+  }
+}
+
+/* ===========================
+   Selection Section
+   =========================== */
+
+.selection-section {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid $border-subtle;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.85rem;
+  color: $text-secondary;
+  min-width: 4.5rem;
+}
+
+.tier-chips,
+.kind-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tier-chip,
+.kind-chip {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(148, 163, 184, 0.08);
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: rgba(148, 163, 184, 0.5);
+    background: rgba(148, 163, 184, 0.15);
+  }
+}
+
+.tier-chip--active {
+  &.tier-2 {
+    border-color: rgba(147, 197, 253, 0.6);
+    background: rgba(147, 197, 253, 0.2);
+    color: #93c5fd;
+  }
+
+  &.tier-3 {
+    border-color: rgba(253, 224, 71, 0.6);
+    background: rgba(253, 224, 71, 0.2);
+    color: #fde047;
+  }
+
+  &.tier-4 {
+    border-color: rgba(248, 113, 113, 0.6);
+    background: rgba(248, 113, 113, 0.2);
+    color: #f87171;
+  }
+}
+
+.kind-chip--active {
+  border-color: $accent-teal;
+  background: rgba(66, 195, 198, 0.15);
+  color: $accent-teal;
+}
+
+.search-input {
+  flex: 1;
+  max-width: 20rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid $border-medium;
+  background: rgba(15, 23, 42, 0.6);
+  color: $text-primary;
+  font-size: 0.85rem;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent-teal;
+  }
+}
+
+/* Presets */
+.preset-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.preset-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(228, 184, 106, 0.3);
+  background: rgba(228, 184, 106, 0.08);
+  color: $accent-gold-soft;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  &:hover {
+    border-color: rgba(228, 184, 106, 0.5);
+    background: rgba(228, 184, 106, 0.15);
+  }
+
+  i {
+    font-size: 0.7rem;
+  }
+
+  &--danger {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
+    color: #fca5a5;
+
+    &:hover {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.15);
+    }
+  }
+}
+
+/* Usage List */
+.usage-list-container {
+  margin-top: 0.75rem;
+  border: 1px solid $border-subtle;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.usage-list-header {
+  display: grid;
+  grid-template-columns: 2rem 1fr 4rem 3.5rem 3.5rem 3.5rem;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid $border-subtle;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: $text-muted;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 2rem 1fr 3rem;
+
+    .col-stat {
+      display: none;
+    }
+  }
+}
+
+.col-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.col-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.col-kind {
+  display: flex;
+  align-items: center;
+}
+
+.col-stat {
+  text-align: right;
+  cursor: help;
+}
+
+.usage-list {
+  max-height: 20rem;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(148, 163, 184, 0.5);
+    }
+  }
+}
+
+.usage-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr 4rem 3.5rem 3.5rem 3.5rem;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  font-size: 0.85rem;
+  color: $text-primary;
+  border-bottom: 1px solid $border-subtle;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(66, 195, 198, 0.06);
+  }
+
+  &--selected {
+    background: rgba(66, 195, 198, 0.1);
+  }
+
+  .col-check {
+    color: $accent-teal;
+
+    .bi-square {
+      color: $text-muted;
+    }
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 2rem 1fr 3rem;
+
+    .col-stat {
+      display: none;
+    }
+  }
+}
+
+.skill-icon-wrap {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  overflow: hidden; // crop window
+  background: $surface-subtle; // same background you used on planner
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.skill-icon {
+  width: 160%; // zoom a bit inside the window
+  height: 160%;
+  object-fit: contain;
+  flex-shrink: 0;
+  transform-origin: center;
+  transform: translateY(13%); // or translateY(13%) scale(1.1) if you want more zoom
+}
+
+.usage-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kind-badge {
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(148, 163, 184, 0.15);
+  color: $text-secondary;
+
+  &--combo {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c4b5fd;
+  }
+}
+
+/* ===========================
+   Chart Controls
+   =========================== */
+
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.control-label {
+  font-size: 0.8rem;
+  color: $text-secondary;
+}
+
+.control-select {
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.4rem;
+  border: 1px solid $border-medium;
+  background: rgba(15, 23, 42, 0.6);
+  color: $text-primary;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $accent-teal;
+  }
+
+  option {
+    background: #0f172a;
+  }
+}
+
+/* ===========================
+   Mobile Tabs
+   =========================== */
+
+.mobile-tabs {
+  display: none;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: 900px) {
+    display: flex;
+  }
+}
+
+.mobile-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid $border-medium;
+  background: rgba(15, 23, 42, 0.6);
+  color: $text-secondary;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: $accent-teal;
+    color: $text-primary;
+  }
+
+  &--active {
+    border-color: $accent-teal;
+    background: rgba(66, 195, 198, 0.15);
+    color: $accent-teal;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* ===========================
+   Charts Grid
+   =========================== */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================
+   Chart Card
+   =========================== */
+
+.chart-card {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 0.75rem;
+  border: 1px solid $border-subtle;
+  overflow: hidden;
+
+  &--hidden-mobile {
+    @media (max-width: 900px) {
+      display: none;
+    }
+  }
+}
+
+.chart-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(15, 23, 42, 0.4);
+  border-bottom: 1px solid $border-subtle;
+  flex-wrap: wrap;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0;
+
+    i {
+      color: $accent-teal;
+    }
+  }
+}
+
+.chart-card__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-card__body {
+  padding: 0.5rem;
+}
+
+.chart-container {
+  width: 100%;
+  height: 22rem;
+
+  @media (max-width: 640px) {
+    height: 18rem;
+  }
+}
+
+.chart-card__legend {
+  padding: 0.6rem 1rem;
+  border-top: 1px solid $border-subtle;
+  background: rgba(15, 23, 42, 0.3);
+
+  p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: $text-muted;
+    line-height: 1.4;
+
+    strong {
+      color: $text-secondary;
+    }
+  }
+}
+
+/* ===========================
+   Comparison Section
+   =========================== */
+
+.comparison-section {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid $border-subtle;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: $text-secondary;
+  margin-bottom: 1rem;
+}
+
+.comparison-chart-container {
+  border: 1px solid $border-subtle;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.comparison-chart {
+  width: 100%;
+  height: 24rem;
+
+  @media (max-width: 640px) {
+    height: 20rem;
+  }
+}
+
+/* ===========================
+   Pinned Section
+   =========================== */
+
+.pinned-section {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid $border-subtle;
+}
+
+.pinned-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1.1rem;
+
+    i {
+      color: $accent-gold-soft;
+    }
+  }
+}
+
+.unpin-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(239, 68, 68, 0.15);
+  }
+}
+
+.pinned-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  color: $text-muted;
+
+  i {
+    font-size: 2rem;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+}
+
+.pinned-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.pinned-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 0.6rem;
+  border: 1px solid var(--tier-border, $border-medium);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--tier-color, $accent-teal);
+  }
+}
+
+.pinned-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--tier-color-soft, rgba(66, 195, 198, 0.1));
+  border-bottom: 1px solid var(--tier-border, $border-subtle);
+}
+
+.pinned-card__icons {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.pinned-icon-wrap {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.35rem;
+  overflow: hidden; // crop window
+  background: $surface-subtle; // or whatever matches the rest
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.08); // keep the hover “pop”
+  }
+}
+
+.pinned-icon {
+  width: 160%;
+  height: 160%;
+  object-fit: contain;
+  flex-shrink: 0;
+  transform-origin: center;
+  transform: translateY(13%); // tweak this (and/or add scale) until framing looks right
+}
+
+.pinned-card__unpin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  border: none;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.3);
+  }
+
+  i {
+    font-size: 0.7rem;
+  }
+}
+
+.pinned-card__body {
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $text-primary;
+    flex: 1;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+    cursor: help;
+  }
+}
+
+.tier-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--tier-color-soft, rgba(148, 163, 184, 0.2));
+  color: var(--tier-color, $text-secondary);
+  flex-shrink: 0;
+}
+
+.pinned-card__stats {
+  margin-top: auto;
+  padding: 0.5rem 0.75rem 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+
+  &--secondary {
+    opacity: 0.7;
+  }
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: $text-muted;
+}
+
+.stat-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--tier-color, $text-primary);
+}
+
+/* ===========================
+   Attribution Card
+   =========================== */
+
+.attribution-card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+
+  > i {
+    font-size: 1.5rem;
+    color: #f87171;
+    flex-shrink: 0;
+  }
+}
+
+.attribution-content {
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: $text-primary;
+
+    a {
+      color: $accent-teal;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+
+      &:hover {
+        color: $accent-teal-active;
+      }
+    }
+  }
+}
+
+.attribution-note {
+  margin-top: 0.5rem !important;
+  font-size: 0.8rem !important;
+  color: $text-secondary !important;
+}
+
+/* ===========================
+   Scroll to Top Button
+   =========================== */
+
+.scroll-top-btn {
+  position: fixed;
+  right: clamp(1.25rem, 4vw, 2.5rem);
+  bottom: 1.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+
+  &--visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 768px) {
+    bottom: 1.25rem;
+    right: 1.25rem;
+  }
+}
+
+/* ===========================
+   Tooltip Helper Class
+   =========================== */
+
+.has-tooltip {
+  cursor: help;
+  border-bottom: 1px dotted rgba(66, 195, 198, 0.5);
+}
+
+.usage-list-header {
+  display: grid;
+  grid-template-columns: 2rem 1fr 4rem 3.5rem 3.5rem 3.5rem;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid $border-subtle;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: $text-muted;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 2rem 1fr 3rem;
+
+    .col-stat {
+      display: none;
+    }
+  }
+}
+
+.col-sortable {
+  border: none;
+  background: transparent;
+  color: $text-muted;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: $accent-teal;
+  }
+
+  i {
+    font-size: 0.65rem;
+  }
+}
+
+.comparison-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.comparison-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

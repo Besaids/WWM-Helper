@@ -16,6 +16,7 @@ import {
   BossTalentsGuideComponent,
   MysticSkillMaterialsGuideComponent,
   MysticUpgradePlannerComponent,
+  MysticMetricsGuideComponent,
 } from './components';
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
   { path: 'guides/trading', component: TradingGuideComponent },
   { path: 'guides/path-season', component: PathSeasonGuideComponent },
   { path: 'guides/mystic-skill-materials', component: MysticSkillMaterialsGuideComponent },
+  { path: 'guides/mystic-metrics', component: MysticMetricsGuideComponent },
   { path: 'tools', component: ToolsHubComponent },
   { path: 'tools/chinese-chess', component: ChineseChessComponent },
   { path: 'tools/mystic-upgrade-planner', component: MysticUpgradePlannerComponent },
