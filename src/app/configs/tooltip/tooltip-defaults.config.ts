@@ -19,9 +19,9 @@ const GAME_ASSETS_BY_ID: Record<string, GameAssetDefinition> = GAME_ASSETS.reduc
  */
 const ASSET_TOOLTIP_BINDINGS: Record<string, string> = {
   // System
-  'system.energy': 'system.energy',
+  'system.energy': 'system.energy_small',
   'system.energy_small': 'system.energy_small',
-  'system.stamina': 'system.stamina',
+  'system.stamina': 'system.stamina_small',
   'system.stamina_small': 'system.stamina_small',
   'system.energy_big': 'system.energy',
   'system.stamina_big': 'system.stamina',
@@ -76,6 +76,7 @@ const ASSET_TOOLTIP_BINDINGS: Record<string, string> = {
   'navigation.draw': 'navigation.draw',
   'navigation.events': 'navigation.events',
   'navigation.journal': 'navigation.journal',
+  'navigation.season': 'navigation.menu_season',
 
   'navigation.menu_appearance': 'navigation.menu_appearance',
   'navigation.menu_bag': 'navigation.menu_bag',
