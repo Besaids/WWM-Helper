@@ -247,6 +247,11 @@
   cursor: help;
 }
 
+.usage-list-header .col-stat {
+  justify-content: flex-end; // for the flex buttons
+  text-align: right; // harmless, keeps intent clear
+}
+
 .usage-list {
   max-height: 20rem;
   overflow-y: auto;
@@ -942,4 +947,36 @@
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+/* ---- Mobile fixes: keep all columns and allow horizontal scroll ---- */
+
+@media (max-width: 640px) {
+  // Container can scroll sideways
+  .usage-list-container {
+    overflow-x: auto;
+    overflow-y: hidden; // vertical scrolling handled by .usage-list
+  }
+
+  // Force header + list to be wider than a phone so x-scroll appears
+  .usage-list-header,
+  .usage-list {
+    min-width: 32rem; // tweak if you want more/less squeeze
+  }
+
+  // Restore the full 6-column layout on mobile
+  .usage-list-header,
+  .usage-row {
+    grid-template-columns: 2rem 1fr 4rem 3.5rem 3.5rem 3.5rem;
+  }
+
+  // Undo the earlier "display: none" for stats
+  .usage-list-header .col-stat {
+    display: flex; // header cells are buttons, we want flex here
+  }
+
+  .usage-row .col-stat {
+    display: block; // data cells are spans
+    text-align: right;
+  }
 }
