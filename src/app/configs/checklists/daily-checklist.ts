@@ -40,7 +40,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     category: 'Economy',
     label: 'Win up to 3 Ye Buxiu chess matches.',
     description:
-      'Located in Qinghe – Dreamscape: Blissful Retreat. On Expert: up to 900 Commerce Coin per day; each loss costs 150 Coin.',
+      'Located in Qinghe – Dreamscape: Blissful Retreat. On Expert: up to 450 Commerce Coin per day; each loss costs 150 Coin.',
     tags: ['economy', 'solo'],
     expired: false,
     route: '/guides/chess-wins',
