@@ -40,10 +40,9 @@ export const TIMER_DEFINITIONS: TimerDefinition[] = [
     schedule: {
       type: 'daily-multi',
       times: [
-        { hour: 10, minute: 0 }, // 10:00–16:00
-        { hour: 22, minute: 0 }, // 22:00–04:00
+        { hour: 22, minute: 0 }, // daily start at 22:00 UTC
       ],
-      windowHours: 6,
+      windowHours: 22, // stays open until 20:00 next day
     },
   },
 
