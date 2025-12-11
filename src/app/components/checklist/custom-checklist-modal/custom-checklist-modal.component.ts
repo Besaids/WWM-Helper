@@ -21,6 +21,7 @@ import {
   CUSTOM_CHECKLIST_LIMITS,
 } from '../../../models';
 import { CustomChecklistService } from '../../../services/checklist/custom-checklist.service';
+import { reset21LocalLabel, sundayReset21LocalLabel } from '../../../utils';
 
 type FormStep = 'type' | 'basic' | 'review';
 
@@ -49,8 +50,16 @@ export class CustomChecklistModalComponent implements OnInit, OnChanges {
   // Importance options (Daily or Weekly for custom items)
   readonly importanceOptions: { value: ChecklistImportance; label: string; description: string }[] =
     [
-      { value: 'daily', label: 'Daily Task', description: 'Resets every day at 21:00 UTC' },
-      { value: 'weekly', label: 'Weekly Task', description: 'Resets every Sunday at 21:00 UTC' },
+      {
+        value: 'daily',
+        label: 'Daily Task',
+        description: 'Resets every day at ' + reset21LocalLabel(),
+      },
+      {
+        value: 'weekly',
+        label: 'Weekly Task',
+        description: 'Resets every ' + sundayReset21LocalLabel(),
+      },
     ];
 
   // Tag options

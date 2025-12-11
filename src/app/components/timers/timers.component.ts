@@ -24,6 +24,13 @@ import { buildAssetTooltips, STATIC_TOOLTIPS, TIMER_DETAILS_CONFIG } from '../..
 import { CustomTimerModalComponent } from './custom-timer-modal';
 import { DateTime } from 'luxon';
 import { TooltipDirective } from '../../directives';
+import {
+  fridayUtcLocalLabel,
+  mondayUtcLocalLabel,
+  saturdayUtcLocalLabel,
+  sundayUtcLocalLabel,
+  tuesdayUtcLocalLabel,
+} from '../../utils';
 
 @Component({
   selector: 'app-timers',
@@ -46,6 +53,15 @@ export class TimersComponent {
   private readonly eventTimerService = inject(EventTimerService);
   private readonly customTimerService = inject(CustomTimerService);
   private readonly tooltipRegistry = inject(TooltipRegistryService);
+
+  readonly formatMonday01UtcLocal = mondayUtcLocalLabel(1, 0);
+  readonly formatFriday13UtcLocal = fridayUtcLocalLabel(13, 0);
+  readonly formatSaturday1230UtcLocal = saturdayUtcLocalLabel(12, 30);
+  readonly formatSunday0030UtcLocal = sundayUtcLocalLabel(0, 30);
+  readonly formatFriday2030UtcLocal = fridayUtcLocalLabel(20, 30);
+  readonly formatSaturday2030UtcLocal = saturdayUtcLocalLabel(20, 30);
+  readonly formatFriday21UtcLocal = fridayUtcLocalLabel(21, 0);
+  readonly formatTuesday21UtcLocal = tuesdayUtcLocalLabel(21, 0);
 
   // All timer chips (unfiltered)
   readonly timers$ = this.timerService.timerChips$;

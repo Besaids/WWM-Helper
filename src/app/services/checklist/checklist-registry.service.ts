@@ -9,6 +9,7 @@ import {
 } from '../../configs';
 import { DAILY_CHECKLIST, WEEKLY_CHECKLIST } from '../../configs';
 import { CustomChecklistService } from './custom-checklist.service';
+import { reset21LocalLabel, sundayReset21LocalLabel } from '../../utils';
 
 @Injectable({ providedIn: 'root' })
 export class ChecklistRegistryService {
@@ -19,25 +20,25 @@ export class ChecklistRegistryService {
     {
       id: 'daily',
       label: 'Daily',
-      description: 'Daily tasks that reset at 21:00 UTC',
+      description: 'Daily tasks that reset at ' + reset21LocalLabel(),
       cycleKeyGenerator: () => getDailyCycleId(),
     },
     {
       id: 'weekly',
       label: 'Weekly',
-      description: 'Weekly tasks that reset Sunday 21:00 UTC',
+      description: 'Weekly tasks that reset ' + sundayReset21LocalLabel(),
       cycleKeyGenerator: () => getWeeklyCycleId(),
     },
     {
       id: 'seasonal-daily',
       label: 'Seasonal Daily',
-      description: 'Season-specific daily tasks',
+      description: 'Season-specific daily tasks reset at ' + reset21LocalLabel(),
       cycleKeyGenerator: () => `${this.getCurrentSeasonId()}-${getDailyCycleId()}`,
     },
     {
       id: 'seasonal-weekly',
       label: 'Seasonal Weekly',
-      description: 'Season-specific weekly tasks',
+      description: 'Season-specific weekly tasks reset at ' + sundayReset21LocalLabel(),
       cycleKeyGenerator: () => `${this.getCurrentSeasonId()}-${getWeeklyCycleId()}`,
     },
     {

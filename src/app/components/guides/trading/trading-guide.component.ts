@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { TooltipRegistryService } from '../../../services/tooltip/tooltip-registry.service';
 import { TooltipDirective } from '../../../directives/tooltip/tooltip.directive';
 import { buildAssetTooltips } from '../../../configs';
+import { fridayReset21LocalLabel, sundayReset21LocalLabel } from '../../../utils';
 
 @Component({
   standalone: true,
@@ -15,6 +16,8 @@ import { buildAssetTooltips } from '../../../configs';
 })
 export class TradingGuideComponent {
   private readonly tooltipRegistry = inject(TooltipRegistryService);
+  readonly fridayResetLabel = fridayReset21LocalLabel();
+  readonly sundayResetLabel = sundayReset21LocalLabel();
 
   showScrollTop = false;
 

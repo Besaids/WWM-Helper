@@ -1,4 +1,8 @@
 import { ChecklistItem } from '../../models';
+import { fridayReset21LocalLabel, sundayReset21LocalLabel } from '../../utils';
+
+const TRADE_RESET_LABEL = fridayReset21LocalLabel();
+const WEEKLY_RESET_LABEL = sundayReset21LocalLabel();
 
 export const DAILY_CHECKLIST: ChecklistItem[] = [
   {
@@ -52,8 +56,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     importance: 'optional',
     category: 'Economy',
     label: 'Trade – buy weekly goods (Fri→Sun).',
-    description:
-      'After the Friday 21:00 UTC trade reset, buy this week’s Trading Goods: usually 30 of the two most expensive items and 20 of the cheapest (if you have 80 slots). Refill again after Sunday reset if you already sold.',
+    description: `After the ${TRADE_RESET_LABEL} trade reset, buy this week’s Trading Goods: usually 30 of the two most expensive items and 20 of the cheapest (if you have 80 slots). Refill again after ${WEEKLY_RESET_LABEL} reset if you already sold.`,
     tags: ['economy', 'solo'],
     expired: false,
     route: '/guides/trading',
@@ -65,8 +68,7 @@ export const DAILY_CHECKLIST: ChecklistItem[] = [
     importance: 'optional',
     category: 'Economy',
     label: 'Trade – check prices and offload goods.',
-    description:
-      'Use the Trading timers for mid-week checks: watch the Local item’s % and refresh Remote Price for high-value buyers (guild members give bonuses). Offload all goods before Friday 21:00 UTC.',
+    description: `Use the Trading timers for mid-week checks: watch the Local item’s % and refresh Remote Price for high-value buyers (guild members give bonuses). Offload all goods before ${TRADE_RESET_LABEL}.`,
     tags: ['economy', 'solo', 'guild'],
     expired: false,
     route: '/guides/trading',

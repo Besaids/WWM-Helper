@@ -517,8 +517,9 @@
                                     <ul>
                                       <li>
                                         <strong>When</strong> – Every
-                                        <strong>Monday 01:00</strong> to
-                                        <strong>Friday 13:00</strong> (UTC).
+                                        <strong>{{ formatMonday01UtcLocal }}</strong> to
+                                        <strong>{{ formatFriday13UtcLocal }}</strong
+                                        >.
                                       </li>
                                       <li>
                                         <strong>What</strong> – Bid on sponsored seats for the
@@ -541,8 +542,9 @@
                             @case ('fireworks-festival') {
                               <p class="timer-settings-row__details-summary">
                                 Weekend <strong>Fireworks Festival</strong> at Pearlglow Lake with
-                                red envelopes for all attendees; runs twice per weekend (Sat 12:30,
-                                Sun 00:30 UTC).
+                                red envelopes for all attendees; runs twice per weekend ({{
+                                  formatSaturday1230UtcLocal
+                                }}, {{ formatSunday0030UtcLocal }}).
                               </p>
 
                               @if (details.hasLongDetails) {
@@ -569,7 +571,9 @@
                                     <ul>
                                       <li>
                                         <strong>When</strong> – Every
-                                        <strong>Saturday at 12:30 and Sunday at 00:30 (UTC)</strong
+                                        <strong
+                                          >{{ formatSaturday1230UtcLocal }} and
+                                          {{ formatSunday0030UtcLocal }}</strong
                                         >.
                                       </li>
                                       <li>
@@ -626,9 +630,11 @@
                                     <ul>
                                       <li>
                                         <strong>Multiplayer</strong> – Every
-                                        <strong>Friday & Saturday at 20:30 (UTC)</strong>. Main
-                                        Fireworks Show instance where sponsored seats and custom
-                                        messages appear; best time for
+                                        <strong
+                                          >{{ formatFriday2030UtcLocal }} and
+                                          {{ formatSaturday2030UtcLocal }}</strong
+                                        >. Main Fireworks Show instance where sponsored seats and
+                                        custom messages appear; best time for
                                         <strong>red envelopes</strong>
                                         with other players.
                                       </li>
@@ -789,10 +795,10 @@
                                ======================================== -->
                             @case ('trading-week-reset') {
                               <p class="timer-settings-row__details-summary">
-                                Trade Week reset for <strong>Trading Goods</strong>. Every Friday at
-                                21:00 UTC the three featured trade items change in the
-                                <strong>Price Bulletin</strong>. Use this to remember when to clear
-                                out old stock and check the new week.
+                                Trade Week reset for <strong>Trading Goods</strong>. Every
+                                {{ formatFriday21UtcLocal }} the three featured trade items change
+                                in the <strong>Price Bulletin</strong>. Use this to remember when to
+                                clear out old stock and check the new week.
                               </p>
 
                               @if (details.hasLongDetails) {
@@ -836,7 +842,7 @@
                                     <h3>Basic trading loop</h3>
                                     <ul>
                                       <li>
-                                        After Friday 21:00 UTC, open the
+                                        After {{ formatFriday21UtcLocal }}, open the
                                         <strong>Price Bulletin</strong>
                                         at Zang Qiyue to see the week's 1 Local + 2 Remote items.
                                       </li>
@@ -847,7 +853,7 @@
                                       </li>
                                       <li>
                                         Hold them and watch prices over the week; aim to sell all
-                                        stock before the next Friday 21:00 UTC reset.
+                                        stock before the next {{ formatFriday21UtcLocal }} reset.
                                       </li>
                                     </ul>
                                   </section>
@@ -880,9 +886,9 @@
                               <p class="timer-settings-row__details-summary">
                                 Weekly reminder to check potential
                                 <strong>Trading Goods</strong> price peaks. Fires on
-                                <strong>Tuesday at 21:00 UTC</strong>, about halfway through the
-                                Trade Week, so you can log in, review Local % values and look for
-                                good Remote buyers.
+                                <strong>{{ formatTuesday21UtcLocal }}</strong
+                                >, about halfway through the Trade Week, so you can log in, review
+                                Local % values and look for good Remote buyers.
                               </p>
 
                               @if (details.hasLongDetails) {
@@ -922,7 +928,8 @@
                                       </li>
                                       <li>
                                         Remember you still have time until
-                                        <strong>Friday 21:00 UTC</strong> to fully dump your stock.
+                                        <strong>{{ formatFriday21UtcLocal }}</strong> to fully dump
+                                        your stock.
                                       </li>
                                     </ul>
                                   </section>

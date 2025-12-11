@@ -1,4 +1,7 @@
 import { ChecklistItem } from '../../models';
+import { fridayReset21LocalLabel } from '../../utils';
+
+const TRADE_RESET_LABEL = fridayReset21LocalLabel();
 
 export const WEEKLY_CHECKLIST: ChecklistItem[] = [
   {
@@ -51,8 +54,7 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     importance: 'optional',
     category: 'Economy',
     label: 'Run your weekly Trading / Commerce loop.',
-    description:
-      'Use the Trading timers: buy this week’s goods after Friday 21:00 UTC, hold and sell across the week (Local peaks or good Remote buyers), then clear all stock before the next Trade Week reset.',
+    description: `Use the Trading timers: buy this week’s goods after ${TRADE_RESET_LABEL}, hold and sell across the week (Local peaks or good Remote buyers), then clear all stock before the next Trade Week reset.`,
     tags: ['economy', 'solo', 'guild'],
     expired: false,
     route: '/guides/trading',

@@ -57,22 +57,22 @@
     </section>
 
     <section id="resets" class="guide-section">
-      <h2>2. Important resets (UTC)</h2>
+      <h2>2. Important resets</h2>
       <ul>
         <li>
-          <strong>Trade Week reset:</strong> Friday 21:00 UTC.<br />
+          <strong>Trade Week reset:</strong> {{ fridayResetLabel }}.<br />
           The three Trading Goods rotate; the Price Bulletin changes and its "Time remaining" timer
           resets.
         </li>
         <li>
-          <strong>Weekly reset:</strong> Sunday 21:00 UTC.<br />
+          <strong>Weekly reset:</strong> {{ sundayResetLabel }}.<br />
           Treat this as the point where vendor purchase amounts have refreshed at least once. If you
           sold early, you can usually buy another batch of this week's goods.
         </li>
       </ul>
       <p class="guide-note">
-        Hard rule: aim to have <strong>no Trading Goods in your bag</strong>
-        when Friday 21:00 UTC hits. Dump everything before the next Trade Week.
+        Hard rule: aim to have <strong>no Trading Goods in your bag</strong> when
+        {{ fridayResetLabel }} hits. Dump everything before the next Trade Week.
       </p>
     </section>
 
@@ -112,7 +112,7 @@
         </li>
         <li>
           A "Time remaining" countdown to the next
-          <strong>Friday 21:00 UTC</strong> Trade Week reset.
+          <strong>{{ fridayResetLabel }}</strong> Trade Week reset.
         </li>
       </ul>
     </section>
@@ -190,8 +190,8 @@
       <h3>Buying pattern (80-slot baseline)</h3>
       <ol>
         <li>
-          After <strong>Friday 21:00 UTC</strong>, open the Price Bulletin and sort the three goods
-          by base price.
+          After <strong>{{ fridayResetLabel }}</strong
+          >, open the Price Bulletin and sort the three goods by base price.
         </li>
         <li>
           With 80 slots and a 30-per-item cap, buy:
@@ -210,7 +210,9 @@
 
       <h3>Weekly loop</h3>
       <ol>
-        <li><strong>Friday</strong> – buy your weekly stock after 21:00 UTC.</li>
+        <li>
+          <strong>{{ fridayResetLabel }}</strong> – buy your weekly stock the reset.
+        </li>
         <li>
           <strong>Across the week</strong> – monitor the Local item % and Remote buyers. Hold until
           the numbers look good.
@@ -221,11 +223,11 @@
         </li>
         <li>
           If you sell early, you can usually re-buy at least once before the next Trade Week,
-          especially after Sunday 21:00 UTC when stocks have refreshed.
+          especially after {{ sundayResetLabel }} when stocks have refreshed.
         </li>
         <li>
-          <strong>Before the next Friday 21:00 UTC</strong> – dump any leftovers at the best price
-          you can find.
+          <strong>Before the next {{ fridayResetLabel }}</strong> – dump any leftovers at the best
+          price you can find.
         </li>
       </ol>
     </section>
@@ -292,8 +294,8 @@
       <p>WWM Helper exposes Trading through:</p>
       <ul>
         <li>
-          <strong>Trade Week Reset</strong> timer – Friday 21:00 UTC, when the three goods rotate
-          and you should clear last week's stock.
+          <strong>Trade Week Reset</strong> timer – {{ fridayResetLabel }}, when the three goods
+          rotate and you should clear last week's stock.
         </li>
         <li>
           <strong>Trade Price Check</strong> timer – mid-week reminder to log in and check Local %
