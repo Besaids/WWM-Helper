@@ -1239,7 +1239,7 @@
               <div class="event-timers-grid">
                 @for (event of eventTimers; track event.id) {
                   @let isCustom = isCustomTimer(event.id);
-                  @let localTime = getLocalEndTime(event.remaining);
+                  @let localTime = getLocalEndTimeFromEndsAt(event.endsAt);
 
                   <div
                     class="event-timer-card"
