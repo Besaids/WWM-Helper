@@ -1,6 +1,10 @@
-// src/app/models/event-timer.model.ts
-
 import { DateTime } from 'luxon';
+
+/**
+ * Whether the timer is counting down to the start of content or to its end.
+ * Default: 'end'
+ */
+export type EventTimerTarget = 'release' | 'end';
 
 /**
  * Category for event timers - helps with grouping and styling
@@ -11,7 +15,12 @@ export type EventTimerCategory =
   | 'gacha-standard'
   | 'gacha-special'
   | 'limited-event'
-  | 'other';
+  | 'other'
+  | 'event-festival'
+  | 'event-realm'
+  | 'event-trial'
+  | 'event-sect'
+  | 'event';
 
 /**
  * Event timer definition for limited-time content
@@ -27,12 +36,14 @@ export interface EventTimerDefinition {
 
   /**
    * End date/time in UTC
-   * Can be specified as:
-   * - ISO string: '2025-12-11T21:00:00.000Z'
-   * - Luxon DateTime object
-   * - Object: { year, month, day, hour?, minute? } - assumes UTC, defaults to 21:00
    */
   endsAt: string | DateTime | EventTimerEndDate;
+
+  /**
+   * Is this a countdown until the content starts or ends?
+   * If omitted, treated as 'end' for backwards compatibility.
+   */
+  target?: EventTimerTarget;
 
   /**
    * Optional description for the details panel
@@ -67,4 +78,9 @@ export interface EventTimerChip {
   remaining: string;
   isExpired: boolean;
   endsAt: DateTime;
+
+  /**
+   * Start vs end countdown
+   */
+  target: EventTimerTarget;
 }

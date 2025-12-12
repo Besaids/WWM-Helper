@@ -1230,9 +1230,9 @@
           @if (eventTimers.length > 0) {
             <article class="event-timers card-surface card-padding">
               <header class="event-timers-header">
-                <h2>Limited-Time Content</h2>
+                <h2>Limited-Time Events & Content</h2>
                 <p class="text-muted-strong">
-                  Battle passes, seasons, and other time-limited content.
+                  Battle passes, seasons, and events with countdowns to release or end.
                 </p>
               </header>
 
@@ -1245,6 +1245,13 @@
                     class="event-timer-card"
                     [class.event-timer-card--expired]="event.isExpired"
                     [class.event-timer-card--custom]="isCustom"
+                    [class.event-timer-card--release]="event.target === 'release'"
+                    [class.event-timer-card--end]="event.target === 'end'"
+                    [appTooltip]="
+                      event.target === 'release'
+                        ? 'event-timer.target-release'
+                        : 'event-timer.target-end'
+                    "
                   >
                     <!-- Icon/Image -->
                     <div class="event-timer-card__icon">

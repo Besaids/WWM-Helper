@@ -513,6 +513,7 @@
   align-items: center;
   gap: 0.5rem;
   transition: all $motion-base $motion-ease;
+  position: relative; // For pseudo-element accents if needed
 
   &:hover {
     background: var(--surface-layer-4);
@@ -526,6 +527,48 @@
   /* Custom timers need slightly different layout for actions */
   &--custom {
     flex-wrap: wrap;
+  }
+
+  /* Target type: Release (teal accent) */
+  &--release {
+    border-top: 2px solid $accent-teal;
+    box-shadow:
+      0 0 0 1px rgba(66, 195, 198, 0.2),
+      var(--shadow-depth-2);
+
+    &:hover {
+      box-shadow:
+        0 0 0 1px rgba(66, 195, 198, 0.3),
+        var(--shadow-depth-3);
+    }
+
+    &.event-timer-card--expired {
+      border-top-color: rgba(66, 195, 198, 0.3);
+      box-shadow:
+        0 0 0 1px rgba(66, 195, 198, 0.1),
+        var(--shadow-depth-1);
+    }
+  }
+
+  /* Target type: End (gold accent) */
+  &--end {
+    border-top: 2px solid $accent-gold-soft;
+    box-shadow:
+      0 0 0 1px rgba(245, 212, 140, 0.2),
+      var(--shadow-depth-2);
+
+    &:hover {
+      box-shadow:
+        0 0 0 1px rgba(245, 212, 140, 0.3),
+        var(--shadow-depth-3);
+    }
+
+    &.event-timer-card--expired {
+      border-top-color: rgba(245, 212, 140, 0.3);
+      box-shadow:
+        0 0 0 1px rgba(245, 212, 140, 0.1),
+        var(--shadow-depth-1);
+    }
   }
 }
 

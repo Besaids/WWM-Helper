@@ -322,6 +322,17 @@ export const STATIC_TOOLTIPS: TooltipConfigMap = {
       'Uncheck all tasks in this checklist. Useful if you want to start fresh or accidentally checked items.',
     variant: 'controlHint',
   },
+  // Event timer target indicators
+  'event-timer.target-release': {
+    title: 'Release Countdown',
+    description: 'This timer counts down to when the content becomes available.',
+    variant: 'controlHint',
+  },
+  'event-timer.target-end': {
+    title: 'Ending Countdown',
+    description: 'This timer counts down to when the content expires.',
+    variant: 'controlHint',
+  },
 };
 
 /**
