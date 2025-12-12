@@ -374,6 +374,10 @@ export class TimersComponent {
     return roundedTime.toFormat('HH:mm');
   }
 
+  getLocalEndTimeFromEndsAt(endsAt: DateTime): string {
+    return endsAt.toLocal().toFormat('HH:mm');
+  }
+
   /**
    * Parse remaining time string like "4h 20m 5s" or "8w 5d" to total seconds
    */

@@ -144,46 +144,57 @@ export function getDailyMultiBoundary(
   schedule: Extract<TimerSchedule, { type: 'daily-multi' }>,
   now: DateTime,
 ): { nextBoundary: DateTime; isOpen: boolean } {
+  if (!schedule.times || schedule.times.length === 0) {
+    throw new Error('daily-multi schedule must define at least one time');
+  }
+
+  const nowUtc = now.toUTC();
   const windowHours = schedule.windowHours ?? 0;
-  const windows: { start: DateTime; end: DateTime }[] = [];
+  const hasWindow = windowHours > 0;
+
+  let bestNextBoundary: DateTime | null = null;
+  let bestIsOpen = false;
 
   for (const t of schedule.times) {
-    let start = now.set({
+    const startToday = nowUtc.set({
       hour: t.hour,
       minute: t.minute,
       second: 0,
       millisecond: 0,
     });
-    let end = start.plus({ hours: windowHours });
+    const startYesterday = startToday.minus({ days: 1 });
 
-    // Handle cross-midnight window
-    if (end <= start) {
-      end = end.plus({ days: 1 });
+    if (hasWindow) {
+      // lastStart is the most recent start that could still be active
+      const lastStart = nowUtc >= startToday ? startToday : startYesterday;
+      const lastEnd = lastStart.plus({ hours: windowHours });
+
+      if (nowUtc < lastEnd) {
+        // currently open; next boundary is close
+        if (!bestNextBoundary || lastEnd < bestNextBoundary) {
+          bestNextBoundary = lastEnd;
+          bestIsOpen = true;
+        }
+        continue;
+      }
+
+      // currently closed; next boundary is next open
+      const nextStart = nowUtc < startToday ? startToday : startToday.plus({ days: 1 });
+      if (!bestNextBoundary || nextStart < bestNextBoundary) {
+        bestNextBoundary = nextStart;
+        bestIsOpen = false;
+      }
+    } else {
+      // instantaneous: next boundary is next start
+      const nextStart = nowUtc < startToday ? startToday : startToday.plus({ days: 1 });
+      if (!bestNextBoundary || nextStart < bestNextBoundary) {
+        bestNextBoundary = nextStart;
+        bestIsOpen = false;
+      }
     }
-
-    // If this window is fully in the past for today, shift to tomorrow
-    if (end <= now) {
-      start = start.plus({ days: 1 });
-      end = end.plus({ days: 1 });
-    }
-
-    windows.push({ start, end });
   }
 
-  // Check if we're inside any window
-  for (const w of windows) {
-    if (now >= w.start && now < w.end) {
-      return { nextBoundary: w.end, isOpen: true };
-    }
-  }
-
-  // Otherwise the next boundary is the earliest upcoming start
-  const nextStart = windows.reduce(
-    (earliest, w) => (w.start < earliest ? w.start : earliest),
-    windows[0].start,
-  );
-
-  return { nextBoundary: nextStart, isOpen: false };
+  return { nextBoundary: bestNextBoundary!, isOpen: bestIsOpen };
 }
 
 /**

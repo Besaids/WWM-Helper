@@ -14,22 +14,22 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
   // Battle Pass
   // ========================
   {
-    id: 'bp-blade-out-vol1',
-    label: 'Battle Pass: Blade Out - Vol. 1',
-    shortLabel: 'BP Vol.1',
+    id: 'bp-blade-out-vol2-collection',
+    label: 'Battle Pass: Blade Out - Vol. 2 (Collection)',
+    shortLabel: 'BP Vol.2',
     icon: 'bi-star-fill',
     image: 'assets/game/navigation/menu-battle-pass-icon.png',
     category: 'battle-pass',
-    // 9d 8h 30m from 2025-12-02 12:30 UTC = 2025-12-11 21:00 UTC (daily reset)
+    // Seen in-game: "Remaining: 27d10h" at 2025-12-12 10:13 UTC; syncs to daily reset
     endsAt: {
-      year: 2025, // ✅ Fixed: was 2024
-      month: 12,
-      day: 11,
+      year: 2026,
+      month: 1,
+      day: 8,
       hour: 21,
       minute: 0,
     },
     description:
-      'Current battle pass with exclusive rewards and progression track. Complete weekly missions and daily tasks to maximize progress before it ends.',
+      'Current battle pass (Magpie Branch) with exclusive rewards and progression track. Complete weekly missions and daily tasks to maximize progress before it ends.',
     autoRemoveWhenExpired: true,
   },
 
@@ -57,48 +57,44 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
   },
 
   // ========================
-  // Gacha - Special
+  // Gacha - Standard Rotation (Cloud Garment)
   // ========================
   {
-    id: 'gacha-swords-unseen',
-    label: 'Gacha: Swords Unseen (Special)',
-    shortLabel: 'Swords',
-    icon: 'bi-gem',
-    image: 'assets/game/navigation/menu-draw-icon.png',
-    category: 'gacha-special',
-    // Same end as BP Vol.1
-    endsAt: {
-      year: 2025, // ✅ Fixed: was 2024
-      month: 12,
-      day: 11,
-      hour: 21,
-      minute: 0,
-    },
-    description:
-      'Special limited-time gacha banner featuring exclusive cosmetic weapons and appearance items. Does not follow the standard rotation.',
-    autoRemoveWhenExpired: true,
-  },
-
-  // ========================
-  // Gacha - Standard Rotation
-  // ========================
-  {
-    id: 'gacha-cloud-garment',
-    label: 'Gacha: Cloud Garment',
-    shortLabel: 'Cloud',
+    id: 'gacha-cloud-garment-musical-grace',
+    label: 'Gacha: Cloud Garment – Musical Grace',
+    shortLabel: 'Musical',
     icon: 'bi-box-seam',
     image: 'assets/game/navigation/menu-draw-icon.png',
     category: 'gacha-standard',
-    // "9 days left" - likely syncs with BP
+    // Banner shows "27 d"; aligns with current BP cycle; assumed daily reset end
     endsAt: {
-      year: 2025, // ✅ Fixed: was 2024
-      month: 12,
-      day: 11,
+      year: 2026,
+      month: 1,
+      day: 8,
       hour: 21,
       minute: 0,
     },
     description:
-      'Current standard gacha banner rotation. Features rotating character outfits and equipment. Rotates with battle pass cycles.',
+      'Cloud Garment rotation showcase. Musical Grace appearance remains available during the current cycle.',
+    autoRemoveWhenExpired: true,
+  },
+  {
+    id: 'gacha-cloud-garment-formless-disguise',
+    label: 'Gacha: Cloud Garment – Formless Disguise',
+    shortLabel: 'Formless',
+    icon: 'bi-box-seam',
+    image: 'assets/game/navigation/menu-draw-icon.png',
+    category: 'gacha-standard',
+    // Banner shows "27 d"; aligns with current BP cycle; assumed daily reset end
+    endsAt: {
+      year: 2026,
+      month: 1,
+      day: 8,
+      hour: 21,
+      minute: 0,
+    },
+    description:
+      'Cloud Garment rotation showcase. Formless Disguise appearance is newly available during the current cycle.',
     autoRemoveWhenExpired: true,
   },
 ];
