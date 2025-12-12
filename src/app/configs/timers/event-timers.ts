@@ -47,7 +47,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     endsAt: {
       year: 2026,
       month: 2,
-      day: 5,
+      day: 6,
       hour: 21,
       minute: 0,
     },
@@ -114,7 +114,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     endsAt: {
       year: 2025,
       month: 12,
-      day: 13,
+      day: 14,
       hour: 21,
       minute: 0,
     },
@@ -135,7 +135,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     endsAt: {
       year: 2025,
       month: 12,
-      day: 20,
+      day: 21,
       hour: 21,
       minute: 0,
     },
@@ -156,7 +156,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     endsAt: {
       year: 2025,
       month: 12,
-      day: 20,
+      day: 21,
       hour: 21,
       minute: 0,
     },
@@ -177,7 +177,7 @@ export const EVENT_TIMERS: EventTimerDefinition[] = [
     endsAt: {
       year: 2025,
       month: 12,
-      day: 29,
+      day: 30,
       hour: 21,
       minute: 0,
     },
