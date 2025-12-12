@@ -91,6 +91,7 @@ export class EventTimerService {
       remaining,
       isExpired,
       endsAt,
+      target: def.target ?? 'end',
     };
   }
 
@@ -127,6 +128,7 @@ export class EventTimerService {
       remaining,
       isExpired,
       endsAt,
+      target: 'end',
     };
   }
 
