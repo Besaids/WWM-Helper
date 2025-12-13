@@ -77,6 +77,34 @@
   }
 }
 
+/* External link with icon */
+.nav-external-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .nav-external-link-text {
+    display: inline;
+  }
+
+  .nav-external-link-icon {
+    display: inline-flex;
+    font-size: 0.9em;
+    opacity: 0.7;
+    transition: opacity 120ms ease;
+  }
+
+  &:hover .nav-external-link-icon,
+  &:focus-visible .nav-external-link-icon {
+    opacity: 1;
+  }
+
+  // External links should not get the active route underline
+  &.active::after {
+    display: none;
+  }
+}
+
 /* Music diamond – small card-style control */
 .music-launcher {
   /* NOTE: no margin-left here; handled per breakpoint */
