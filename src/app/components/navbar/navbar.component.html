@@ -7,14 +7,29 @@
     </a>
 
     <nav class="main-nav main-nav--desktop">
-      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        Home
-      </a>
-      <a routerLink="/checklist" routerLinkActive="active">Checklist</a>
-      <a routerLink="/guides" routerLinkActive="active">Guides</a>
-      <a routerLink="/timers" routerLinkActive="active">Timers</a>
-      <a routerLink="/tools" routerLinkActive="active">Tools</a>
-      <a routerLink="/map" routerLinkActive="active">Map</a>
+      @for (item of navItems; track item.label) {
+        @if (item.type === 'route') {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.exact)">
+            {{ item.label }}
+          </a>
+        } @else {
+          <a
+            [href]="item.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="nav-external-link"
+            [attr.aria-label]="item.ariaLabel"
+            (click)="onExternalLinkClick(item.label)">
+            <span class="nav-external-link-text">{{ item.label }}</span>
+            @if (item.icon) {
+              <i class="bi nav-external-link-icon" [ngClass]="item.icon"></i>
+            }
+          </a>
+        }
+      }
     </nav>
 
     <button
@@ -44,19 +59,30 @@
 
   <!-- Mobile dropdown menu: appears directly under logo+burger on small screens -->
   <nav class="mobile-menu" [class.mobile-menu--open]="isMenuOpen()">
-    <a
-      routerLink="/home"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      (click)="closeMenu()"
-    >
-      Home
-    </a>
-    <a routerLink="/checklist" routerLinkActive="active" (click)="closeMenu()"> Checklist </a>
-    <a routerLink="/guides" routerLinkActive="active" (click)="closeMenu()"> Guides </a>
-    <a routerLink="/timers" routerLinkActive="active" (click)="closeMenu()"> Timers </a>
-    <a routerLink="/tools" routerLinkActive="active" (click)="closeMenu()"> Tools </a>
-    <a routerLink="/map" routerLinkActive="active" (click)="closeMenu()">Map</a>
+    @for (item of navItems; track item.label) {
+      @if (item.type === 'route') {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.exact)"
+          (click)="closeMenu()">
+          {{ item.label }}
+        </a>
+      } @else {
+        <a
+          [href]="item.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-external-link"
+          [attr.aria-label]="item.ariaLabel"
+          (click)="onExternalLinkClick(item.label)">
+          <span class="nav-external-link-text">{{ item.label }}</span>
+          @if (item.icon) {
+            <i class="bi nav-external-link-icon" [ngClass]="item.icon"></i>
+          }
+        </a>
+      }
+    }
   </nav>
 
   <!-- Player row: fixed-height drawer under navbar -->

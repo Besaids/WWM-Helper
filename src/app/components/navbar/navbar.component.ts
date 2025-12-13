@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MusicPlayerComponent } from '../music-player';
+import { NAV_ITEMS, NavItem } from '../../models';
+import { AnalyticsService } from '../../services/analytics';
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +14,9 @@ import { MusicPlayerComponent } from '../music-player';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent implements OnDestroy {
+  private readonly analytics = inject(AnalyticsService);
+
+  readonly navItems: NavItem[] = NAV_ITEMS;
   readonly isMenuOpen = signal(false);
 
   // Music player visibility
@@ -30,6 +35,18 @@ export class NavbarComponent implements OnDestroy {
 
   closeMenu(): void {
     this.isMenuOpen.set(false);
+  }
+
+  onExternalLinkClick(label: string): void {
+    this.analytics.trackEvent('external_link_click', {
+      link_label: label.toLowerCase(),
+      link_location: 'navbar',
+    });
+    this.closeMenu(); // Ensure mobile menu closes after clicking
+  }
+
+  getRouterLinkActiveOptions(exact: boolean | undefined): { exact: boolean } {
+    return { exact: exact ?? false };
   }
 
   // --- Music player ---
