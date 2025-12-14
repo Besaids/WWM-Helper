@@ -1,0 +1,65 @@
+@use 'tokens/colors' as *;
+@use 'tokens/surfaces' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/spacing' as *;
+
+.not-found-page {
+  padding: $space-5 0;
+}
+
+.not-found-card {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.not-found-card__icon {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 999px;
+  margin: 0 auto $space-3;
+  display: grid;
+  place-items: center;
+  background: $surface-layer-3;
+  border: 1px solid $border-subtle;
+  box-shadow: $shadow-soft;
+
+  i {
+    font-size: 1.6rem;
+    color: $accent-teal;
+  }
+}
+
+.not-found-card__title {
+  margin: 0 0 $space-2;
+}
+
+.not-found-card__text {
+  margin: 0 auto $space-3;
+  max-width: 54ch;
+  color: $text-secondary;
+  line-height: 1.55;
+}
+
+.not-found-card__path {
+  margin: 0 auto $space-4;
+  color: $text-secondary;
+
+  code {
+    display: inline-block;
+    padding: 0.2rem 0.45rem;
+    border-radius: $radius-sm;
+    background: $surface-layer-2;
+    border: 1px solid $border-subtle;
+    color: $text-primary;
+    word-break: break-all;
+  }
+}
+
+.not-found-card__actions {
+  display: flex;
+  gap: $space-2;
+  justify-content: center;
+  flex-wrap: wrap;
+}

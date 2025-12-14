@@ -11,3 +11,4 @@ export * from './timer-strip';
 export * from './timers';
 export * from './tools';
 export * from './ui';
+export * from './not-found';

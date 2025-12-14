@@ -48,6 +48,9 @@ jobs:
           echo "Building Angular app..."
           npx ng build --configuration production --base-href "/WWM-Helper/"
 
+          echo "Static prerender of key routes (meta + canonical)."
+          node scripts/prerender-static-routes.mjs
+
           echo "Directory structure after build:"
           ls -la dist/wwm-helper/
           ls -la dist/wwm-helper/browser/

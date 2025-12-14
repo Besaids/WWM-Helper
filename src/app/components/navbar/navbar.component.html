@@ -12,7 +12,8 @@
           <a
             [routerLink]="item.path"
             routerLinkActive="active"
-            [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.exact)">
+            [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.exact)"
+          >
             {{ item.label }}
           </a>
         } @else {
@@ -22,7 +23,8 @@
             rel="noopener noreferrer"
             class="nav-external-link"
             [attr.aria-label]="item.ariaLabel"
-            (click)="onExternalLinkClick(item.label)">
+            (click)="onExternalLinkClick(item.label)"
+          >
             <span class="nav-external-link-text">{{ item.label }}</span>
             @if (item.icon) {
               <i class="bi nav-external-link-icon" [ngClass]="item.icon"></i>
@@ -65,7 +67,8 @@
           [routerLink]="item.path"
           routerLinkActive="active"
           [routerLinkActiveOptions]="getRouterLinkActiveOptions(item.exact)"
-          (click)="closeMenu()">
+          (click)="closeMenu()"
+        >
           {{ item.label }}
         </a>
       } @else {
@@ -75,7 +78,8 @@
           rel="noopener noreferrer"
           class="nav-external-link"
           [attr.aria-label]="item.ariaLabel"
-          (click)="onExternalLinkClick(item.label)">
+          (click)="onExternalLinkClick(item.label)"
+        >
           <span class="nav-external-link-text">{{ item.label }}</span>
           @if (item.icon) {
             <i class="bi nav-external-link-icon" [ngClass]="item.icon"></i>

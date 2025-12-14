@@ -10,7 +10,7 @@ import {
 import { provideRouter, withInMemoryScrolling, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 import { GlobalErrorHandler } from './utils/global-error-handler';
-import { AnalyticsService, CookieConsentService } from './services';
+import { AnalyticsService, CookieConsentService, SeoService } from './services';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -40,6 +40,9 @@ export const appConfig: ApplicationConfig = {
       } else {
         console.info('[App Init] No consent yet, waiting for user decision');
       }
+    }),
+    provideAppInitializer(() => {
+      inject(SeoService).init();
     }),
   ],
 };

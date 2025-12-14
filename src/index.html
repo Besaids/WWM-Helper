@@ -68,6 +68,26 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="assets/portal/wwm-logo.png" />
 
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get('p');
+        if (!p) return;
+
+        var q = params.get('q');
+
+        var baseEl = document.querySelector('base');
+        var base = (baseEl && baseEl.getAttribute('href')) || '/';
+        if (!base.startsWith('/')) base = '/' + base;
+        if (!base.endsWith('/')) base = base + '/';
+
+        var newUrl = base + p + (q ? '?' + q : '') + window.location.hash;
+
+        // Clean the ugly ?p=... URL; keep SPA routing intact
+        window.history.replaceState(null, '', newUrl);
+      })();
+    </script>
+
     <!-- Google Analytics (GA4) with Consent Mode v2 -->
     <script>
       (function () {

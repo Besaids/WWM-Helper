@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <meta name="robots" content="noindex" />
+    <script>
+      // GitHub Pages SPA fallback for project pages (/<repo>/...)
+      // Keep 1 segment (the repo name) => /WWM-Helper/
+      var pathSegmentsToKeep = 1;
+
+      var l = window.location;
+      var base =
+        l.protocol +
+        '//' +
+        l.hostname +
+        (l.port ? ':' + l.port : '') +
+        l.pathname
+          .split('/')
+          .slice(0, 1 + pathSegmentsToKeep)
+          .join('/') +
+        '/';
+
+      // Path after /WWM-Helper/
+      var pathAfterBase = l.pathname
+        .split('/')
+        .slice(1 + pathSegmentsToKeep)
+        .join('/');
+
+      var redirect =
+        base +
+        '?p=' +
+        encodeURIComponent(pathAfterBase) +
+        (l.search ? '&q=' + encodeURIComponent(l.search.slice(1)) : '') +
+        l.hash;
+
+      l.replace(redirect);
+    </script>
+  </head>
+  <body></body>
+</html>
