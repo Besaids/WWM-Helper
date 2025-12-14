@@ -24,19 +24,27 @@ import { SeoData } from './models';
 
 const OG_DEFAULT_IMAGE = 'https://besaids.github.io/WWM-Helper/assets/portal/wwm-logo.png';
 
+const NOT_FOUND_SEO: SeoData = {
+  title: '404 – Page not found | WWM Helper',
+  description: 'This page does not exist. Use Home, Guides, or Tools to navigate.',
+  image: OG_DEFAULT_IMAGE,
+  robots: 'noindex, follow',
+  canonicalPath: '/404',
+};
+
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
 
   {
     path: 'home',
     component: HomeComponent,
-    title: 'WWM Helper; Home',
     data: {
       seo: {
         title: 'WWM Helper – Where Winds Meet Timers, Checklists, Guides & Tools',
         description:
           'Unofficial Where Winds Meet companion; track resets, events, seasonal goals, and keep your own checklists. Runs in your browser; no login.',
         image: OG_DEFAULT_IMAGE,
+        canonicalPath: '/',
       } satisfies SeoData,
     },
   },
@@ -44,7 +52,6 @@ export const routes: Routes = [
   {
     path: 'timers',
     component: TimersComponent,
-    title: 'WWM Helper; Timers',
     data: {
       seo: {
         title: 'WWM Timers – Daily, Weekly, Events; WWM Helper',
@@ -58,7 +65,6 @@ export const routes: Routes = [
   {
     path: 'checklist',
     component: ChecklistComponent,
-    title: 'WWM Helper; Checklists',
     data: {
       seo: {
         title: 'WWM Checklists – Dailies, Weeklies, Seasonal; WWM Helper',
@@ -72,7 +78,6 @@ export const routes: Routes = [
   {
     path: 'map',
     component: MapComponent,
-    title: 'WWM Helper; Map',
     data: {
       seo: {
         title: 'WWM Map – Interactive Links & Tracking; WWM Helper',
@@ -86,7 +91,6 @@ export const routes: Routes = [
   {
     path: 'guides',
     component: GuidesHubComponent,
-    title: 'WWM Helper; Guides',
     data: {
       seo: {
         title: 'WWM Guides – Trading, Boss Talents, Seasonal Paths; WWM Helper',
@@ -100,7 +104,6 @@ export const routes: Routes = [
   {
     path: 'guides/boss-talents',
     component: BossTalentsGuideComponent,
-    title: 'WWM Helper; Boss Talents Guide',
     data: {
       seo: {
         title: 'Boss Talents Guide (Blade Out); WWM Helper',
@@ -114,7 +117,6 @@ export const routes: Routes = [
   {
     path: 'guides/chess-wins',
     component: ChessWinsGuideComponent,
-    title: 'WWM Helper; Chess Wins Guide',
     data: {
       seo: {
         title: 'Chinese Chess Wins Guide; WWM Helper',
@@ -128,7 +130,6 @@ export const routes: Routes = [
   {
     path: 'guides/multi-day-rewards',
     component: MultiDayRewardsGuideComponent,
-    title: 'WWM Helper; Multi-day Rewards',
     data: {
       seo: {
         title: 'Multi-day Rewards Guide; WWM Helper',
@@ -142,7 +143,6 @@ export const routes: Routes = [
   {
     path: 'guides/trading',
     component: TradingGuideComponent,
-    title: 'WWM Helper; Trading Guide',
     data: {
       seo: {
         title: 'Trading Guide; WWM Helper',
@@ -156,7 +156,6 @@ export const routes: Routes = [
   {
     path: 'guides/path-season',
     component: PathSeasonGuideComponent,
-    title: 'WWM Helper; Seasonal Path',
     data: {
       seo: {
         title: 'Seasonal Path Challenges Guide; WWM Helper',
@@ -170,7 +169,6 @@ export const routes: Routes = [
   {
     path: 'guides/mystic-skill-materials',
     component: MysticSkillMaterialsGuideComponent,
-    title: 'WWM Helper; Mystic Skill Materials',
     data: {
       seo: {
         title: 'Mystic Skill Materials Farming Guide; WWM Helper',
@@ -184,7 +182,6 @@ export const routes: Routes = [
   {
     path: 'guides/mystic-metrics',
     component: MysticMetricsGuideComponent,
-    title: 'WWM Helper; Mystic Skill Metrics',
     data: {
       seo: {
         title: 'Mystic Skill Damage Metrics; WWM Helper',
@@ -198,7 +195,6 @@ export const routes: Routes = [
   {
     path: 'tools',
     component: ToolsHubComponent,
-    title: 'WWM Helper; Tools',
     data: {
       seo: {
         title: 'WWM Tools Hub; WWM Helper',
@@ -212,12 +208,10 @@ export const routes: Routes = [
   {
     path: 'tools/chinese-chess',
     component: ChineseChessComponent,
-    title: 'WWM Helper; Chinese Chess Tool',
     data: {
       seo: {
         title: 'Chinese Chess Tool; WWM Helper',
-        description:
-          'Practice and solve Chinese Chess positions; helper tool built for Where Winds Meet players.',
+        description: 'Practice and solve Chinese Chess positions; helper tool built for Where Winds Meet players.',
         image: OG_DEFAULT_IMAGE,
       } satisfies SeoData,
     },
@@ -226,7 +220,6 @@ export const routes: Routes = [
   {
     path: 'tools/mystic-upgrade-planner',
     component: MysticUpgradePlannerComponent,
-    title: 'WWM Helper; Mystic Upgrade Planner',
     data: {
       seo: {
         title: 'Mystic Upgrade Planner; WWM Helper',
@@ -240,7 +233,6 @@ export const routes: Routes = [
   {
     path: 'tools/settings',
     component: SettingsIoComponent,
-    title: 'WWM Helper; Import/Export',
     data: {
       seo: {
         title: 'Import/Export Settings; WWM Helper',
@@ -254,7 +246,6 @@ export const routes: Routes = [
   {
     path: 'privacy',
     component: PrivacyComponent,
-    title: 'WWM Helper; Privacy',
     data: {
       seo: {
         title: 'Privacy; WWM Helper',
@@ -265,20 +256,17 @@ export const routes: Routes = [
     },
   },
 
-  // Optional explicit route (handy for testing / sharing)
+  // Explicit 404 route (handy for testing / sharing)
   {
     path: '404',
     component: NotFoundComponent,
-    title: '404; WWM Helper',
-    data: {
-      seo: {
-        title: '404 – Page not found | WWM Helper',
-        description: 'This page does not exist. Use Home, Guides, or Tools to navigate.',
-        image: OG_DEFAULT_IMAGE,
-      } satisfies SeoData,
-    },
+    data: { seo: NOT_FOUND_SEO },
   },
 
-  // Real SPA fallback (stop redirecting unknown routes to home)
-  { path: '**', component: NotFoundComponent },
+  // Real SPA fallback (unknown routes show 404 UI + noindex + canonical /404)
+  {
+    path: '**',
+    component: NotFoundComponent,
+    data: { seo: NOT_FOUND_SEO },
+  },
 ];

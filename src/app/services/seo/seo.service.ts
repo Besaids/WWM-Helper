@@ -31,12 +31,25 @@ export class SeoService {
           this.doc.querySelector('meta[name="description"]')?.getAttribute('content') ??
           '';
 
-        const path = this.router.url.split('?')[0].split('#')[0];
+        const currentPath = this.router.url.split('?')[0].split('#')[0];
+
+        // Canonical override support:
+        // - /home -> /
+        // - wildcard 404 -> /404
+        const canonicalPath = seo?.canonicalPath ?? currentPath;
         const canonicalUrl = this.normalizeCanonical(
-          `${this.siteBase}${path === '/' ? '/' : path}`,
+          `${this.siteBase}${canonicalPath === '/' ? '/' : canonicalPath}`,
         );
 
-        this.apply({ title, description, image: seo?.image ?? this.defaultImage }, canonicalUrl);
+        this.apply(
+          {
+            title,
+            description,
+            image: seo?.image ?? this.defaultImage,
+            robots: seo?.robots,
+          },
+          canonicalUrl,
+        );
       });
   }
 
@@ -55,7 +68,9 @@ export class SeoService {
   private apply(seo: SeoData, canonicalUrl: string): void {
     this.title.setTitle(seo.title);
 
+    // Basic SEO
     this.meta.updateTag({ name: 'description', content: seo.description });
+    this.meta.updateTag({ name: 'robots', content: seo.robots ?? 'index, follow' });
 
     // Open Graph
     this.meta.updateTag({ property: 'og:title', content: seo.title });
