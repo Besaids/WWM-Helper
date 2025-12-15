@@ -114,11 +114,9 @@ const YE_WANSHAN_TRACKS: BossTalentTrack[] = [
       ),
       mkTier(
         2,
-        null,
+        'Defeat Ye Wanshan in Sword Trial - Formless Mountain Pass or Ocean of Vengeance and successfully stop all Wraiths from self-destructing.',
         'DMG +20% vs Ye Wanshan in Exhausted State',
-        null, // sheet shows "-" for unlock; requirement is clearly same as T1
-        1,
-        'Same requirement as Tier 1.',
+        51,
       ),
       mkTier(
         3,
