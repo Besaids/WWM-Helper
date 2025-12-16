@@ -60,9 +60,16 @@ export class SeoService {
   }
 
   private normalizeCanonical(url: string): string {
-    // Keep trailing slash only for root.
-    if (url === this.siteBase) return `${this.siteBase}/`;
-    return url.endsWith('/') ? url.slice(0, -1) : url;
+    // Standardize on trailing-slash canonical URLs (GitHub Pages serves prerendered routes as folders).
+    // - Root must be exactly `${siteBase}/`
+    // - Non-root route URLs become `${...}/`
+    // - If it looks like a file (last segment contains a dot), keep as-is
+    const trimmed = url.replace(/\/+$/, '');
+    if (trimmed === this.siteBase) return `${this.siteBase}/`;
+
+    const lastSeg = trimmed.split('/').pop() ?? '';
+    const looksLikeFile = lastSeg.includes('.');
+    return looksLikeFile ? trimmed : `${trimmed}/`;
   }
 
   private apply(seo: SeoData, canonicalUrl: string): void {

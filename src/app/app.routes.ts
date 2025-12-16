@@ -211,7 +211,8 @@ export const routes: Routes = [
     data: {
       seo: {
         title: 'Chinese Chess Tool; WWM Helper',
-        description: 'Practice and solve Chinese Chess positions; helper tool built for Where Winds Meet players.',
+        description:
+          'Practice and solve Chinese Chess positions; helper tool built for Where Winds Meet players.',
         image: OG_DEFAULT_IMAGE,
       } satisfies SeoData,
     },

@@ -126,11 +126,13 @@ function escapeHtml(s) {
 }
 
 function canonicalForRoute(routePath) {
+  // Standardize on trailing-slash canonical URLs (matches GitHub Pages folder URLs).
   if (!routePath || routePath === '/') return `${BASE}/`;
 
   const cleaned = String(routePath).replace(/^\/+/, '').replace(/\/+$/, '');
-  return `${BASE}/${cleaned}`;
+  return `${BASE}/${cleaned}/`;
 }
+
 
 function writeRouteIndex(routePath, baseIndexHtml, seo) {
   const outDir = path.join(DIST_BROWSER, routePath);
