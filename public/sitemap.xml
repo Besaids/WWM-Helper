@@ -2,23 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://besaids.github.io/WWM-Helper/</loc></url>
 
-  <url><loc>https://besaids.github.io/WWM-Helper/home</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/checklist</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/timers</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/map</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/tools</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/privacy</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/home/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/checklist/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/timers/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/map/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/tools/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/privacy/</loc></url>
 
-  <url><loc>https://besaids.github.io/WWM-Helper/guides</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/guides/boss-talents</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/guides/chess-wins</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/guides/multi-day-rewards</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/guides/trading</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/guides/path-season</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/guides/mystic-skill-materials</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/guides/mystic-metrics</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/boss-talents/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/chess-wins/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/multi-day-rewards/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/trading/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/path-season/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/mystic-skill-materials/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/guides/mystic-metrics/</loc></url>
 
-  <url><loc>https://besaids.github.io/WWM-Helper/tools/chinese-chess</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/tools/mystic-upgrade-planner</loc></url>
-  <url><loc>https://besaids.github.io/WWM-Helper/tools/settings</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/tools/chinese-chess/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/tools/mystic-upgrade-planner/</loc></url>
+  <url><loc>https://besaids.github.io/WWM-Helper/tools/settings/</loc></url>
 </urlset>
