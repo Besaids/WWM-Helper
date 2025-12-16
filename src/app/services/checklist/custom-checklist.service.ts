@@ -1,6 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 import { DateTime } from 'luxon';
-import { ChecklistItem, CustomChecklistItemFormData, CustomChecklistStorage } from '../../models';
+import {
+  ChecklistFrequency,
+  ChecklistImportance,
+  ChecklistItem,
+  CustomChecklistItemFormData,
+  CustomChecklistStorage,
+} from '../../models';
 import { getSafeLocalStorage, loadVersioned, saveVersioned } from '../../utils/storage';
 
 const STORAGE_KEY = 'wwm-custom-checklist';
@@ -39,8 +45,8 @@ export class CustomChecklistService {
 
     const item: ChecklistItem = {
       id,
-      frequency: 'custom',
       importance: formData.importance,
+      frequency: this.getFrequencyFromImportance(formData.importance),
       category: this.getCategoryFromImportance(formData.importance),
       label: this.sanitizeText(formData.label),
       description: formData.description ? this.sanitizeText(formData.description) : undefined,
@@ -68,6 +74,7 @@ export class CustomChecklistService {
     const updated: ChecklistItem = {
       ...existing,
       importance: formData.importance,
+      frequency: this.getFrequencyFromImportance(formData.importance),
       category: this.getCategoryFromImportance(formData.importance),
       label: this.sanitizeText(formData.label),
       description: formData.description ? this.sanitizeText(formData.description) : undefined,
@@ -111,7 +118,10 @@ export class CustomChecklistService {
 
     const versioned = loadVersioned<CustomChecklistStorage>(STORAGE_KEY);
     if (versioned?.data?.items) {
-      this.customItems.set(versioned.data.items);
+      const normalized = versioned.data.items.map((i) => this.normalizeCustomItem(i));
+      this.customItems.set(normalized);
+      // Persist any migration (old custom items used frequency: 'custom' for daily/weekly buckets).
+      this.saveToStorage();
     }
   }
 
@@ -133,11 +143,42 @@ export class CustomChecklistService {
     return `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
+  private getFrequencyFromImportance(importance: ChecklistImportance): ChecklistFrequency {
+    // Custom items still live under the "custom" tab, but their *reset behavior*
+    // should match their chosen importance bucket.
+    switch (importance) {
+      case 'daily':
+        return 'daily';
+      case 'weekly':
+        return 'weekly';
+      default:
+        return 'custom';
+    }
+  }
+
+  private normalizeCustomItem(item: ChecklistItem): ChecklistItem {
+    const importance = item.importance as ChecklistImportance;
+
+    return {
+      ...item,
+      isCustom: true,
+      importance,
+      // Critical: daily/weekly custom items must use daily/weekly frequency so they cycle-reset.
+      frequency: this.getFrequencyFromImportance(importance),
+      category: this.getCategoryFromImportance(importance),
+      label: this.sanitizeText(item.label),
+      description: item.description ? this.sanitizeText(item.description) : undefined,
+      createdAt: item.createdAt ?? DateTime.utc().toISO(),
+      expired: item.expired ?? false,
+      tags: item.tags ?? [],
+    };
+  }
+
   private sanitizeText(text: string): string {
     return text.trim().replace(/\s+/g, ' ');
   }
 
-  private getCategoryFromImportance(importance: string): string {
+  private getCategoryFromImportance(importance: ChecklistImportance): string {
     // Map importance to category name
     switch (importance) {
       case 'daily':
@@ -157,14 +198,7 @@ export class CustomChecklistService {
    * Replace all custom items (for import overwrite mode)
    */
   replaceAll(items: ChecklistItem[]): void {
-    // Ensure all items have isCustom flag and frequency set to 'custom'
-    const sanitized = items.map((item) => ({
-      ...item,
-      isCustom: true as const,
-      frequency: 'custom' as const,
-      label: this.sanitizeText(item.label),
-      description: item.description ? this.sanitizeText(item.description) : undefined,
-    }));
+    const sanitized = items.map((item) => this.normalizeCustomItem(item));
 
     this.customItems.set(sanitized);
     this.saveToStorage();
@@ -180,13 +214,7 @@ export class CustomChecklistService {
 
     // Add or replace items from import
     for (const item of items) {
-      const sanitized: ChecklistItem = {
-        ...item,
-        isCustom: true,
-        frequency: 'custom',
-        label: this.sanitizeText(item.label),
-        description: item.description ? this.sanitizeText(item.description) : undefined,
-      };
+      const sanitized = this.normalizeCustomItem(item);
       currentById.set(item.id, sanitized);
     }
 

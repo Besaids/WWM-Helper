@@ -24,6 +24,7 @@
             class="nav-external-link"
             [attr.aria-label]="item.ariaLabel"
             (click)="onExternalLinkClick(item.label)"
+            [appTooltip]="'link.discord'"
           >
             <span class="nav-external-link-text">{{ item.label }}</span>
             @if (item.icon) {
@@ -79,6 +80,7 @@
           class="nav-external-link"
           [attr.aria-label]="item.ariaLabel"
           (click)="onExternalLinkClick(item.label)"
+          [appTooltip]="'link.discord'"
         >
           <span class="nav-external-link-text">{{ item.label }}</span>
           @if (item.icon) {

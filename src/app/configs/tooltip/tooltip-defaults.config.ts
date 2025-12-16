@@ -236,6 +236,12 @@ const ASSET_TOOLTIP_BINDINGS: Record<string, string> = {
  * Static (non-asset) tooltips: hand-written once, reused everywhere.
  */
 export const STATIC_TOOLTIPS: TooltipConfigMap = {
+  'link.discord': {
+    title: 'WWM Helper Discord',
+    description: 'Announcements, changelogs, bug reports, feature requests, and Q&A.',
+    variant: 'controlHint',
+  },
+
   'common.open_guide': {
     title: 'Open Guide',
     description: 'Go to the guide for more information about this feature.',
