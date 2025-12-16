@@ -303,7 +303,17 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   }
 
   resetCurrentTab(): void {
-    this.state.resetType(this.activeTab());
+    // Custom tab can include items that reset on daily/weekly cycles; only reset the custom items shown here.
+    if (this.activeTab() === 'custom') {
+      const customItems = this.registry
+        .getItemsForType('custom')
+        .filter((item) => item.isCustom && !item.expired);
+
+      this.state.resetItems(customItems);
+    } else {
+      this.state.resetType(this.activeTab());
+    }
+
     this.recalcPinnedProgress();
   }
 
@@ -358,8 +368,13 @@ export class ChecklistComponent implements OnInit, OnDestroy {
 
   deleteCustomItem(itemId: string): void {
     if (confirm('Are you sure you want to delete this checklist item?')) {
+      const item = this.customChecklistService.getById(itemId);
       const deleted = this.customChecklistService.delete(itemId);
+
       if (deleted) {
+        if (item) {
+          this.state.purgeItem(item);
+        }
         console.log('Custom checklist item deleted:', itemId);
         this.recalcPinnedProgress();
       }

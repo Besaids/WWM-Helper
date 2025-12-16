@@ -185,6 +185,46 @@ export class ChecklistStateService {
     this.saveCompletionCountsForType(type);
   }
 
+  /**
+   * Reset (uncheck) only a specific set of items; preserves the rest of that checklist type.
+   * This is needed for the Custom tab, where items may reset on daily/weekly cycles but still
+   * live under the "custom" view.
+   */
+  resetItems(items: ChecklistItem[]): void {
+    const byType = new Map<ChecklistFrequency, string[]>();
+
+    for (const item of items) {
+      const list = byType.get(item.frequency) ?? [];
+      list.push(item.id);
+      byType.set(item.frequency, list);
+    }
+
+    for (const [type, ids] of byType.entries()) {
+      const state = this.getStateForType(type);
+      const counts = this.getCompletionCountsForType(type);
+
+      for (const id of ids) {
+        delete state[id];
+        delete counts[id];
+      }
+
+      this.saveStateForType(type);
+      this.saveCompletionCountsForType(type);
+    }
+  }
+
+  /**
+   * Remove all stored data for a single item (check state, counts, pinned/hidden prefs).
+   * Useful when deleting custom items to avoid orphaned storage.
+   */
+  purgeItem(item: ChecklistItem): void {
+    this.resetItems([item]);
+    delete this.pinned[item.id];
+    delete this.hidden[item.id];
+    delete this.completionCounts[item.id];
+    this.savePrefs();
+  }
+
   resetTab(tab: ChecklistTab): void {
     if (tab === 'daily') {
       this.dailyState = {};

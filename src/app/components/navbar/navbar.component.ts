@@ -4,23 +4,31 @@ import { RouterModule } from '@angular/router';
 import { MusicPlayerComponent } from '../music-player';
 import { NAV_ITEMS, NavItem } from '../../models';
 import { AnalyticsService } from '../../services/analytics';
+import { getDefaultTooltips } from '../../configs';
+import { TooltipRegistryService } from '../../services';
+import { TooltipDirective } from '../../directives';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, MusicPlayerComponent],
+  imports: [CommonModule, RouterModule, MusicPlayerComponent, TooltipDirective],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent implements OnDestroy {
   private readonly analytics = inject(AnalyticsService);
+  private readonly tooltipRegistry = inject(TooltipRegistryService);
 
   readonly navItems: NavItem[] = NAV_ITEMS;
   readonly isMenuOpen = signal(false);
 
   // Music player visibility
   readonly isMusicPlayerOpen = signal(false);
+
+    constructor() {
+      this.tooltipRegistry.registerAll(getDefaultTooltips());
+    }
 
   private get musicAutoHideDelay(): number {
     return window.innerWidth < 992 ? 7500 : 2000; // 7500ms for mobile, 2000ms for desktop
