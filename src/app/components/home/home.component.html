@@ -60,7 +60,8 @@
                 </div>
                 @if (timer.state.type === 'warning' || timer.state.type === 'urgent') {
                   <span
-                    class="home-timer-countdown notranslate" translate="no"
+                    class="home-timer-countdown notranslate"
+                    translate="no"
                     [appTooltip]="
                       timer.state.type === 'urgent' ? 'timer-state.urgent' : 'timer-state.warning'
                     "
@@ -68,7 +69,9 @@
                     {{ timer.remaining }}
                   </span>
                 } @else {
-                  <span class="home-timer-countdown notranslate" translate="no">{{ timer.remaining }}</span>
+                  <span class="home-timer-countdown notranslate" translate="no">{{
+                    timer.remaining
+                  }}</span>
                 }
               </li>
             }

@@ -26,9 +26,9 @@ export class NavbarComponent implements OnDestroy {
   // Music player visibility
   readonly isMusicPlayerOpen = signal(false);
 
-    constructor() {
-      this.tooltipRegistry.registerAll(getDefaultTooltips());
-    }
+  constructor() {
+    this.tooltipRegistry.registerAll(getDefaultTooltips());
+  }
 
   private get musicAutoHideDelay(): number {
     return window.innerWidth < 992 ? 7500 : 2000; // 7500ms for mobile, 2000ms for desktop

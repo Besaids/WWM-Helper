@@ -6,3 +6,4 @@ export * from './tooltip';
 export * from './multi-day-activity';
 export * from './boss-talents';
 export * from './mystic-skill-upgrade';
+export * from './martial-arts-upgrade';

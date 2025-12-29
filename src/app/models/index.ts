@@ -13,3 +13,4 @@ export * from './boss-talents.model';
 export * from './mystic-skill-upgrade';
 export * from './mystic-metrics.model';
 export * from './seo-data.model';
+export * from './martial-arts-upgrade';

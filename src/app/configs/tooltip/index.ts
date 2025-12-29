@@ -8,3 +8,5 @@ export * from './game-assets.navigation';
 export * from './game-assets.sect_paths';
 export * from './game-assets.system';
 export * from './tooltip-defaults.config';
+export * from './game-assets.gear_enhance';
+export * from './game-assets.martial_arts';

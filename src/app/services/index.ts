@@ -9,3 +9,4 @@ export * from './tooltip';
 export * from './settings';
 export * from './mystic-skill-upgrade';
 export * from './seo';
+export * from './martial-arts-upgrade';

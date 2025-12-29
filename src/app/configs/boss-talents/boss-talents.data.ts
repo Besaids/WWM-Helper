@@ -440,7 +440,7 @@ const TWIN_LIONS_TRACKS: BossTalentTrack[] = [
       ),
       mkTier(
         2,
-        'Defeat Twin Lions in Hero\'s Realm. After the battle starts, snatch the Golden Ball 3 times (at least once using Celestial Seize) and throw them away before the progress bar is full.',
+        "Defeat Twin Lions in Hero's Realm. After the battle starts, snatch the Golden Ball 3 times (at least once using Celestial Seize) and throw them away before the progress bar is full.",
         'DMG +20% vs Twin Lions in Exhausted state',
         66,
       ),
@@ -488,7 +488,7 @@ const TWIN_LIONS_TRACKS: BossTalentTrack[] = [
       ),
       mkTier(
         2,
-        'Defeat Twin Lions in Hero\'s Realm - Sorrow of Mortalbound once and claim the reward once.',
+        "Defeat Twin Lions in Hero's Realm - Sorrow of Mortalbound once and claim the reward once.",
         'DMG and Healing +15% vs Twin Lions',
         71,
       ),
