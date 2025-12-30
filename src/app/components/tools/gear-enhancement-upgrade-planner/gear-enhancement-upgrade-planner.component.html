@@ -1,0 +1,348 @@
+<!-- src/app/components/tools/gear-enhancement-upgrade-planner/gear-enhancement-upgrade-planner.component.html -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<main id="top" class="planner-page">
+  <header class="planner-header">
+    <h1 class="planner-header__title">Gear Enhancement Upgrade Planner</h1>
+    <p class="planner-header__subtitle">
+      Calculate
+      <span class="has-tooltip" [appTooltip]="'currency.coin'">Coin</span>,
+      <span class="has-tooltip" [appTooltip]="'items.oscillating_jade'">Oscillating Jade</span>, and
+      material costs for enhancing your gear from current levels to a target.
+    </p>
+  </header>
+
+  <!-- Global Summary Card -->
+  <section class="summary-card">
+    <header class="summary-card__header">
+      <div class="summary-card__header-left">
+        <h2 class="summary-card__title">Total Materials Needed</h2>
+        <label class="input-group input-group--inline">
+          <span class="input-group__label">Target Level</span>
+          <select
+            class="input-group__select"
+            [ngModel]="targetLevel()"
+            (ngModelChange)="setTargetLevel($event)"
+          >
+            @for (lvl of levelOptions; track lvl) {
+              <option [value]="lvl">{{ lvl }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      <span class="summary-card__target">
+        Totals for all included gear slots to reach +{{ targetLevel() }}.
+      </span>
+    </header>
+
+    <div class="summary-card__body">
+      <!-- Coin total -->
+      <div class="summary-coin">
+        <h3 class="summary-coin__label">
+          <span class="has-tooltip" [appTooltip]="'currency.coin'">Coin</span>
+        </h3>
+        <div class="coin-value">
+          <img
+            class="coin-value__icon"
+            src="assets/game/currency/currency-coin.png"
+            alt="Coin"
+            loading="lazy"
+          />
+          <span class="coin-value__count">{{ coinTotal() | number }}</span>
+        </div>
+      </div>
+
+      <!-- Materials -->
+      <div class="summary-materials">
+        <h3 class="summary-materials__label">Upgrade Materials</h3>
+        @if (!hasMaterialCosts()) {
+          <p class="summary-materials__empty">No material costs (all slots at or above target).</p>
+        } @else {
+          <div class="summary-materials__grid">
+            @for (entry of materialEntries(); track entry.assetId) {
+              <div class="material-item" [class]="getMaterialTagClass(entry.assetId)">
+                @if (entry.iconUrl) {
+                  <img
+                    class="material-item__icon"
+                    [src]="entry.iconUrl"
+                    [alt]="entry.label"
+                    loading="lazy"
+                  />
+                }
+                <span class="material-item__name has-tooltip" [appTooltip]="entry.assetId">
+                  {{ entry.label }}
+                </span>
+                <span class="material-item__count">× {{ entry.count }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content: catalogue + detail -->
+  <div class="planner-layout">
+    <!-- Catalogue (master list) -->
+    <section class="catalogue">
+      <header class="catalogue__header">
+        <div class="catalogue__title-row">
+          <h2 class="catalogue__title">Gear Slots</h2>
+          <div class="catalogue__actions">
+            <button type="button" class="btn-text btn-text--compact" (click)="includeAll()">
+              <i class="bi bi-check-all"></i> All
+            </button>
+            <button type="button" class="btn-text btn-text--compact" (click)="includeNone()">
+              <i class="bi bi-x-lg"></i> None
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <ul class="slot-list">
+        @for (slot of allSlots; track slot.def.id) {
+          @let track = tracks()[slot.def.id];
+          <li
+            class="slot-item"
+            [class.slot-item--selected]="isSelected(slot.def.id)"
+            [class.slot-item--complete]="track.currentLevel >= targetLevel()"
+            (click)="selectSlot(slot.def.id)"
+          >
+            <!-- Icon + Info -->
+            <div class="slot-item__icon-wrap">
+              @if (slot.iconUrl) {
+                <img
+                  class="slot-item__icon has-tooltip"
+                  [src]="slot.iconUrl"
+                  [alt]="slot.def.name"
+                  loading="lazy"
+                  [appTooltip]="slot.def.iconAssetId"
+                />
+              } @else {
+                <div class="slot-item__icon-placeholder">
+                  <i class="bi bi-question-circle"></i>
+                </div>
+              }
+            </div>
+
+            <div class="slot-item__info">
+              <span class="slot-item__name">{{ slot.def.name }}</span>
+              <span class="slot-item__meta">+{{ track.currentLevel }} / +{{ targetLevel() }}</span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="slot-item__progress">
+              <div class="progress-bar">
+                <div
+                  class="progress-bar__fill"
+                  [style.width.%]="getProgressPercent(slot.def.id)"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Current level control -->
+            <label class="slot-item__level" (click)="$event.stopPropagation()">
+              <select
+                class="level-select"
+                [ngModel]="track.currentLevel"
+                (ngModelChange)="setCurrentLevel(slot.def.id, $event)"
+              >
+                @for (lvl of levelOptions; track lvl) {
+                  @if (lvl <= targetLevel()) {
+                    <option [value]="lvl">{{ lvl }}</option>
+                  }
+                }
+              </select>
+            </label>
+
+            <!-- Include checkbox -->
+            <label class="slot-item__include" (click)="$event.stopPropagation()">
+              <input
+                type="checkbox"
+                [checked]="track.included"
+                (change)="toggleIncluded(slot.def.id, $event)"
+              />
+              <span class="include-label">Include</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Detail panel -->
+    <section class="detail-panel">
+      @if (selectedSlot(); as slot) {
+        <header class="detail-header">
+          @if (slot.iconUrl) {
+            <div class="detail-header__icon-wrap">
+              <img
+                class="detail-header__icon has-tooltip"
+                [src]="slot.iconUrl"
+                [alt]="slot.def.name"
+                loading="lazy"
+                [appTooltip]="slot.def.iconAssetId"
+              />
+            </div>
+          }
+          <div class="detail-header__info">
+            <h2 class="detail-header__title">{{ slot.def.name }}</h2>
+            <p class="detail-header__meta">Gear Enhancement Slot</p>
+          </div>
+        </header>
+
+        @let track = tracks()[slot.def.id];
+        @let progress = selectedProgress();
+
+        <!-- Current Progress Inputs -->
+        <div class="progress-inputs">
+          <h3 class="progress-inputs__title">Current Progress</h3>
+          <p class="progress-inputs__scope">
+            From <strong>+{{ progress.fromLevel }}</strong> to
+            <strong>+{{ progress.toLevel }}</strong
+            >.
+          </p>
+          <div class="progress-inputs__row">
+            <label class="input-group">
+              <span class="input-group__label">Current Level</span>
+              <select
+                class="input-group__select"
+                [ngModel]="track.currentLevel"
+                (ngModelChange)="setCurrentLevel(slot.def.id, $event)"
+              >
+                @for (lvl of levelOptions; track lvl) {
+                  @if (lvl <= targetLevel()) {
+                    <option [value]="lvl">{{ lvl }}</option>
+                  }
+                }
+              </select>
+            </label>
+          </div>
+
+          <!-- Visual progress bar -->
+          <div class="progress-visual">
+            <div class="progress-visual__bar">
+              <div
+                class="progress-visual__fill"
+                [style.width.%]="getProgressPercent(slot.def.id)"
+              ></div>
+            </div>
+          </div>
+
+          @if (progress.maxRequiredGearTier) {
+            <p class="progress-inputs__note">
+              <i class="bi bi-info-circle"></i>
+              Requires up to <strong>Gear Tier {{ progress.maxRequiredGearTier }}</strong> to reach
+              target.
+            </p>
+          }
+        </div>
+
+        <!-- Steps breakdown -->
+        <div class="steps-section">
+          <h3 class="steps-section__title">Upgrade Steps</h3>
+
+          @if (progress.steps.length === 0) {
+            <p class="steps-section__empty">Already at or above target level.</p>
+          } @else {
+            <ol class="steps-list">
+              @for (step of progress.steps; track trackByStepIndex($index)) {
+                <li class="step-item" [class.step-item--tier]="step.requiredGearTier">
+                  <span class="step-item__label">
+                    +{{ step.fromLevel }} → +{{ step.toLevel }}
+                    @if (step.requiredGearTier) {
+                      <span class="tier-badge">Tier {{ step.requiredGearTier }}+</span>
+                    }
+                  </span>
+                  <div class="step-item__materials">
+                    <span
+                      class="material-tag material-tag--coin has-tooltip"
+                      [appTooltip]="'currency.coin'"
+                    >
+                      <img
+                        class="material-tag__icon"
+                        src="assets/game/currency/currency-coin.png"
+                        alt="Coin"
+                      />
+                      Coin: <strong>{{ step.coin | number }}</strong>
+                    </span>
+                    @for (mat of getStepMaterials(step); track mat.assetId) {
+                      <span
+                        class="material-tag has-tooltip"
+                        [class]="getMaterialTagClass(mat.assetId)"
+                        [appTooltip]="mat.assetId"
+                      >
+                        @if (mat.iconUrl) {
+                          <img class="material-tag__icon" [src]="mat.iconUrl" [alt]="mat.label" />
+                        }
+                        {{ mat.label }}: <strong>{{ mat.count }}</strong>
+                      </span>
+                    }
+                  </div>
+                </li>
+              }
+            </ol>
+          }
+        </div>
+
+        <!-- Per-slot totals -->
+        <div class="skill-totals">
+          <h3 class="skill-totals__title">Totals for This Slot</h3>
+          <p class="totals-item__note">
+            Total materials needed to go from +{{ progress.fromLevel }} to +{{
+              progress.toLevel
+            }}
+            for <strong>{{ slot.def.name }}</strong
+            >.
+          </p>
+          @if (progress.steps.length === 0) {
+            <p class="skill-totals__empty">No materials needed (already at target).</p>
+          } @else {
+            <div class="skill-totals__grid">
+              <div class="totals-item has-tooltip" [appTooltip]="'currency.coin'">
+                <img
+                  class="totals-item__icon"
+                  src="assets/game/currency/currency-coin.png"
+                  alt="Coin"
+                />
+                <span class="totals-item__label">Coin</span>
+                <span class="totals-item__value">{{ progress.totals.coin | number }}</span>
+              </div>
+              @for (mat of getProgressMaterials(progress.totals.materials); track mat.assetId) {
+                <div class="totals-item has-tooltip" [appTooltip]="mat.assetId">
+                  @if (mat.iconUrl) {
+                    <img class="totals-item__icon" [src]="mat.iconUrl" [alt]="mat.label" />
+                  }
+                  <span class="totals-item__label">{{ mat.label }}</span>
+                  <span class="totals-item__value">{{ mat.count | number }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- No selection -->
+        <div class="no-selection">
+          <i class="bi bi-hand-index"></i>
+          <p>Select a gear slot from the list to view its upgrade details.</p>
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Credits Section -->
+  <section class="credits-section">
+    <h3 class="credits-section__title">Data Credits</h3>
+    <p class="credits-section__text">
+      Martial Arts upgrade data compiled with contributions from the community. Special thanks to
+      <strong>moonwoou</strong> for providing detailed cost information used in this planner.
+    </p>
+  </section>
+
+  <!-- Actions -->
+  <footer class="planner-footer">
+    <button type="button" class="btn-secondary" (click)="resetAllProgress()">
+      <i class="bi bi-arrow-counterclockwise"></i>
+      Reset All Progress
+    </button>
+  </footer>
+</main>

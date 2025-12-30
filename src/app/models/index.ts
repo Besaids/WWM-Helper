@@ -14,3 +14,4 @@ export * from './mystic-skill-upgrade';
 export * from './mystic-metrics.model';
 export * from './seo-data.model';
 export * from './martial-arts-upgrade';
+export * from './gear-enhancement-upgrade';

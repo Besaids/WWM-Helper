@@ -20,6 +20,7 @@ import {
   MysticMetricsGuideComponent,
   NotFoundComponent,
   MartialArtsUpgradePlannerComponent,
+  GearEnhancementUpgradePlannerComponent,
 } from './components';
 import { SeoData } from './models';
 
@@ -240,6 +241,19 @@ export const routes: Routes = [
         title: 'Martial Arts Upgrade Planner; WWM Helper',
         description:
           'Plan martial arts upgrades and required materials; reduce guesswork; keep your progression structured.',
+        image: OG_DEFAULT_IMAGE,
+      } satisfies SeoData,
+    },
+  },
+
+  {
+    path: 'tools/gear-enhancement-upgrade-planner',
+    component: GearEnhancementUpgradePlannerComponent,
+    data: {
+      seo: {
+        title: 'Gear Enhancement Upgrade Planner; WWM Helper',
+        description:
+          'Plan gear enhancement upgrades and required materials; reduce guesswork; keep your progression structured.',
         image: OG_DEFAULT_IMAGE,
       } satisfies SeoData,
     },
