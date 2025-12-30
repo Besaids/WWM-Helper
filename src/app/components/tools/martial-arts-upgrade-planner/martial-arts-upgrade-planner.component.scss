@@ -1,0 +1,984 @@
+// src/app/components/tools/martial-arts-upgrade-planner/martial-arts-upgrade-planner.component.scss
+@use 'tokens/colors' as *;
+@use 'tokens/spacing' as *;
+@use 'tokens/radius' as *;
+@use 'tokens/shadows' as *;
+@use 'tokens/motion' as *;
+
+/* ===========================
+   Martial Arts Upgrade Planner
+   =========================== */
+
+.planner-page {
+  padding: 1.5rem var(--spacing-outer-x, 1.5rem) 2rem;
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+/* Header */
+.planner-header {
+  margin-bottom: 1.5rem;
+
+  &__title {
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__subtitle {
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+}
+
+/* Summary Card */
+.summary-card {
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: $shadow-soft;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  &__header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__target {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    background: $surface-subtle;
+    border-radius: $radius-pill;
+    align-self: flex-start;
+  }
+
+  &__body {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.summary-coin {
+  &__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.coin-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border: 1px solid $border-subtle;
+
+  &__icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  &__count {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $accent-gold;
+  }
+}
+
+.summary-tips {
+  &__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+.tips-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border: 1px solid $border-subtle;
+
+  &--zero {
+    opacity: 0.4;
+  }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  &__name {
+    font-size: 0.85rem;
+  }
+
+  &__count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $accent-teal;
+  }
+}
+
+.summary-materials {
+  &__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+.materials-group {
+  &__title {
+    font-size: 0.8rem;
+    color: $text-muted;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+.material-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border: 1px solid $border-subtle;
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  &__name {
+    font-size: 0.85rem;
+  }
+
+  &__count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $accent-gold;
+  }
+
+  &--green {
+    border-color: rgba(76, 175, 80, 0.3);
+    .material-item__count {
+      color: #4caf50;
+    }
+  }
+
+  &--blue {
+    border-color: rgba(100, 149, 237, 0.3);
+    .material-item__count {
+      color: #6495ed;
+    }
+  }
+}
+
+/* Main Layout */
+.planner-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(400px, 1.5fr);
+  gap: 1.5rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Catalogue */
+.catalogue {
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+
+  &__header {
+    padding: 1rem;
+    border-bottom: 1px solid $border-subtle;
+  }
+
+  &__title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.filter-chip {
+  padding: 0.2rem 0.65rem;
+  border-radius: $radius-pill;
+  border: 1px solid $border-medium;
+  background: transparent;
+  color: $text-secondary;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  &:hover {
+    border-color: $accent-teal;
+    color: $text-primary;
+  }
+
+  &--active {
+    border-color: $accent-teal;
+    background: rgba(66, 195, 198, 0.15);
+    color: $accent-teal;
+  }
+
+  &--with-icon {
+    padding-left: 0.35rem;
+  }
+
+  &__icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    border-radius: 2px;
+  }
+
+  &__label {
+    white-space: nowrap;
+  }
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: $text-secondary;
+  cursor: pointer;
+
+  input {
+    accent-color: $accent-teal;
+  }
+}
+
+.filter-search {
+  padding: 0.4rem 0.75rem;
+  border-radius: $radius-sm;
+  border: 1px solid $border-medium;
+  background: $bg-soft;
+  color: $text-primary;
+  font-size: 0.85rem;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent-teal;
+  }
+}
+
+/* Art List */
+.art-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.art-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid $border-subtle;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  &--selected {
+    background: rgba(66, 195, 198, 0.1);
+    border-left: 3px solid $accent-teal;
+  }
+
+  &--complete {
+    opacity: 0.6;
+  }
+
+  &__row1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__row2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  &__level {
+    display: flex;
+    align-items: center;
+  }
+
+  &__include {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: $text-secondary;
+    cursor: pointer;
+
+    input {
+      accent-color: $accent-teal;
+    }
+  }
+}
+
+.level-select {
+  padding: 0.2rem 0.4rem;
+  border-radius: $radius-sm;
+  border: 1px solid $border-medium;
+  background: $bg-soft;
+  color: $text-primary;
+  font-size: 0.8rem;
+  min-width: 50px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $accent-teal;
+  }
+}
+
+/* Breakthrough Indicator (compact for list) - mirrors Mystic's tier-indicator */
+.breakthrough-indicator {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+
+.breakthrough-block {
+  flex: 1;
+  height: 8px;
+  background: $surface-subtle;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+
+  &--filled {
+    background: $accent-gold;
+  }
+
+  &--current {
+    background: $surface-subtle;
+    border: 1px solid $accent-gold;
+  }
+}
+
+.level-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: $accent-gold;
+  transition: width 0.2s ease;
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  color: $text-muted;
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: right;
+}
+
+.include-label {
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+/* Detail Panel */
+.detail-panel {
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  padding: 1.25rem 1.25rem 0.25rem;
+  box-shadow: $shadow-soft;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-subtle;
+
+  &__icon-wrap {
+    width: 200px;
+    height: 50px;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: $surface-subtle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+
+  &__meta {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    &__icon-wrap {
+      width: 160px;
+      height: 40px;
+    }
+
+    &__title {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+/* Progress Inputs */
+.progress-inputs {
+  margin-bottom: 1.25rem;
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $accent-gold-soft;
+  }
+
+  &__scope {
+    color: $text-secondary;
+    font-size: 0.85rem;
+    margin: 0 0 0.75rem;
+
+    strong {
+      color: $text-primary;
+    }
+  }
+
+  &__row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &--inline {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: $text-secondary;
+  }
+
+  &__select {
+    padding: 0.4rem 0.75rem;
+    border-radius: $radius-sm;
+    border: 1px solid $border-medium;
+    background: $bg-soft;
+    color: $text-primary;
+    font-size: 0.9rem;
+    min-width: 80px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: $accent-teal;
+    }
+  }
+
+  &__checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: $accent-teal;
+    cursor: pointer;
+  }
+}
+
+/* Progress Visual with segments (mirrors Mystic's tier progress) */
+.progress-visual {
+  margin-top: 1rem;
+
+  &__segments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    text-align: right;
+  }
+}
+
+.progress-segment {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border: 1px solid transparent;
+
+  &--current {
+    border-color: $accent-gold;
+    background: rgba(228, 184, 106, 0.08);
+  }
+
+  &--filled {
+    background: rgba(228, 184, 106, 0.15);
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: $text-secondary;
+    min-width: 50px;
+  }
+
+  &__bar {
+    flex: 1;
+    height: 8px;
+    background: $surface-card;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    background: $accent-gold;
+    transition: width 0.2s ease;
+  }
+}
+
+/* Steps Section */
+.steps-section {
+  margin-bottom: 1.25rem;
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $accent-gold-soft;
+  }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+.steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.step-item {
+  padding: 0.65rem 0.75rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  border-left: 3px solid $accent-teal;
+
+  &--breakthrough {
+    border-left-color: $accent-gold;
+    background: rgba(228, 184, 106, 0.08);
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+
+    i {
+      color: $accent-gold;
+    }
+  }
+
+  &__materials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+}
+
+.material-tag {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: $radius-pill;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(100, 100, 100, 0.3);
+  color: $text-secondary;
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  &--coin {
+    background: rgba(228, 184, 106, 0.15);
+    color: $accent-gold;
+  }
+
+  &--tips {
+    background: rgba(66, 195, 198, 0.15);
+    color: $accent-teal;
+  }
+
+  &--blue {
+    background: rgba(100, 149, 237, 0.15);
+    color: #6495ed;
+  }
+
+  &--green {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+  }
+}
+
+/* Skill Totals (matching Mystic naming) */
+.skill-totals {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-top: 1px solid $border-subtle;
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: $accent-gold-soft;
+  }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 500px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.totals-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  background: $surface-subtle;
+  border-radius: $radius-sm;
+  font-size: 0.85rem;
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+
+  &__label {
+    color: $text-secondary;
+  }
+
+  &__value {
+    font-weight: 600;
+    color: $accent-gold;
+  }
+
+  &__note {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    opacity: 0.75;
+
+    strong {
+      color: $text-primary;
+    }
+  }
+}
+
+/* No Selection */
+.no-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: $text-muted;
+
+  i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Credits Section */
+.credits-section {
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  background: $surface-card;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  opacity: 0.9;
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: $accent-gold-soft;
+  }
+
+  &__text {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    margin: 0;
+
+    strong {
+      color: $accent-teal;
+    }
+  }
+}
+
+/* Footer */
+.planner-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Button variants */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: $radius-pill;
+  border: 1px solid $border-medium;
+  background: transparent;
+  color: $text-secondary;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: $accent-teal;
+    color: $text-primary;
+  }
+}
+
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: $accent-teal;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: $text-primary;
+    background: rgba(66, 195, 198, 0.1);
+    border-radius: $radius-sm;
+  }
+
+  &--compact {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Tooltip helper */
+.has-tooltip {
+  cursor: help;
+  border-bottom: 1px dashed $accent-teal;
+}

@@ -16,17 +16,17 @@ export interface MartialArtDefinition {
   id: MartialArtId;
   label: string;
 
-  /** Concrete item IDs (these exist in game-assets.items.ts + tooltips) */
-  tipsMaterialId: string;
-  greenMaterialId: string;
-  blueMaterialId: string;
+  /** Items (asset IDs) */
+  tipsMaterialId: string; // items.*_tips
+  greenMaterialId: string; // items.*
+  blueMaterialId: string; // items.*
 }
 
 export interface MartialArtsLevelCostSegment {
   fromLevel: number; // inclusive
   toLevel: number; // inclusive
   coin: number; // currency.coin per level-up into this range
-  greenTier?: number; // concrete green material count per level-up
+  greenTier?: number; // green material count per level-up into this range
 }
 
 export interface MartialArtsBreakthroughCost {
@@ -39,9 +39,8 @@ export interface MartialArtsBreakthroughCost {
 }
 
 export interface MartialArtsTrackState {
-  enabled: boolean;
+  included: boolean;
   currentLevel: number; // 1..max
-  targetLevel: number; // 1..max
 }
 
 export interface MartialArtsTotals {
@@ -49,4 +48,19 @@ export interface MartialArtsTotals {
   tips: number;
   green: number;
   blue: number;
+}
+
+export interface MartialArtsUpgradeStep {
+  kind: 'levels' | 'breakthrough';
+  label: string;
+  costsById: Record<string, number>;
+}
+
+export interface MartialArtsUpgradePlan {
+  id: MartialArtId;
+  label: string;
+  currentLevel: number;
+  targetLevel: number;
+  steps: MartialArtsUpgradeStep[];
+  totalsById: Record<string, number>;
 }

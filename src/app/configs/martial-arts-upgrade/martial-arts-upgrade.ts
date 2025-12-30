@@ -6,96 +6,90 @@ import {
 
 export const MARTIAL_ARTS_MAX_LEVEL = 70;
 
-/**
- * IMPORTANT:
- * tipsMaterialId MUST be correct per martial art.
- * I’m wiring the field now so the planner can show the right icon and totals.
- * You can adjust the mapping later once you confirm per-art tips from your sheet/game.
- */
 export const MARTIAL_ARTS: MartialArtDefinition[] = [
   {
-    id: 'martial_arts.heavenquaker_spear',
-    label: 'Heavenquaker Spear',
-    tipsMaterialId: 'items.stonesplit_might_tips', // TODO verify
-    greenMaterialId: 'items.bluestone_lock',
-    blueMaterialId: 'items.wolframite_weight',
-  },
-  {
-    id: 'martial_arts.infernal_twinblades',
-    label: 'Infernal Twinblades',
-    tipsMaterialId: 'items.bellstrike_umbra_tips', // TODO verify
-    greenMaterialId: 'items.bluestone_lock',
-    blueMaterialId: 'items.wolframite_weight',
-  },
-  {
-    id: 'martial_arts.inkwell_fan',
-    label: 'Inkwell Fan',
-    tipsMaterialId: 'items.silkbind_jade_tips', // TODO verify
-    greenMaterialId: 'items.pine_resin_ointment',
-    blueMaterialId: 'items.scarlet_flame_ointment',
-  },
-  {
-    id: 'martial_arts.mortal_rope_dart',
-    label: 'Mortal Rope Dart',
-    tipsMaterialId: 'items.bamboocut_wind_tips', // TODO verify
+    id: 'martial_arts.nameless_sword',
+    label: 'Nameless Sword',
+    tipsMaterialId: 'items.bellstrike_splendor_tips',
     greenMaterialId: 'items.pine_resin_ointment',
     blueMaterialId: 'items.scarlet_flame_ointment',
   },
   {
     id: 'martial_arts.nameless_spear',
     label: 'Nameless Spear',
-    tipsMaterialId: 'items.stonesplit_might_tips', // TODO verify
-    greenMaterialId: 'items.bluestone_lock',
-    blueMaterialId: 'items.wolframite_weight',
-  },
-  {
-    id: 'martial_arts.nameless_sword',
-    label: 'Nameless Sword',
-    tipsMaterialId: 'items.bellstrike_splendor_tips', // TODO verify
-    greenMaterialId: 'items.pine_resin_ointment',
-    blueMaterialId: 'items.scarlet_flame_ointment',
-  },
-  {
-    id: 'martial_arts.panacea_fan',
-    label: 'Panacea Fan',
-    tipsMaterialId: 'items.silkbind_deluge_tips', // from your screenshot “Silkbind - Deluge”
-    greenMaterialId: 'items.pine_resin_ointment',
-    blueMaterialId: 'items.scarlet_flame_ointment',
-  },
-  {
-    id: 'martial_arts.soulshade_umbrella',
-    label: 'Soulshade Umbrella',
-    tipsMaterialId: 'items.bellstrike_umbra_tips', // TODO verify
-    greenMaterialId: 'items.tiger_bone_liquor',
-    blueMaterialId: 'items.bone_renewal_tonic',
-  },
-  {
-    id: 'martial_arts.stormbreaker_spear',
-    label: 'Stormbreaker Spear',
-    tipsMaterialId: 'items.stonesplit_might_tips', // TODO verify
+    tipsMaterialId: 'items.bellstrike_splendor_tips',
     greenMaterialId: 'items.bluestone_lock',
     blueMaterialId: 'items.wolframite_weight',
   },
   {
     id: 'martial_arts.strategic_sword',
     label: 'Strategic Sword',
-    tipsMaterialId: 'items.bellstrike_splendor_tips', // TODO verify
+    tipsMaterialId: 'items.bellstrike_umbra_tips',
     greenMaterialId: 'items.pine_resin_ointment',
     blueMaterialId: 'items.scarlet_flame_ointment',
   },
   {
-    id: 'martial_arts.thundercry_blade',
-    label: 'Thundercry Blade',
-    tipsMaterialId: 'items.bamboocut_wind_tips', // TODO verify
+    id: 'martial_arts.heavenquaker_spear',
+    label: 'Heavenquaker Spear',
+    tipsMaterialId: 'items.bellstrike_umbra_tips',
     greenMaterialId: 'items.bluestone_lock',
     blueMaterialId: 'items.wolframite_weight',
   },
   {
+    id: 'martial_arts.inkwell_fan',
+    label: 'Inkwell Fan',
+    tipsMaterialId: 'items.silkbind_jade_tips',
+    greenMaterialId: 'items.pine_resin_ointment',
+    blueMaterialId: 'items.scarlet_flame_ointment',
+  },
+  {
     id: 'martial_arts.vernal_umbrella',
     label: 'Vernal Umbrella',
-    tipsMaterialId: 'items.bellstrike_umbra_tips', // TODO verify
+    tipsMaterialId: 'items.silkbind_jade_tips',
     greenMaterialId: 'items.tiger_bone_liquor',
     blueMaterialId: 'items.bone_renewal_tonic',
+  },
+  {
+    id: 'martial_arts.panacea_fan',
+    label: 'Panacea Fan',
+    tipsMaterialId: 'items.silkbind_deluge_tips',
+    greenMaterialId: 'items.pine_resin_ointment',
+    blueMaterialId: 'items.scarlet_flame_ointment',
+  },
+  {
+    id: 'martial_arts.soulshade_umbrella',
+    label: 'Soulshade Umbrella',
+    tipsMaterialId: 'items.silkbind_deluge_tips',
+    greenMaterialId: 'items.tiger_bone_liquor',
+    blueMaterialId: 'items.bone_renewal_tonic',
+  },
+  {
+    id: 'martial_arts.thundercry_blade',
+    label: 'Thundercry Blade',
+    tipsMaterialId: 'items.stonesplit_might_tips',
+    greenMaterialId: 'items.tiger_bone_liquor',
+    blueMaterialId: 'items.bone_renewal_tonic',
+  },
+  {
+    id: 'martial_arts.stormbreaker_spear',
+    label: 'Stormbreaker Spear',
+    tipsMaterialId: 'items.stonesplit_might_tips',
+    greenMaterialId: 'items.bluestone_lock',
+    blueMaterialId: 'items.wolframite_weight',
+  },
+  {
+    id: 'martial_arts.infernal_twinblades',
+    label: 'Infernal Twinblades',
+    tipsMaterialId: 'items.bamboocut_wind_tips',
+    greenMaterialId: 'items.bluestone_lock',
+    blueMaterialId: 'items.wolframite_weight',
+  },
+  {
+    id: 'martial_arts.mortal_rope_dart',
+    label: 'Mortal Rope Dart',
+    tipsMaterialId: 'items.bamboocut_wind_tips',
+    greenMaterialId: 'items.pine_resin_ointment',
+    blueMaterialId: 'items.scarlet_flame_ointment',
   },
 ];
 
