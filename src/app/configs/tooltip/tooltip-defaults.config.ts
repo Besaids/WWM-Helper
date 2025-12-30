@@ -123,6 +123,9 @@ const ASSET_TOOLTIP_BINDINGS: Record<string, string> = {
   'items.stonesplit_might_tips': 'items.stonesplit_might_tips',
   'items.tiger_bone_liquor': 'items.tiger_bone_liquor',
   'items.wolframite_weight': 'items.wolframite_weight',
+  'items.bear_pelt': 'items.bear_pelt',
+  'items.lethal_crystal': 'items.lethal_crystal',
+  'items.aromatic_jade': 'items.aromatic_jade',
 
   // Martial Arts
   'martial_arts.heavenquaker_spear': 'martial_arts.heavenquaker_spear',

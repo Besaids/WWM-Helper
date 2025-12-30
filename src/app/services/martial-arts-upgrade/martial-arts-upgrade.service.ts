@@ -13,6 +13,7 @@ import {
   MARTIAL_ARTS_LEVEL_COST_SEGMENTS,
   MARTIAL_ARTS_MAX_LEVEL,
 } from '../../configs';
+import { clampInt } from '../../utils';
 
 interface PersistedStateV3 {
   version: 3;
@@ -31,12 +32,6 @@ interface LegacyTrackStateV2 {
 interface LegacyPersistedStateV2 {
   version?: number;
   tracks?: Partial<Record<MartialArtId, LegacyTrackStateV2>>;
-}
-
-function clampInt(v: number, min: number, max: number): number {
-  const n = Math.floor(Number(v));
-  if (!Number.isFinite(n)) return min;
-  return Math.max(min, Math.min(max, n));
 }
 
 function buildLevelCostMaps(): {
