@@ -14,19 +14,33 @@
           <i class="bi" [ngClass]="t.icon" aria-hidden="true"></i>
           <span class="label">{{ t.label }}</span>
           @if (state.type === 'active') {
-            <span class="value notranslate" translate="no" aria-live="polite" [appTooltip]="'timer-badge.active'">{{
-              t.remaining
-            }}</span>
+            <span
+              class="value notranslate"
+              translate="no"
+              aria-live="polite"
+              [appTooltip]="'timer-badge.active'"
+              >{{ t.remaining }}</span
+            >
           } @else if (state.type === 'urgent') {
-            <span class="value notranslate" translate="no" aria-live="polite" [appTooltip]="'timer-state.urgent'">{{
-              t.remaining
-            }}</span>
+            <span
+              class="value notranslate"
+              translate="no"
+              aria-live="polite"
+              [appTooltip]="'timer-state.urgent'"
+              >{{ t.remaining }}</span
+            >
           } @else if (state.type === 'warning') {
-            <span class="value notranslate" translate="no" aria-live="polite" [appTooltip]="'timer-state.warning'">{{
+            <span
+              class="value notranslate"
+              translate="no"
+              aria-live="polite"
+              [appTooltip]="'timer-state.warning'"
+              >{{ t.remaining }}</span
+            >
+          } @else {
+            <span class="value notranslate" translate="no" aria-live="polite">{{
               t.remaining
             }}</span>
-          } @else {
-            <span class="value notranslate" translate="no" aria-live="polite">{{ t.remaining }}</span>
           }
         </div>
       }

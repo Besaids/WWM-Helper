@@ -2,6 +2,8 @@ import { TooltipVariant } from './tooltip.model';
 
 // High-level buckets for your assets
 export type GameAssetCategory =
+  | 'gear_enhance'
+  | 'martial_arts'
   | 'currency'
   | 'items'
   | 'navigation'
@@ -13,6 +15,8 @@ export type GameAssetCategory =
 
 // How the icon is used / drawn in UI
 export type GameAssetKind =
+  | 'gear-enhance-slot-icon'
+  | 'martial-art-icon'
   | 'currency-icon'
   | 'gacha-ticket-icon'
   | 'nav-icon'
@@ -34,6 +38,19 @@ export type GameAssetKind =
 
 // Tags used for filtering / grouping across systems
 export type GameSystemTag =
+  | 'planner'
+  | 'selector'
+  | 'spear'
+  | 'twinblades'
+  | 'fan'
+  | 'rope_dart'
+  | 'sword'
+  | 'umbrella'
+  | 'blade'
+  | 'gear_enhance'
+  | 'slot'
+  | 'material'
+  | 'tips'
   | 'giftbox'
   | 'scholar'
   | 'multi_profession'

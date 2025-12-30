@@ -1,0 +1,443 @@
+<!-- src/app/components/tools/martial-arts-upgrade-planner/martial-arts-upgrade-planner.component.html -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<main id="top" class="planner-page">
+  <header class="planner-header">
+    <h1 class="planner-header__title">Martial Arts Upgrade Planner</h1>
+    <p class="planner-header__subtitle">
+      Calculate
+      <span class="has-tooltip" [appTooltip]="'currency.coin'">Coin</span>, path tips, and upgrade
+      material costs for leveling your martial arts from their current level to a target.
+    </p>
+  </header>
+
+  <!-- Global Summary Card -->
+  <section class="summary-card">
+    <header class="summary-card__header">
+      <div class="summary-card__header-left">
+        <h2 class="summary-card__title">Total Materials Needed</h2>
+        <label class="input-group input-group--inline">
+          <span class="input-group__label">Target Level</span>
+          <select
+            class="input-group__select"
+            [ngModel]="targetLevel()"
+            (ngModelChange)="setTargetLevel($event)"
+          >
+            @for (lvl of levelOptions; track lvl) {
+              <option [value]="lvl">{{ lvl }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      <span class="summary-card__target">
+        Totals for all included martial arts to reach Lv. {{ targetLevel() }}.
+      </span>
+    </header>
+
+    <div class="summary-card__body">
+      <!-- Coin total -->
+      <div class="summary-coin">
+        <h3 class="summary-coin__label">
+          <span class="has-tooltip" [appTooltip]="'currency.coin'">Coin</span>
+        </h3>
+        <div class="coin-value">
+          <img
+            class="coin-value__icon"
+            src="assets/game/currency/currency-coin.png"
+            alt="Coin"
+            loading="lazy"
+          />
+          <span class="coin-value__count">{{ coinTotal() | number }}</span>
+        </div>
+      </div>
+
+      <!-- Path Tips -->
+      <div class="summary-tips">
+        <h3 class="summary-tips__label">Path Tips</h3>
+        @if (!hasTipsCosts()) {
+          <p class="summary-tips__empty">No tips costs (all arts at or above target).</p>
+        } @else {
+          <div class="summary-tips__grid">
+            @for (entry of tipsEntries(); track entry.assetId) {
+              <div class="tips-item" [class.tips-item--zero]="entry.count === 0">
+                @if (entry.iconUrl) {
+                  <img
+                    class="tips-item__icon"
+                    [src]="entry.iconUrl"
+                    [alt]="entry.label"
+                    loading="lazy"
+                  />
+                }
+                <span class="tips-item__name has-tooltip" [appTooltip]="entry.assetId">
+                  {{ entry.label }}
+                </span>
+                <span class="tips-item__count">× {{ entry.count }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Upgrade Materials -->
+      <div class="summary-materials">
+        <h3 class="summary-materials__label">Upgrade Materials</h3>
+        @if (!hasUpgradeMaterials()) {
+          <p class="summary-materials__empty">No material costs (all arts at or above target).</p>
+        } @else {
+          <div class="summary-materials__sections">
+            <!-- Green Materials -->
+            @if (greenMaterialEntries().length > 0) {
+              <div class="materials-group">
+                <h4 class="materials-group__title">Green Materials</h4>
+                <div class="materials-group__grid">
+                  @for (entry of greenMaterialEntries(); track entry.assetId) {
+                    <div class="material-item material-item--green">
+                      @if (entry.iconUrl) {
+                        <img
+                          class="material-item__icon"
+                          [src]="entry.iconUrl"
+                          [alt]="entry.label"
+                          loading="lazy"
+                        />
+                      }
+                      <span class="material-item__name has-tooltip" [appTooltip]="entry.assetId">
+                        {{ entry.label }}
+                      </span>
+                      <span class="material-item__count">× {{ entry.count }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Blue Materials -->
+            @if (blueMaterialEntries().length > 0) {
+              <div class="materials-group">
+                <h4 class="materials-group__title">Blue Materials</h4>
+                <div class="materials-group__grid">
+                  @for (entry of blueMaterialEntries(); track entry.assetId) {
+                    <div class="material-item material-item--blue">
+                      @if (entry.iconUrl) {
+                        <img
+                          class="material-item__icon"
+                          [src]="entry.iconUrl"
+                          [alt]="entry.label"
+                          loading="lazy"
+                        />
+                      }
+                      <span class="material-item__name has-tooltip" [appTooltip]="entry.assetId">
+                        {{ entry.label }}
+                      </span>
+                      <span class="material-item__count">× {{ entry.count }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content: catalogue + detail -->
+  <div class="planner-layout">
+    <!-- Catalogue (master list) -->
+    <section class="catalogue">
+      <header class="catalogue__header">
+        <div class="catalogue__title-row">
+          <h2 class="catalogue__title">Martial Arts</h2>
+          <div class="catalogue__actions">
+            <button type="button" class="btn-text btn-text--compact" (click)="includeAll()">
+              <i class="bi bi-check-all"></i> All
+            </button>
+            <button type="button" class="btn-text btn-text--compact" (click)="includeNone()">
+              <i class="bi bi-x-lg"></i> None
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="catalogue__filters">
+          <div class="filter-chips">
+            <button
+              type="button"
+              class="filter-chip"
+              [class.filter-chip--active]="pathFilter() === 'all'"
+              (click)="pathFilter.set('all')"
+            >
+              All
+            </button>
+            @for (pf of pathFilters; track pf.key) {
+              <button
+                type="button"
+                class="filter-chip filter-chip--with-icon"
+                [class.filter-chip--active]="pathFilter() === pf.key"
+                (click)="pathFilter.set(pf.key)"
+              >
+                @if (pf.iconUrl) {
+                  <img class="filter-chip__icon" [src]="pf.iconUrl" [alt]="pf.label" />
+                }
+                <span class="filter-chip__label">{{ pf.label }}</span>
+              </button>
+            }
+          </div>
+
+          <label class="filter-toggle">
+            <input
+              type="checkbox"
+              [checked]="upgradeableOnly()"
+              (change)="upgradeableOnly.set(!upgradeableOnly())"
+            />
+            <span>Upgradeable only</span>
+          </label>
+
+          <input
+            type="text"
+            class="filter-search"
+            placeholder="Search martial arts..."
+            [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)"
+          />
+        </div>
+      </header>
+
+      <ul class="art-list">
+        @for (art of filteredArts(); track art.def.id) {
+          @let track = tracks()[art.def.id];
+          <li
+            class="art-item"
+            [class.art-item--selected]="isSelected(art.def.id)"
+            [class.art-item--complete]="track.currentLevel >= targetLevel()"
+            (click)="selectArt(art.def.id)"
+          >
+            <!-- Line 1: Name + Path | Level dropdown + Include toggle -->
+            <div class="art-item__row1">
+              <div class="art-item__info">
+                <span class="art-item__name">{{ art.label }}</span>
+                <span class="art-item__meta">{{ art.pathLabel }}</span>
+              </div>
+              <div class="art-item__controls">
+                <label class="art-item__level" (click)="$event.stopPropagation()">
+                  <select
+                    class="level-select"
+                    [ngModel]="track.currentLevel"
+                    (ngModelChange)="setCurrentLevel(art.def.id, $event)"
+                  >
+                    @for (lvl of levelOptions; track lvl) {
+                      @if (lvl <= targetLevel()) {
+                        <option [value]="lvl">{{ lvl }}</option>
+                      }
+                    }
+                  </select>
+                </label>
+                <label class="art-item__include" (click)="$event.stopPropagation()">
+                  <input
+                    type="checkbox"
+                    [checked]="track.included"
+                    (change)="toggleIncluded(art.def.id, $event)"
+                  />
+                  <span class="include-label">Include</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Line 2: Breakthrough progress indicator -->
+            <div class="art-item__row2">
+              <div class="breakthrough-indicator">
+                @for (bt of breakthroughLevels; track bt) {
+                  <div
+                    class="breakthrough-block"
+                    [class.breakthrough-block--filled]="track.currentLevel > bt"
+                    [class.breakthrough-block--current]="
+                      track.currentLevel > getPrevBreakthrough(bt) && track.currentLevel <= bt
+                    "
+                  >
+                    @if (track.currentLevel > getPrevBreakthrough(bt) && track.currentLevel <= bt) {
+                      <div
+                        class="level-bar"
+                        [style.width.%]="getLevelProgressInSegment(track.currentLevel, bt)"
+                      ></div>
+                    }
+                  </div>
+                }
+              </div>
+              <span class="progress-label">
+                Lv. {{ track.currentLevel }} → {{ targetLevel() }}
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Detail panel -->
+    <section class="detail-panel">
+      @if (selectedArt(); as art) {
+        <header class="detail-header">
+          @if (art.iconUrl) {
+            <div class="detail-header__icon-wrap">
+              <img
+                class="detail-header__icon"
+                [src]="art.iconUrl"
+                [alt]="art.label"
+                loading="lazy"
+              />
+            </div>
+          }
+          <div class="detail-header__info">
+            <h2 class="detail-header__title">{{ art.label }}</h2>
+            <p class="detail-header__meta">
+              {{ art.pathLabel }}
+            </p>
+          </div>
+        </header>
+
+        @let track = tracks()[art.def.id];
+        @let plan = selectedPlan()!;
+
+        <!-- Current Progress Inputs -->
+        <div class="progress-inputs">
+          <h3 class="progress-inputs__title">Current Progress</h3>
+          <p class="progress-inputs__scope">
+            From Level <strong>{{ track.currentLevel }}</strong> to Level
+            <strong>{{ targetLevel() }}</strong
+            >.
+          </p>
+          <div class="progress-inputs__row">
+            <label class="input-group">
+              <span class="input-group__label">Current Level</span>
+              <select
+                class="input-group__select"
+                [ngModel]="track.currentLevel"
+                (ngModelChange)="setCurrentLevel(art.def.id, $event)"
+              >
+                @for (lvl of levelOptions; track lvl) {
+                  @if (lvl <= targetLevel()) {
+                    <option [value]="lvl">{{ lvl }}</option>
+                  }
+                }
+              </select>
+            </label>
+          </div>
+
+          <!-- Visual progress with breakthroughs -->
+          <div class="progress-visual">
+            <div class="progress-visual__segments">
+              @for (bt of breakthroughLevels; track bt) {
+                <div
+                  class="progress-segment"
+                  [class.progress-segment--filled]="track.currentLevel > bt"
+                  [class.progress-segment--current]="
+                    track.currentLevel > getPrevBreakthrough(bt) && track.currentLevel <= bt
+                  "
+                >
+                  <span class="progress-segment__label"
+                    >{{ getPrevBreakthrough(bt) + 1 }}-{{ bt }}</span
+                  >
+                  <div class="progress-segment__bar">
+                    @if (track.currentLevel > getPrevBreakthrough(bt) && track.currentLevel <= bt) {
+                      <div
+                        class="progress-segment__fill"
+                        [style.width.%]="getLevelProgressInSegment(track.currentLevel, bt)"
+                      ></div>
+                    } @else if (track.currentLevel > bt) {
+                      <div class="progress-segment__fill" style="width: 100%"></div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Steps breakdown -->
+        <div class="steps-section">
+          <h3 class="steps-section__title">Upgrade Steps</h3>
+
+          @if (plan.steps.length === 0) {
+            <p class="steps-section__empty">Already at or above target level.</p>
+          } @else {
+            <ol class="steps-list">
+              @for (step of plan.steps; track $index) {
+                <li
+                  class="step-item"
+                  [class.step-item--breakthrough]="step.kind === 'breakthrough'"
+                >
+                  <span class="step-item__label">
+                    @if (step.kind === 'breakthrough') {
+                      <i class="bi bi-lightning-charge"></i>
+                    }
+                    {{ step.label }}
+                  </span>
+                  <div class="step-item__materials">
+                    @for (mat of getStepMaterials(step); track mat.assetId) {
+                      <span
+                        class="material-tag has-tooltip"
+                        [class]="getMaterialTagClass(mat.assetId, art)"
+                        [appTooltip]="mat.assetId"
+                      >
+                        @if (mat.iconUrl) {
+                          <img class="material-tag__icon" [src]="mat.iconUrl" [alt]="mat.label" />
+                        }
+                        {{ mat.label }}: <strong>{{ mat.count }}</strong>
+                      </span>
+                    }
+                  </div>
+                </li>
+              }
+            </ol>
+          }
+        </div>
+
+        <!-- Per-art totals -->
+        <div class="skill-totals">
+          <h3 class="skill-totals__title">Totals for This Martial Art</h3>
+          <p class="totals-item__note">
+            Total materials needed to go from Level {{ track.currentLevel }} to Level
+            {{ targetLevel() }} for <strong>{{ art.label }}</strong
+            >.
+          </p>
+          @if (plan.steps.length === 0) {
+            <p class="skill-totals__empty">No materials needed (already at target).</p>
+          } @else {
+            <div class="skill-totals__grid">
+              @for (mat of getPlanMaterials(plan); track mat.assetId) {
+                <div class="totals-item has-tooltip" [appTooltip]="mat.assetId">
+                  @if (mat.iconUrl) {
+                    <img class="totals-item__icon" [src]="mat.iconUrl" [alt]="mat.label" />
+                  }
+                  <span class="totals-item__label">{{ mat.label }}</span>
+                  <span class="totals-item__value">{{ mat.count | number }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- No selection -->
+        <div class="no-selection">
+          <i class="bi bi-hand-index"></i>
+          <p>Select a martial art from the list to view its upgrade details.</p>
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Credits Section -->
+  <section class="credits-section">
+    <h3 class="credits-section__title">Data Credits</h3>
+    <p class="credits-section__text">
+      Martial Arts upgrade data compiled with contributions from the community. Special thanks to
+      <strong>moonwoou</strong> for providing detailed cost information used in this planner.
+    </p>
+  </section>
+
+  <!-- Actions -->
+  <footer class="planner-footer">
+    <button type="button" class="btn-secondary" (click)="resetAllProgress()">
+      <i class="bi bi-arrow-counterclockwise"></i>
+      Reset All Progress
+    </button>
+  </footer>
+</main>
