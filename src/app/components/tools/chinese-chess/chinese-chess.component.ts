@@ -1,5 +1,12 @@
 // chinese-chess.component.ts
-import { AfterViewInit, ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TooltipDirective } from '../../../directives';
@@ -24,10 +31,41 @@ export class ChineseChessComponent implements AfterViewInit {
     this.chessUrlRaw,
   );
 
+  // FEN converter modal state
+  readonly fenModalOpen = signal(false);
+  readonly fenIframeLoaded = signal(false);
+
+  readonly fenConverterUrlRaw = 'https://wwmchesstofenmini.streamlit.app/?embed=true';
+  readonly fenConverterUrlSafe: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+    this.fenConverterUrlRaw,
+  );
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.scrollToMap();
     }, 0);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.fenModalOpen()) {
+      this.closeFenModal();
+    }
+  }
+
+  openFenModal(): void {
+    this.fenModalOpen.set(true);
+    this.fenIframeLoaded.set(false);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeFenModal(): void {
+    this.fenModalOpen.set(false);
+    document.body.style.overflow = '';
+  }
+
+  onFenIframeLoad(): void {
+    this.fenIframeLoaded.set(true);
   }
 
   private scrollToMap(): void {

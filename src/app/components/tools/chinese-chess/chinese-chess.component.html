@@ -2,18 +2,111 @@
 <main id="top" class="chess-container">
   <iframe [src]="chessUrlSafe" title="Chinese Chess - Xiangqi" allowfullscreen></iframe>
 
-  <a
-    [href]="chessUrlRaw"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="external-link-btn"
-    [appTooltip]="{
-      title: 'Open in New Tab',
-      description:
-        'Open the full Xiangqi.com website in a new tab if you encounter issues with the embedded version.',
-      variant: 'controlHint',
-    }"
-  >
-    <i class="bi bi-box-arrow-up-right"></i>
-  </a>
+  <div class="action-buttons">
+    <!-- FEN Converter Button -->
+    <button
+      type="button"
+      class="action-btn"
+      (click)="openFenModal()"
+      [appTooltip]="{
+        title: 'Screenshot → FEN',
+        description:
+          'Upload a WWM chess screenshot to extract the FEN string. Copy it and paste into the simulator.',
+        variant: 'controlHint',
+      }"
+      aria-label="Convert WWM screenshot to FEN"
+    >
+      <i class="bi bi-camera"></i>
+    </button>
+
+    <!-- Open in New Tab Link -->
+    <a
+      [href]="chessUrlRaw"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="action-btn"
+      [appTooltip]="{
+        title: 'Open in New Tab',
+        description:
+          'Open the full Xiangqi.com website in a new tab if you encounter issues with the embedded version.',
+        variant: 'controlHint',
+      }"
+    >
+      <i class="bi bi-box-arrow-up-right"></i>
+    </a>
+  </div>
 </main>
+
+<!-- FEN Converter Modal -->
+@if (fenModalOpen()) {
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+  <div class="fen-modal-overlay" (click)="closeFenModal()">
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+    <div
+      class="fen-modal"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="fen-modal-title"
+    >
+      <!-- Modal Header -->
+      <header class="fen-modal__header">
+        <div class="fen-modal__header-content">
+          <h2 id="fen-modal-title" class="fen-modal__title">WWM Chess → FEN</h2>
+          <p class="fen-modal__subtitle">
+            Upload screenshot; copy FEN; close and paste into simulator.
+          </p>
+          <p class="fen-modal__credit">
+            Tool by
+            <a
+              href="https://github.com/RaimundoMedeiros/WWMXiangqiToFEN"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              RaimundoMedeiros
+            </a>
+          </p>
+        </div>
+        <div class="fen-modal__actions">
+          <a
+            [href]="fenConverterUrlRaw"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="fen-modal__link"
+          >
+            <i class="bi bi-box-arrow-up-right"></i>
+            Open in new tab
+          </a>
+          <button
+            type="button"
+            class="fen-modal__close"
+            (click)="closeFenModal()"
+            aria-label="Close modal"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Modal Body -->
+      <div class="fen-modal__body">
+        @if (!fenIframeLoaded()) {
+          <div class="fen-modal__loader">
+            <div class="fen-modal__spinner"></div>
+            <span>Loading FEN converter...</span>
+          </div>
+        }
+        <iframe
+          [src]="fenConverterUrlSafe"
+          title="WWM Chess Screenshot to FEN Converter"
+          class="fen-modal__iframe"
+          [class.fen-modal__iframe--loaded]="fenIframeLoaded()"
+          (load)="onFenIframeLoad()"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div>
+}

@@ -22,34 +22,39 @@
   display: block;
 }
 
-.external-link-btn {
+/* Action buttons container */
+.action-buttons {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: $radius-pill; // was $radius-round
+  border-radius: $radius-pill;
   background: $surface-layer-3;
   color: $accent-teal;
   border: 1px solid $border-subtle;
   box-shadow: $shadow-depth-2;
   cursor: pointer;
   text-decoration: none;
-  transition: color $motion-fast $motion-ease; // only color animates now
+  transition: color $motion-fast $motion-ease;
 
   i {
     font-size: 1.1rem;
   }
 
   &:hover {
-    /* keep shape & surface identical */
     background: $surface-layer-3;
     box-shadow: $shadow-depth-2;
     transform: none;
-    color: $accent-teal-active; // only this changes
+    color: $accent-teal-active;
   }
 
   &:active {
@@ -62,5 +67,224 @@
   &:focus-visible {
     outline: 2px solid $accent-teal;
     outline-offset: 2px;
+  }
+}
+
+/* Legacy class for backwards compatibility */
+.external-link-btn {
+  @extend .action-btn;
+}
+
+/* ===========================
+   FEN Converter Modal
+   =========================== */
+
+.fen-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 9999;
+  animation: fenModalFadeIn $motion-base $motion-ease;
+}
+
+.fen-modal {
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: $radius-modal;
+  box-shadow: $shadow-depth-4;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fenModalSlideUp $motion-base $motion-ease;
+
+  // Desktop sizing
+  width: min(1100px, 92vw);
+  height: min(800px, 86vh);
+
+  // Mobile sizing
+  @media (max-width: 640px) {
+    width: 96vw;
+    height: 88vh;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $border-subtle;
+    flex-shrink: 0;
+  }
+
+  &__header-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: $text-muted;
+  }
+
+  &__credit {
+    margin: 0.35rem 0 0;
+    font-size: 0.75rem;
+    color: $text-muted;
+
+    a {
+      color: $accent-teal;
+      text-decoration: none;
+      transition: color $motion-fast $motion-ease;
+
+      &:hover {
+        color: $accent-teal-active;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    color: $accent-teal;
+    text-decoration: none;
+    border-radius: $radius-sm;
+    border: 1px solid $border-subtle;
+    background: transparent;
+    transition: all $motion-fast $motion-ease;
+
+    i {
+      font-size: 0.85rem;
+    }
+
+    &:hover {
+      background: rgba(66, 195, 198, 0.1);
+      border-color: $accent-teal;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $accent-teal;
+      outline-offset: 2px;
+    }
+  }
+
+  &__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: all $motion-fast $motion-ease;
+
+    i {
+      font-size: 1.25rem;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: $text-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $accent-teal;
+      outline-offset: 2px;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: $text-muted;
+    font-size: 0.9rem;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1;
+  }
+
+  &__spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 3px solid $border-subtle;
+    border-top-color: $accent-teal;
+    border-radius: 50%;
+    animation: fenModalSpin 0.8s linear infinite;
+  }
+
+  &__iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    opacity: 0;
+    transition: opacity $motion-base $motion-ease;
+
+    &--loaded {
+      opacity: 1;
+    }
+  }
+}
+
+/* Animations */
+@keyframes fenModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fenModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fenModalSpin {
+  to {
+    transform: rotate(360deg);
   }
 }
