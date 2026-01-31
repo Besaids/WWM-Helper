@@ -4,7 +4,7 @@ import {
   MartialArtsLevelCostSegment,
 } from '../../models';
 
-export const MARTIAL_ARTS_MAX_LEVEL = 70;
+export const MARTIAL_ARTS_MAX_LEVEL = 80;
 
 export const MARTIAL_ARTS: MartialArtDefinition[] = [
   {
@@ -111,6 +111,9 @@ export const MARTIAL_ARTS_LEVEL_COST_SEGMENTS: MartialArtsLevelCostSegment[] = [
   { fromLevel: 56, toLevel: 60, coin: 8000, greenTier: 6 },
   { fromLevel: 61, toLevel: 65, coin: 12000, greenTier: 6 },
   { fromLevel: 66, toLevel: 70, coin: 15000, greenTier: 6 },
+  { fromLevel: 71, toLevel: 75, coin: 20000, greenTier: 6 },
+  { fromLevel: 76, toLevel: 79, coin: 30000, greenTier: 6 },
+  { fromLevel: 80, toLevel: 80, coin: 40000, greenTier: 6 },
 ];
 
 export const MARTIAL_ARTS_BREAKTHROUGHS: MartialArtsBreakthroughCost[] = [
@@ -122,4 +125,6 @@ export const MARTIAL_ARTS_BREAKTHROUGHS: MartialArtsBreakthroughCost[] = [
   { atLevel: 55, tips: 12, blueTier: 5 },
   { atLevel: 60, tips: 18, blueTier: 5 },
   { atLevel: 65, tips: 24, blueTier: 10 },
+  { atLevel: 70, tips: 36, blueTier: 10 },
+  { atLevel: 75, tips: 48, blueTier: 10 },
 ];
