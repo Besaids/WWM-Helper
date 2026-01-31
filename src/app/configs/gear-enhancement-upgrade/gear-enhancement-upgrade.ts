@@ -1,7 +1,7 @@
 import { GearEnhancementLevelCost, GearEnhancementSlotDefinition } from '../../models';
 
 export const GEAR_ENHANCEMENT_MIN_LEVEL = 0;
-export const GEAR_ENHANCEMENT_MAX_LEVEL = 30;
+export const GEAR_ENHANCEMENT_MAX_LEVEL = 35;
 
 /**
  * 8 gear pieces (slots) + their standard & breakthrough material mapping.
@@ -75,7 +75,7 @@ export const GEAR_ENHANCEMENT_SLOTS: GearEnhancementSlotDefinition[] = [
 ];
 
 /**
- * Costs to upgrade INTO each enhancement level (1..30).
+ * Costs to upgrade INTO each enhancement level (1..35).
  * Oscillating Jade + Coin are always used.
  * StandardMaterial is slot-dependent: Raw Ore or Coarse Fur.
  * Breakthrough mats map by slot:
@@ -126,4 +126,11 @@ export const GEAR_ENHANCEMENT_LEVEL_COSTS: GearEnhancementLevelCost[] = [
   { level: 29, oscillatingJade: 20, coin: 15000, standardMaterial: 20 },
 
   { level: 30, oscillatingJade: 25, coin: 19500, breakthroughMaterial2: 6 },
+
+  { level: 31, oscillatingJade: 25, coin: 20000, standardMaterial: 25, requiredGearTier: 71 },
+  { level: 32, oscillatingJade: 25, coin: 21000, standardMaterial: 25 },
+  { level: 33, oscillatingJade: 25, coin: 21500, standardMaterial: 25 },
+  { level: 34, oscillatingJade: 25, coin: 22000, standardMaterial: 25 },
+
+  { level: 35, oscillatingJade: 25, coin: 22500, breakthroughMaterial2: 8 },
 ];

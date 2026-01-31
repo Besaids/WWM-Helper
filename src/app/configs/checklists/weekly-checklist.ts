@@ -85,7 +85,7 @@ export const WEEKLY_CHECKLIST: ChecklistItem[] = [
     frequency: 'weekly',
     importance: 'core',
     category: 'Caps',
-    label: 'Hit weekly Jade Fish cap (20,000) and spend it wisely.',
+    label: 'Hit weekly Jade Fish cap and spend it wisely.',
     description:
       'Season currency from many activities; used in the Season Shop where many items also have weekly purchase limits.',
     tags: ['economy'],
